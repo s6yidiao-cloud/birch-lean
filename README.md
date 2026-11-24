@@ -9,7 +9,7 @@ Lean 4 formalization of the main results in *Forms and polynomial covers in many
 | Theorem 1.2, Serre bound for integral pairs | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
 | Theorem 1.3, weighted polynomial-cover asymptotic | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
 
-All four declarations take [Deligne’s prime-field exponential-sum bound](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis for polynomials of degree $r \ge 3$ over $\mathbb F_p$ with $p>r$ and smooth leading projective hypersurface.
+We take [the prime-field case of Theorem 8.4 in Deligne’s *La conjecture de Weil. I*](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis.
 
 ## Build and verify
 
