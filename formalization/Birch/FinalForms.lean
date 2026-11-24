@@ -1,6 +1,6 @@
 import Birch.V2FormAsymptotic
 
-/-! # Form results of `final_v2.tex`
+/-! # Form results
 
 The weighted formula uses the strict codimension case of the circle-method
 argument. The Hasse principle follows by choosing a weight near a nonsingular
@@ -34,7 +34,7 @@ def FixedPartialFormAsymptotic : Prop :=
         (B ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
         C * B ^ ((n : ℝ) - d - η)
 
-/-- Theorem `thm:main` of `final_v2.tex` for the affine gradient codimension. -/
+/-- Theorem `thm:main` of the manuscript for the affine gradient codimension. -/
 def FinalSmoothHassePrinciple : Prop :=
   ∀ (d n : ℕ) (F : IntForm n) (σ : ℕ), 2 ≤ d →
     F ≠ 0 → F.IsHomogeneous d → RationalGradientDimension F σ → 2 ^ (d + 1) - 3 ≤ n - σ →
@@ -110,7 +110,7 @@ private theorem finalSmoothHassePrinciple_of_formAsymptotic (h : FixedPartialFor
   exact hasNonsingularZero_rat_of_weightedZeros_pos hF htrans hB
 
 /-- The smooth Hasse principle under the same prime-field Deligne estimate. -/
-theorem finalSmoothHassePrinciple_of_deligne
+theorem finalSmoothHassePrinciple
     (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalSmoothHassePrinciple :=
   finalSmoothHassePrinciple_of_formAsymptotic (fixedPartialFormAsymptotic_of_deligne hDeligne)
 

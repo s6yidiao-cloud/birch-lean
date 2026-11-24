@@ -3,7 +3,7 @@ import Birch.V2CoverAsymptotic
 import Birch.V2CoverFromWooley
 import Birch.V2CoverSerre
 
-/-! # Polynomial covers in `final_v2.tex`
+/-! # Polynomial covers
 
 The Serre bound counts integral pairs, with no cutoff on the cover variable.
 The weighted asymptotic uses the signed cutoff `|y| ≤ B^(d/e)` and the
@@ -17,7 +17,7 @@ namespace Birch
 
 noncomputable section
 
-/-- The integral-pair estimate of `thm:serre` in `final_v2.tex`. -/
+/-- The integral-pair estimate of `thm:serre` in the manuscript. -/
 def FinalCoverSerreBound : Prop :=
   ∀ (d e n : ℕ) (F : IntForm n) (g : ℤ[X]) (σ : ℕ),
     2 ≤ d → 2 ≤ e → F ≠ 0 → F.IsHomogeneous d → g.natDegree = e →
@@ -26,7 +26,7 @@ def FinalCoverSerreBound : Prop :=
     ∀ ε > 0, ∃ C > 0, ∀ᶠ B : ℝ in atTop,
       (coverIntegralCount F g B : ℝ) ≤ C * B ^ ((n : ℝ) - 1 + ε)
 
-/-- The weighted asymptotic of `thm:cover_asymptotic` in `final_v2.tex`,
+/-- The weighted asymptotic of `thm:cover_asymptotic` in the manuscript,
 including absolute convergence of its singular factors. -/
 def FinalCoverAsymptotic : Prop :=
   ∀ (d e n : ℕ) (F : IntForm n) (g : ℤ[X]) (σ : ℕ) (w : (Fin n → ℝ) → ℝ),
@@ -44,7 +44,7 @@ def FinalCoverAsymptotic : Prop :=
 
 /-- Deligne's estimate implies the Serre bound for integral pairs at the
 closed codimension threshold. -/
-theorem finalCoverSerreBound_of_deligne
+theorem finalCoverSerreBound
     (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalCoverSerreBound := by
   intro d e n F g σ hd he _ hF hg hσ hν
   apply coverIntegralCount_serre_of_weilII hd he hF hg hσ
@@ -53,7 +53,7 @@ theorem finalCoverSerreBound_of_deligne
 
 /-- Deligne's estimate implies the weighted cover asymptotic at the
 strict codimension threshold with the manuscript's moment exponent. -/
-theorem finalCoverAsymptotic_of_deligne
+theorem finalCoverAsymptotic
     (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalCoverAsymptotic := by
   intro d e n F g σ w hd he hne hF hg hσ hν hw _
   have hmoment : ∀ g' : ℤ[X], g'.natDegree = e → CoverMeanValueBound e g' := by

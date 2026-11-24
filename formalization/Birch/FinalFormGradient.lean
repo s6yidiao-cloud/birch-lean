@@ -137,7 +137,7 @@ theorem formAsymptotic_of_gradientPartition {n d : ℕ} {F : IntForm n} {w : (Fi
   rw [← Finset.sum_mul]
   exact mul_le_mul_of_nonneg_right (by linarith) (by positivity)
 
-/-- The weighted form asymptotic in `final_v2.tex` for a weight supported on
+/-- The weighted form asymptotic in the manuscript for a weight supported on
 the noncritical locus. -/
 def FinalFormAsymptotic : Prop :=
   ∀ d n : ℕ, 2 ≤ d → ∃ η > 0,
@@ -152,7 +152,7 @@ def FinalFormAsymptotic : Prop :=
 
 /-- Deligne's prime-field estimate gives the weighted form asymptotic with
 the manuscript's full support condition. -/
-theorem finalFormAsymptotic_of_deligne
+theorem finalFormAsymptotic
     (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalFormAsymptotic := by
   intro d n hd
   obtain ⟨η, hη, hfixed⟩ := fixedPartialFormAsymptotic_of_deligne hDeligne d n hd
