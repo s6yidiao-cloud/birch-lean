@@ -4,7 +4,7 @@ Lean is pinned to `leanprover/lean4:v4.32.0`. Mathlib is pinned to
 `81a5d257c8e410db227a6665ed08f64fea08e997` by the [Lake manifest](../formalization/lake-manifest.json).
 
 The [verifier](../scripts/verify.py) checks the local module closure and scans the Lean sources for proof placeholders. With `--frozen` it also verifies the [SHA-256 manifest](../checks/SHA256SUMS).
-From the Lean project directory, it runs
+From the `formalization/` directory, it runs
 
 ```sh
 lake build Birch GafniTao
