@@ -9,6 +9,8 @@ Lean 4 formalization of the main results in *Forms and polynomial covers in many
 | Theorem 1.2, Serre bound for integral pairs | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
 | Theorem 1.3, weighted polynomial-cover asymptotic | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
 
+All four declarations take [Deligne’s prime-field exponential-sum bound](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis for polynomials of degree $r \ge 3$ over $\mathbb F_p$ with $p>r$ and smooth leading projective hypersurface.
+
 ## Build and verify
 
 Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean and Mathlib to v4.32.0. From this folder, run
