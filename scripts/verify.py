@@ -1,4 +1,4 @@
-"""Build and audit the standalone manuscript formalization."""
+"""Check the source tree, build the Lean libraries, and run the theorem audit."""
 
 import argparse
 import hashlib
