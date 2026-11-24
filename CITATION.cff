@@ -1,6 +1,7 @@
 cff-version: 1.2.0
 message: "Please cite the manuscript and identify the checked formalization revision."
 type: software
+repository-code: "https://github.com/s6yidiao-cloud/birch-lean"
 title: "Lean formalization of Forms and polynomial covers in many variables"
 authors:
   - family-names: Diao
