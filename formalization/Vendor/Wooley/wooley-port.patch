@@ -1,0 +1,217 @@
+--- upstream/WooleyBinomialMatrix.lean
++++ ported/WooleyBinomialMatrix.lean
+@@ -138,7 +138,6 @@
+   have hdet := congrArg
+     (fun A : Matrix (Fin r) (Fin r) (ZMod p) => A.det)
+     (wooleySection7_binomial_factorization k r p)
+-  dsimp only at hdet
+   rw [Matrix.det_mul, Matrix.det_mul, hbin, zero_mul] at hdet
+   exact (mul_ne_zero hDiagDet hEvalDet) hdet.symm
+ 
+--- upstream/WooleyCriticalBase.lean
++++ ported/WooleyCriticalBase.lean
+@@ -1,4 +1,4 @@
+-import GafniTao.VinogradovCriticalReduction
++import GafniTao.WooleyCountDependencies
+ 
+ /-!
+ # The degree-one base of the critical Vinogradov mean value theorem
+--- upstream/WooleyFiniteMean.lean
++++ ported/WooleyFiniteMean.lean
+@@ -46,7 +46,7 @@
+     simp
+   · rw [if_neg hd]
+     obtain ⟨j, hj⟩ : ∃ j, d j ≠ 0 := by
+-      simpa only [Function.ne_iff] using hd
++      simpa only [Function.ne_iff, Pi.zero_apply] using hd
+     rw [prod_eq_zero (mem_univ j)]
+     simp [hj]
+ 
+--- upstream/WooleyInitialConditioning.lean
++++ ported/WooleyInitialConditioning.lean
+@@ -392,7 +392,7 @@
+       have hinner (i : ι) (hi : i ∈ t) :
+           (∑ j ∈ t, ‖z i‖ * ‖z j‖) =
+             ‖z i‖ ^ 2 + ∑ j ∈ t with j ≠ i, ‖z i‖ * ‖z j‖ := by
+-        rw [Finset.sum_eq_add_sum_diff_singleton_of_mem hi]
++        rw [← Finset.add_sum_erase t (fun j => ‖z i‖ * ‖z j‖) hi]
+         congr 1
+         · ring
+         · apply Finset.sum_congr
+@@ -830,8 +830,12 @@
+   let bb : NNReal := ⟨b, hb⟩
+   have h := NNReal.rpow_add_le_mul_rpow_add_rpow aa bb
+     (p := (s : ℝ)) (by exact_mod_cast hs)
+-  norm_cast at h
+-  simpa [aa, bb, Real.rpow_natCast] using h
++  have hreal := NNReal.coe_le_coe.mpr h
++  have hsCast : (s : ℝ) - 1 = ((s - 1 : ℕ) : ℝ) := by
++    rw [Nat.cast_sub hs, Nat.cast_one]
++  simp only [NNReal.coe_add, NNReal.coe_mul, NNReal.coe_rpow, NNReal.coe_ofNat,
++    hsCast, Real.rpow_natCast] at hreal
++  exact hreal
+ 
+ /-- The pointwise estimate integrated in Wooley equation (6.9).  Both
+ terms on the right are the literal normalized diagonal and mixed sums. -/
+--- upstream/WooleyIterationArithmetic.lean
++++ ported/WooleyIterationArithmetic.lean
+@@ -1,4 +1,6 @@
+-import Mathlib
++import Mathlib.Tactic
++import Mathlib.Algebra.Order.Archimedean.Real.Basic
++import Mathlib.Algebra.Order.Floor.Div
+ 
+ /-!
+ # Arithmetic ledger for Wooley Sections 9 and 10
+--- upstream/WooleyPadicToCritical.lean
++++ ported/WooleyPadicToCritical.lean
+@@ -104,13 +104,6 @@
+           (Q : ℝ) ^ fordLambda34 (fordVinogradovKappa k) k epsilon := by
+       rw [hcriticalExponent]
+ 
+-theorem heathBrownVMVTMainConjecture_of_wooleyPadic
+-    (hconc : WooleyMonomialPadicConcentration) :
+-    HeathBrownVMVTMainConjecture :=
+-  heathBrownVMVTMainConjecture_of_critical
+-    (vinogradovCriticalEndpoint_of_wooleyPadic hconc)
+-
+-
+ end
+ 
+ end GafniTao
+--- upstream/WooleySection10HierarchySelection.lean
++++ ported/WooleySection10HierarchySelection.lean
+@@ -233,9 +233,8 @@
+         (alpha + beta) := hleft
+     _ ≤ target * mu * (H : ℝ) := hH0 H hH
+     _ ≤ target * (wooleyIterationTheta mu H : ℝ) := by
+-      have := mul_le_mul_of_nonneg_left hthetaLower htarget
+-      convert this using 1
+-      · ring
++      rw [mul_assoc]
++      exact mul_le_mul_of_nonneg_left hthetaLower htarget
+ 
+ /-- The strict quadratic-loss inequality in the Section-9 admissibility
+ ledger. -/
+@@ -616,8 +615,9 @@
+       (show 0 < (k : ℝ) ^ 2 / 2 by positivity)
+     have hconverted : 8 * (k : ℝ) ^ 5 * epsilon <
+         ((k : ℝ) ^ 2 / 2) * (delta * Lambda ^ 2 * mu) := by
+-      convert hmul using 1
+-      · ring
++      calc
++        _ = ((k : ℝ) ^ 2 / 2) * (epsilon * (16 * (k : ℝ) ^ 3)) := by ring
++        _ < _ := hmul
+     have hright : ((k : ℝ) ^ 2 / 2) * (delta * Lambda ^ 2 * mu) <
+         (k : ℝ) ^ 2 * delta * Lambda * mu * Lambda := by
+       nlinarith [mul_pos (mul_pos (mul_pos (sq_pos_of_pos (by linarith : (0 : ℝ) < k))
+--- upstream/WooleySection4Congruence.lean
++++ ported/WooleySection4Congruence.lean
+@@ -110,7 +110,6 @@
+       (fun f : Polynomial ℤ =>
+         wooleyIntegerTupleDisplacement R
+           (fun x => f.eval (dilatedPoint x)) xy) (hchange i)
+-    dsimp only at hcng
+     rw [wooleyIntegerTupleDisplacement_polynomial_add,
+       wooleyIntegerTupleDisplacement_polynomial_add,
+       wooleyIntegerTupleDisplacement_polynomial_C,
+--- upstream/WooleySection7Hard.lean
++++ ported/WooleySection7Hard.lean
+@@ -112,8 +112,7 @@
+                 pow_nonneg (norm_nonneg _) _)))
+     have hscaled := mul_le_mul_of_nonneg_right
+       (mul_le_mul_of_nonneg_left hloss hC.le) hcond
+-    exact hbound.trans (by
+-      simpa only [coeff, wooleySection7Coefficient] using hscaled)
++    exact hbound.trans hscaled
+   obtain ⟨gammaVal, hgammaVal, hlocal⟩ :=
+     wooley_equation_7_23_native hpPrime hc hr hrk hkp hMB hgammaK
+       hBPrime phi hphi gamma xi eta hseparated hxiMass hetaMass
+--- upstream/WooleySection7SourceShift.lean
++++ ported/WooleySection7SourceShift.lean
+@@ -201,9 +201,9 @@
+     (p ^ bp) r R
+       (fun x : ↑left.support => fun j => (Psi j).eval (x : ℤ))
+       swapped.1 i] at hz
+-  simpa only [swapped, wooleyEquation717InsertedDisplacement,
+-    wooleySourceTuplePolynomialDisplacement, wooleyPolynomialValue, bp]
+-    using hz
++  simp only [wooleyEquation717InsertedDisplacement,
++    wooleySourceTuplePolynomialDisplacement, Pi.zero_apply]
++  exact hz
+ 
+ /-- Literal source-residue version of equation (7.17), before analytic
+ normalization.  Both residue representatives occur in the displayed Fourier
+--- upstream/WooleySection7TopExtraction.lean
++++ ported/WooleySection7TopExtraction.lean
+@@ -414,9 +414,9 @@
+     (p ^ bp) r R
+       (fun x : ↑left.support => fun j => (Psi j).eval (x : ℤ))
+       tuple.1 i] at hz
+-  simpa only [wooleyEquation717InsertedDisplacement,
+-    wooleySourceTuplePolynomialDisplacement, wooleyPolynomialValue, bp]
+-    using hz
++  simp only [wooleyEquation717InsertedDisplacement,
++    wooleySourceTuplePolynomialDisplacement, Pi.zero_apply]
++  exact hz
+ 
+ /-- The exact finite normalized identity displayed in (7.17), packaged only
+ to keep its two occurrences in the native theorem synchronized. -/
+--- upstream/WooleySourceMean.lean
++++ ported/WooleySourceMean.lean
+@@ -1,4 +1,5 @@
+ import GafniTao.WooleyPolynomialSystem
++import Mathlib.Algebra.Order.Floor.Div
+ 
+ /-!
+ # Wooley's source-level finitely supported means
+--- upstream/WooleySourceToPadic.lean
++++ ported/WooleySourceToPadic.lean
+@@ -19,8 +19,7 @@
+ 
+ theorem wooley_mul_ceilDiv_self
+     {k h : ℕ} (hk : 1 ≤ k) : (k * h) ⌈/⌉ k = h := by
+-  simpa only [nsmul_eq_mul] using
+-    (smul_ceilDiv (α := ℕ) (β := ℕ) (a := k) (by omega : 0 < k) h)
++  exact smul_ceilDiv (α := ℕ) (β := ℕ) (a := k) (by omega : 0 < k) h
+ 
+ /-- The full source-faithful polynomial Corollary 3.2 discharges the exact
+ coefficient-one p-adic input used by the critical VMVT consumer. -/
+@@ -76,7 +75,9 @@
+     have hQpowPos : (0 : ℝ) < ((Q ^ wooleyTriangular k : ℕ) : ℝ) := by
+       positivity
+     have hmul := (div_le_iff₀ hQpowPos).mp hbound
+-    simpa only [Nat.cast_pow, mul_assoc] using hmul
++    simp only [Nat.cast_pow, mul_assoc] at hmul
++    rw [mul_assoc]
++    exact hmul
+ 
+ 
+ end
+--- upstream/WooleyTaylorCoefficient.lean
++++ ported/WooleyTaylorCoefficient.lean
+@@ -92,7 +92,6 @@
+         C ((p : ℤ) ^ c) * X ^ (k + 1) * psi =
+           ((p : ℤ) ^ c) • (X ^ (k + 1) * psi) := by
+       rw [mul_assoc, Polynomial.C_mul']
+-      rfl
+     have hderivScalar :
+         hasseDeriv i (((p : ℤ) ^ c) • (X ^ (k + 1) * psi)) =
+           ((p : ℤ) ^ c) • hasseDeriv i (X ^ (k + 1) * psi) :=
+@@ -125,7 +124,6 @@
+       C ((p : ℤ) ^ c) * X ^ (k + 1) * psi =
+         ((p : ℤ) ^ c) • (X ^ (k + 1) * psi) := by
+     rw [mul_assoc, Polynomial.C_mul']
+-    rfl
+   have hderivScalar :
+       hasseDeriv i (((p : ℤ) ^ c) • (X ^ (k + 1) * psi)) =
+         ((p : ℤ) ^ c) • hasseDeriv i (X ^ (k + 1) * psi) :=
+--- upstream/WooleyWeightedHolder.lean
++++ ported/WooleyWeightedHolder.lean
+@@ -1,4 +1,5 @@
+-import Mathlib
++import Mathlib.Analysis.MeanInequalities
++import Mathlib.Tactic
+ 
+ /-!
+ # The weighted Hölder inequality used in Wooley (3.9)
