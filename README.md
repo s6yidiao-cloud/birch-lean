@@ -4,10 +4,10 @@ Lean 4 formalization of the main results in *Forms and polynomial covers in many
 
 | Manuscript result | Lean declaration |
 | --- | --- |
-| Theorem 1.1, smooth Hasse principle at \(n-\sigma\ge 2^{d+1}-3\) | [`Birch.finalSmoothHassePrinciple`](formalization/Birch/FinalForms.lean) |
-| Equation (1.1), weighted form asymptotic on the noncritical locus and absolute convergence | [`Birch.finalFormAsymptotic`](formalization/Birch/FinalFormGradient.lean) |
-| Theorem 1.2, Serre bound for integral pairs | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
-| Theorem 1.3, weighted polynomial-cover asymptotic | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
+| Theorem 1.1, smooth Hasse principle | [`Birch.finalSmoothHassePrinciple`](formalization/Birch/FinalForms.lean) |
+| Equation (1.1), asymptotic formula for forms | [`Birch.finalFormAsymptotic`](formalization/Birch/FinalFormGradient.lean) |
+| Theorem 1.2, Serre's conjecture for covers | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
+| Theorem 1.3, asymptotic formula for covers | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
 
 We take [Theorem 8.4 in Deligne’s *La conjecture de Weil. I*](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis.
 
