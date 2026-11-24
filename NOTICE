@@ -2,7 +2,7 @@ Forms and polynomial covers in many variables
 
 The manuscript is by Yijie Diao and Lena Wurzinger.
 
-Third-party Lean source
+Third-party Lean sources and dependencies
 
 - formalization/Vendor/Wooley contains the nested efficient congruencing proof
   port from S. McColm's Lean monorepo. The source pin, per-file provenance,
