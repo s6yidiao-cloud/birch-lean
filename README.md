@@ -27,4 +27,4 @@ The verifier checks the source closure, builds the Lean project with warnings as
 - Statement correspondence and proof choices are in the [proof map](docs/FORMALIZATION_MAP.md).
 - The toolchain and checks are in the [verification notes](docs/verification.md).
 - The theorem scope and hypothesis are in the [status file](checks/formalization.yaml).
-- Third-party provenance and licenses are in the [notice](NOTICE).
+- Third party provenance and licenses are in the [notice](NOTICE).
