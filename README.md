@@ -1,6 +1,6 @@
 # Forms and polynomial covers in many variables
 
-Lean 4 formalization of the main results in *Forms and polynomial covers in many variables* by Yijie Diao and Lena Wurzinger. The declarations cover form degrees \(d\ge 2\) and are available after `import Birch`.
+Lean 4 formalization of the main results in *Forms and polynomial covers in many variables* by Yijie Diao and Lena Wurzinger. The declarations are available after `import Birch`.
 
 | Manuscript result | Lean declaration |
 | --- | --- |
