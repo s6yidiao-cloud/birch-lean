@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "Please cite the manuscript and identify the checked formalization revision."
+type: software
+title: "Lean formalization of Forms and polynomial covers in many variables"
+authors:
+  - family-names: Diao
+    given-names: Yijie
+  - family-names: Wurzinger
+    given-names: Lena
+version: 0.1.0
+keywords:
+  - Lean
+  - circle method
+  - Hasse principle
+  - polynomial covers
