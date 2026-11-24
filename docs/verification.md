@@ -16,7 +16,7 @@ Both libraries set warnings as errors. The audit elaborates the literal manuscri
 The local build used a temporary checkout on macOS arm64 with the pinned dependency cache. It rebuilt the changed modules and their dependents, checked the four manuscript statements and their proof dependencies, and audited the local declarations. Lean also replayed the endpoint and quadratic estimate modules with
 
 ```sh
-lake env leanchecker -v +  Birch.FinalQuadraticMetric Birch.FinalForms Birch.FinalFormGradient Birch.FinalCovers
+lake env leanchecker -v Birch.FinalQuadraticMetric Birch.FinalForms Birch.FinalFormGradient Birch.FinalCovers
 ```
 
 The commands and decisive output are in the [build record](../checks/verification.txt).

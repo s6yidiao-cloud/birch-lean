@@ -1,15 +1,15 @@
-# Proof map for final_v2.tex
+# Proof map
 
-The source is `final_v2.tex` by Yijie Diao and Lena Wurzinger, SHA-256
+The manuscript is by Yijie Diao and Lena Wurzinger, SHA-256
 `10d428d1fcdb41cadeb8b478703fc0cd4a2a71c30b436338e53ceb5d81891f8d`.
-The form degree satisfies \(d\ge 2\) throughout the endpoints. The cover degree satisfies \(e\ge 2\). [Manuscript PDF](../paper/final_v2.pdf)
+The form degree satisfies \(d\ge 2\) throughout the endpoints. The cover degree satisfies \(e\ge 2\).
 
 | Source label | Lean declaration | Checked correspondence |
 | --- | --- | --- |
-| `thm:main` | `Birch.finalSmoothHassePrinciple_of_deligne` | Closed codimension threshold \(n-\sigma\ge 2^{d+1}-3\). Local nonsingular zeros over \(\mathbb R\) and every \(\mathbb Q_p\) give a nonsingular zero over \(\mathbb Q\). |
-| `eq:asymptotic`, `lem:tail` | `Birch.finalFormAsymptotic_of_deligne` | Same codimension threshold. The saving is chosen at fixed \(d,n\), before the form, singular dimension, or weight. The formula includes termwise absolute convergence of the series and integrability of the oscillatory factor. |
-| `thm:serre` | `Birch.finalCoverSerreBound_of_deligne` | Closed real threshold \(n-\sigma\ge(2^{d+1}-4)(1/d+1/(2e))\). Counts all distinct integral pairs with \(\lVert\mathbf x\rVert_\infty\le B\). The proof bounds every integral root by a fixed multiple of \(B^{d/e}\) and chooses a dilated weight covering the box. |
-| `thm:cover_asymptotic` and its convergence argument | `Birch.finalCoverAsymptotic_of_deligne` | Open threshold \(n-\sigma>(2^{d+1}-4)(1-1/m)\), where \(m=\min(2^e,e(e+1))\). Uses signed cutoff \(\lvert y\rvert\le B^{d/e}\), exponent \(n+d/e-d\), and the two factors of equations (1.4) and (1.5). |
+| `thm:main` | `Birch.finalSmoothHassePrinciple` | Closed codimension threshold \(n-\sigma\ge 2^{d+1}-3\). Local nonsingular zeros over \(\mathbb R\) and every \(\mathbb Q_p\) give a nonsingular zero over \(\mathbb Q\). |
+| `eq:asymptotic`, `lem:tail` | `Birch.finalFormAsymptotic` | Same codimension threshold. The saving is chosen at fixed \(d,n\), before the form, singular dimension, or weight. The formula includes termwise absolute convergence of the series and integrability of the oscillatory factor. |
+| `thm:serre` | `Birch.finalCoverSerreBound` | Closed real threshold \(n-\sigma\ge(2^{d+1}-4)(1/d+1/(2e))\). Counts all distinct integral pairs with \(\lVert\mathbf x\rVert_\infty\le B\). The proof bounds every integral root by a fixed multiple of \(B^{d/e}\) and chooses a dilated weight covering the box. |
+| `thm:cover_asymptotic` and its convergence argument | `Birch.finalCoverAsymptotic` | Open threshold \(n-\sigma>(2^{d+1}-4)(1-1/m)\), where \(m=\min(2^e,e(e+1))\). Uses signed cutoff \(\lvert y\rvert\le B^{d/e}\), exponent \(n+d/e-d\), and the two factors of equations (1.4) and (1.5). |
 
 ## Definitions
 
