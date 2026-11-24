@@ -1,3 +1,6 @@
+# Lake and Python build artifacts
 .lake/
-.DS_Store
 __pycache__/
+
+# macOS folder metadata
+.DS_Store
