@@ -1,6 +1,6 @@
 import Birch
 
-/-! Exact types, proof dependencies, and axioms for the results of final_v2.tex. -/
+/-! Exact types, proof dependencies, and axioms for the results of the manuscript. -/
 
 open Birch Filter MeasureTheory
 open scoped Polynomial
@@ -27,7 +27,7 @@ example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
       2 ^ (d + 1) - 3 ≤ n - σ →
       (HasNonsingularZero F ℝ ∧ ∀ (p : ℕ) [Fact p.Prime], HasNonsingularZero F ℚ_[p]) →
       HasNonsingularZero F ℚ :=
-  finalSmoothHassePrinciple_of_deligne hDeligne
+  finalSmoothHassePrinciple hDeligne
 
 example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
     ∀ d n : ℕ, 2 ≤ d → ∃ η > 0, ∀ (F : IntForm n) (σ : ℕ) (w : (Fin n → ℝ) → ℝ),
@@ -39,7 +39,7 @@ example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
         ‖(compactWeightedZeros F w B : ℂ) -
           (B ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
           C * B ^ ((n : ℝ) - d - η) :=
-  finalFormAsymptotic_of_deligne hDeligne
+  finalFormAsymptotic hDeligne
 
 example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
     ∀ (d e n : ℕ) (F : IntForm n) (g : ℤ[X]) (σ : ℕ),
@@ -48,7 +48,7 @@ example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
       ((2 ^ (d + 1) - 4 : ℕ) : ℝ) * (1 / (d : ℝ) + 1 / (2 * (e : ℝ))) ≤ (n - σ : ℕ) →
       ∀ ε > 0, ∃ C > 0, ∀ᶠ B : ℝ in atTop,
         (coverIntegralCount F g B : ℝ) ≤ C * B ^ ((n : ℝ) - 1 + ε) :=
-  finalCoverSerreBound_of_deligne hDeligne
+  finalCoverSerreBound hDeligne
 
 example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
     ∀ (d e n : ℕ) (F : IntForm n) (g : ℤ[X]) (σ : ℕ) (w : (Fin n → ℝ) → ℝ),
@@ -64,12 +64,12 @@ example (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) :
           (B ^ ((n : ℝ) + (d : ℝ) / e - d) : ℝ) •
             (coverSingularSeries F g * coverSingularIntegral F g e w)‖ ≤
         C * B ^ ((n : ℝ) + (d : ℝ) / e - d - η) :=
-  finalCoverAsymptotic_of_deligne hDeligne
+  finalCoverAsymptotic hDeligne
 
-#print axioms finalSmoothHassePrinciple_of_deligne
-#print axioms finalFormAsymptotic_of_deligne
-#print axioms finalCoverSerreBound_of_deligne
-#print axioms finalCoverAsymptotic_of_deligne
+#print axioms finalSmoothHassePrinciple
+#print axioms finalFormAsymptotic
+#print axioms finalCoverSerreBound
+#print axioms finalCoverAsymptotic
 
 open Lean Elab Command
 
@@ -90,14 +90,14 @@ set_option maxHeartbeats 0 in
 run_cmd do
   let env := (← getEnv).setExporting false
   let routes := [
-    (``finalSmoothHassePrinciple_of_deligne,
+    (``finalSmoothHassePrinciple,
       [``fixedPartialFormAsymptotic_of_deligne, ``singularSeries_positive_of_nonsingularZeros]),
-    (``finalFormAsymptotic_of_deligne,
+    (``finalFormAsymptotic,
       [``formAsymptotic_of_gradientPartition, ``v2CubeFormAsymptotic_of_weilII,
         ``formConductorMass_tail_of_minorArcs_atExponent]),
-    (``finalCoverSerreBound_of_deligne,
+    (``finalCoverSerreBound,
       [``coverIntegralCount_serre_of_weilII, ``coverYSum_fourthMoment]),
-    (``finalCoverAsymptotic_of_deligne,
+    (``finalCoverAsymptotic,
       [``v2CoverCubeAsymptoticAt_of_weilII_of_coverMoment, ``coverMeanValueBound_of_degree_le_four,
         ``criticalVinogradovEstimate_of_wooley, ``GafniTao.wooleyPolynomialCorollary32_native,
         ``coverConductorMass_tail_of_coverNormalizedMinor])]

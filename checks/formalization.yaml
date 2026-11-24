@@ -1,7 +1,6 @@
 source:
-  filename: final_v2.tex
+  title: Forms and polynomial covers in many variables
   sha256: 10d428d1fcdb41cadeb8b478703fc0cd4a2a71c30b436338e53ceb5d81891f8d
-  pdf: paper/final_v2.pdf
 toolchain:
   lean: leanprover/lean4:v4.32.0
   mathlib_commit: 81a5d257c8e410db227a6665ed08f64fea08e997
@@ -13,26 +12,26 @@ external_input:
   weil_ii_url: https://publications.ias.edu/sites/default/files/Number40.pdf#page=79
 results:
   - label: "thm:main"
-    declaration: Birch.finalSmoothHassePrinciple_of_deligne
+    declaration: Birch.finalSmoothHassePrinciple
     file: formalization/Birch/FinalForms.lean
     minimum_form_degree: 2
     threshold: "n - σ ≥ 2^(d+1) - 3"
     status: conditional
   - label: "eq:asymptotic"
-    declaration: Birch.finalFormAsymptotic_of_deligne
+    declaration: Birch.finalFormAsymptotic
     file: formalization/Birch/FinalFormGradient.lean
     minimum_form_degree: 2
     weight_support: Birch.HasNonvanishingGradientOnSupport
     threshold: "n - σ ≥ 2^(d+1) - 3"
     status: conditional
   - label: "thm:serre"
-    declaration: Birch.finalCoverSerreBound_of_deligne
+    declaration: Birch.finalCoverSerreBound
     file: formalization/Birch/FinalCovers.lean
     minimum_form_degree: 2
     threshold: "n - σ ≥ (2^(d+1) - 4) * (1/d + 1/(2e))"
     status: conditional
   - label: "thm:cover_asymptotic"
-    declaration: Birch.finalCoverAsymptotic_of_deligne
+    declaration: Birch.finalCoverAsymptotic
     file: formalization/Birch/FinalCovers.lean
     minimum_form_degree: 2
     weight_support: Birch.HasNonvanishingGradientOnSupport
