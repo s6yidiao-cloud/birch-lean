@@ -9,7 +9,7 @@ Lean 4 formalization of the main results in *Forms and polynomial covers in many
 | Theorem 1.2, Serre's conjecture for covers | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
 | Theorem 1.3, asymptotic formula for covers | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
 
-We take [Theorem 8.4 in Deligne’s *La conjecture de Weil. I*](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis.
+In the formalization, we take [Theorem 8.4 in Deligne’s *La conjecture de Weil. I*](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis.
 
 ## Build and verify
 
