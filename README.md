@@ -13,7 +13,7 @@ In the formalization, we take [Theorem 8.4 in Deligne’s *La conjecture de Weil
 
 ## Build and verify
 
-Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean and Mathlib to v4.32.0. From this folder, run
+Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean and Mathlib to v4.32.0. From the repository root, run
 
 ```sh
 cd formalization
