@@ -11,6 +11,7 @@ rev = "v4.32.0"
 name = "Birch"
 moreLeanArgs = ["-DwarningAsError=true"]
 
+# Vendored Wooley modules use the upstream GafniTao namespace.
 [[lean_lib]]
 name = "GafniTao"
 srcDir = "Vendor/Wooley"
