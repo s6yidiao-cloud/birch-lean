@@ -11,6 +11,12 @@ Third party Lean sources and dependencies
   OpenAI's SquareDifference circle-distance and phase-bound arguments.
   Its source header gives the exact revision. The Apache 2.0 license text is
   in formalization/LICENSES/Apache-2.0.txt.
+- formalization/Vendor/AxiomMath contains the Stepanov point-count proof
+  from AxiomMath's Stacks project. The source pin, compatibility patch,
+  and Apache 2.0 license accompany the source.
+- formalization/Vendor/IndependentWeil contains the Weil conjectures proof
+  used for the smooth projective spectrum. The exact source revision,
+  pruning map and Apache 2.0 license accompany the source.
 - Mathlib and its dependencies are obtained through the pinned Lake manifest
   and carry their respective licenses.
 
