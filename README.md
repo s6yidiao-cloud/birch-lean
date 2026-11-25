@@ -1,6 +1,6 @@
 # Forms and polynomial covers in many variables
 
-Lean 4 formalization of the main results in [*Forms and polynomial covers in many variables*](https://arxiv.org/abs/2611.33114) by Yijie Diao and Lena Wurzinger. The declarations are available after `import Birch`.
+Lean formalization of the main results in [*Forms and polynomial covers in many variables*](https://arxiv.org/abs/2611.33114) by Yijie Diao and Lena Wurzinger. The declarations are available after `import Birch`.
 
 | Manuscript result | Lean declaration |
 | --- | --- |
