@@ -1,23 +1,224 @@
-Local verification of the Birch formalization on macOS arm64
-Lean 4.32.0 (8c9756b28d64dab099da31a4c09229a9e6a2ef35)
-Mathlib 81a5d257c8e410db227a6665ed08f64fea08e997
+Checked 17788 Lean source files, including the audit.
+Checked the frozen release hashes.
+⚠ [16841/16892] Replayed WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Rational
+warning: WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Rational.lean:1:0: The current module only contains private declarations.
 
-$ python3 scripts/verify.py
-Checked 246 Lean source files, including the audit.
-Build completed successfully (3977 jobs).
+Consider adding `public section` at the beginning of the module, or selectively marking declarations as `public`. Mark a `def` with `@[expose]` if downstream code needs it to be definitionally equal to its body (e.g. for `unfold`). Alternatively, add `@[expose] public section` to mark every definition as exposed.
+
+Note: This linter can be disabled with `set_option linter.privateModule false`
+⚠ [21586/21611] Replayed WeilConjectures.WeilSheaf.SmoothPurityMapOfOrientation
+warning: WeilConjectures/WeilSheaf/SmoothPurityMapOfOrientation.lean:1:0: The current module only contains private declarations.
+
+Consider adding `public section` at the beginning of the module, or selectively marking declarations as `public`. Mark a `def` with `@[expose]` if downstream code needs it to be definitionally equal to its body (e.g. for `unfold`). Alternatively, add `@[expose] public section` to mark every definition as exposed.
+
+Note: This linter can be disabled with `set_option linter.privateModule false`
+ℹ [22943/22960] Replayed Birch.WeilRationalPointRanks
+info: stderr:
+cumulative profiling times:
+	attribute application 0.0243ms
+	declTypeLinter 5.05ms
+	elaboration 38.2ms
+	fix level params 0.231ms
+	instantiate metavars 0.093ms
+	let-to-have transformation 0.062ms
+	linting 23.3ms
+	parsing 1.31ms
+	process pre-definitions 1.02ms
+	share common exprs 0.628ms
+	tactic execution 12.5ms
+	tacticAnalysis 1.35ms
+	type checking 12.5ms
+	typeclass inference 34.2ms
+ℹ [22944/22960] Replayed Birch.WeilRationalFibreLeray
+info: stderr:
+cumulative profiling times:
+	attribute application 0.0103ms
+	declTypeLinter 4.98ms
+	elaboration 9.63ms
+	fix level params 0.0822ms
+	instantiate metavars 0.0576ms
+	let-to-have transformation 0.0262ms
+	linting 16.2ms
+	parsing 0.469ms
+	process pre-definitions 0.338ms
+	share common exprs 0.248ms
+	tactic execution 5.79ms
+	tacticAnalysis 1.21ms
+	type checking 2.5ms
+	typeclass inference 20.7ms
+ℹ [22945/22960] Replayed Birch.WeilRationalFibreConstant
+info: stderr:
+cumulative profiling times:
+	attribute application 0.0106ms
+	declTypeLinter 4.3ms
+	elaboration 11.6ms
+	fix level params 0.064ms
+	instantiate metavars 0.0144ms
+	let-to-have transformation 0.732ms
+	linting 16.7ms
+	parsing 0.532ms
+	process pre-definitions 0.185ms
+	share common exprs 0.192ms
+	tacticAnalysis 0.171ms
+	type checking 1.1ms
+	typeclass inference 16.2ms
+ℹ [22946/22960] Replayed Birch.WeilRationalFibrePullback
+info: stderr:
+cumulative profiling times:
+	attribute application 0.0119ms
+	declTypeLinter 4.25ms
+	elaboration 18.7ms
+	fix level params 0.0925ms
+	instantiate metavars 0.0625ms
+	let-to-have transformation 0.0366ms
+	linting 21.7ms
+	parsing 0.811ms
+	process pre-definitions 0.303ms
+	share common exprs 0.282ms
+	tactic execution 3.79ms
+	tacticAnalysis 1.21ms
+	type checking 1.6ms
+	typeclass inference 29.8ms
+ℹ [22947/22960] Replayed Birch.WeilRationalFibreBaseChange
+info: stderr:
+cumulative profiling times:
+	attribute application 0.00971ms
+	declTypeLinter 4.78ms
+	elaboration 18ms
+	fix level params 0.0797ms
+	instantiate metavars 0.0272ms
+	let-to-have transformation 0.0366ms
+	linting 17.8ms
+	parsing 0.823ms
+	process pre-definitions 0.228ms
+	share common exprs 0.353ms
+	tacticAnalysis 0.238ms
+	type checking 1.86ms
+	typeclass inference 20.2ms
+ℹ [23008/23058] Replayed Birch.IndependentWeilFibreRanks
+info: stderr:
+cumulative profiling times:
+	attribute application 0.0617ms
+	compilation (IR) 0.838ms
+	compilation (LCNF base) 4.3ms
+	compilation (LCNF impure) 1.36ms
+	compilation (LCNF mono) 1.56ms
+	congr simp thm 0.117ms
+	declTypeLinter 5.37ms
+	elaboration 31.7ms
+	fix level params 0.312ms
+	instantiate metavars 0.114ms
+	let-to-have transformation 0.11ms
+	linting 28.2ms
+	parsing 2.45ms
+	process pre-definitions 1.24ms
+	share common exprs 1.17ms
+	simp 0.733ms
+	tactic execution 3.42ms
+	tacticAnalysis 2.02ms
+	type checking 5.75ms
+	typeclass inference 47ms
+Build completed successfully (23517 jobs).
+structure Birch.FinalWeight {n : ℕ} (w : (Fin n → ℝ) → ℝ) : Prop
+number of parameters: 2
+parents:
+  Birch.FinalWeight.toCompactWeight : CompactWeight w
+fields:
+  Birch.CompactWeight.smooth : ContDiff ℝ (↑⊤) w
+  Birch.CompactWeight.compact : HasCompactSupport w
+  Birch.CompactWeight.nonnegative : ∀ (x : Fin n → ℝ), 0 ≤ w x
+  Birch.FinalWeight.bounded : ∀ (x : Fin n → ℝ), w x ≤ 1
+  Birch.FinalWeight.support_box : ∀ x ∈ tsupport w, ∀ (i : Fin n), |x i| < 1
+constructor:
+  Birch.FinalWeight.mk {n : ℕ} {w : (Fin n → ℝ) → ℝ} (toCompactWeight : CompactWeight w)
+    (bounded : ∀ (x : Fin n → ℝ), w x ≤ 1) (support_box : ∀ x ∈ tsupport w, ∀ (i : Fin n), |x i| < 1) : FinalWeight w
+field notation resolution order:
+  Birch.FinalWeight, Birch.CompactWeight
+def Birch.HasNonvanishingGradientOnSupport : {n : ℕ} → IntForm n → ((Fin n → ℝ) → ℝ) → Prop :=
+fun {n} F w => ∀ x ∈ tsupport w, ∃ i, evalForm ((MvPolynomial.pderiv i) F) x ≠ 0
+def Birch.RationalGradientDimension : {n : ℕ} → IntForm n → ℕ → Prop :=
+fun {n} F σ =>
+  let K := AlgebraicClosure ℚ;
+  have J := Ideal.span (Set.range fun i => (MvPolynomial.map (Int.castRingHom K)) ((MvPolynomial.pderiv i) F));
+  ringKrullDim (MvPolynomial (Fin n) K ⧸ J) = ↑↑σ
+def Birch.HasNonsingularZero.{u_1} : {n : ℕ} → IntForm n → (R : Type u_1) → [CommRing R] → Prop :=
+fun {n} F R [CommRing R] => ∃ x, evalForm F x = 0 ∧ ∃ i, evalForm ((MvPolynomial.pderiv i) F) x ≠ 0
+def Birch.SmoothHassePrinciple : {n : ℕ} → IntForm n → Prop :=
+fun {n} F =>
+  (HasNonsingularZero F ℝ ∧ ∀ (p : ℕ) [inst : Fact (Nat.Prime p)], HasNonsingularZero F ℚ_[p]) → HasNonsingularZero F ℚ
+def Birch.compactWeightedZeros : {n : ℕ} → IntForm n → ((Fin n → ℝ) → ℝ) → ℝ → ℝ :=
+fun {n} F w P => ∑ᶠ (x : Fin n → ℤ), if evalForm F x = 0 then w (scaledPoint P x) else 0
+def Birch.formConductorMass : {n : ℕ} → IntForm n → ℕ → ℝ :=
+fun {n} F q => if h : q = 0 then 0 else ∑ a, ‖completeSum F q ↑a‖
+def Birch.coverIntegralPairs : {n : ℕ} → IntForm n → ℤ[X] → ℝ → Finset ((_ : Fin n → ℤ) × ℤ) :=
+fun {n} F g P => (latticeBox n P).sigma fun x => (g - Polynomial.C (evalForm F x)).roots.toFinset
+def Birch.coverWeightedZeros : {n : ℕ} → ℕ → ℕ → IntForm n → ℤ[X] → ((Fin n → ℝ) → ℝ) → ℝ → ℝ :=
+fun {n} d e F g w P =>
+  have Y := P ^ (↑d / ↑e);
+  ∑ᶠ (x : Fin n → ℤ), ∑ y ∈ Finset.Icc (-⌊Y⌋) ⌊Y⌋, if evalForm F x = Polynomial.eval y g then w (scaledPoint P x) else 0
+def Birch.coverConductorMass : {n : ℕ} → IntForm n → ℤ[X] → (q : ℕ) → [NeZero q] → ℝ :=
+fun {n} F g q [NeZero q] => ∑ a, ‖completeSum F q ↑a * coverCompleteSum g q ↑a‖
+def Birch.coverSingularIntegral : {n : ℕ} → IntForm n → ℤ[X] → ℕ → ((Fin n → ℝ) → ℝ) → ℂ :=
+fun {n} F g e w => ∫ (γ : ℝ), realOscillation F w γ * coverRealOscillation g e γ
+Birch.quadraticPointwiseEstimate {n σ : ℕ} {F : IntForm n} {w : (Fin n → ℝ) → ℝ} (hn : 0 < n)
+  (hF : MvPolynomial.IsHomogeneous F 2) (hσ : RationalGradientDimension F σ) (hw : ContDiff ℝ (↑⊤) w)
+  (hwbox : CubeSupported w) :
+  ∃ C > 0,
+    ∀ᶠ (B : ℝ) in atTop,
+      ∀ (T : ℝ),
+        1 ≤ T →
+          T ≤ B ^ (1 / 2) →
+            ∀ (p : ℕ),
+              Nat.Prime p →
+                (B / T) ^ 2 < ↑p →
+                  ↑p ≤ 2 * (B / T) ^ 2 →
+                    ∀ (a : ℤ) (α : ℝ),
+                      ¬↑p ∣ a → |α - ↑a / ↑p| ≤ B ^ (-2) → ‖normalizedSum F w B α‖ ≤ C * T ^ (-↑(n - σ))
+Birch.quadraticMetricDistribution_uniform {n σ : ℕ} {F : IntForm n} {w : (Fin n → ℝ) → ℝ} (hν : 0 < n - σ)
+  (hF : MvPolynomial.IsHomogeneous F 2) (hσ : RationalGradientDimension F σ) (hw : ContDiff ℝ (↑⊤) w)
+  (hwbox : CubeSupported w) :
+  ∃ C > 0,
+    ∀ ε > 0,
+      ∃ K > 0,
+        ∀ᶠ (B : ℝ) in atTop,
+          ∀ (T : ℝ),
+            1 ≤ T →
+              T ≤ B ^ (1 / 2) →
+                circleMeasure {α | C * T ^ (-↑(n - σ)) < ‖normalizedSum F w B α‖} ≤
+                  ENNReal.ofReal (K * B ^ (-2 + ε) * T ^ 4)
 'Birch.quadraticMetricDistribution_uniform' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Birch.finalSmoothHassePrinciple' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Birch.finalFormAsymptotic' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Birch.finalCoverSerreBound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Birch.finalCoverAsymptotic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.nativeSmoothHypersurfaceSpectrum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.nativeUnconditionalFinalResults' depends on axioms: [propext, Classical.choice, Quot.sound]
+finalResults_of_higherDimensionalPrimeBounds : (∀ (r : ℕ), 3 ≤ r → ∀ (l : ℕ), 2 ≤ l → UniformTwistedPrimeBound r l) →
+  FinalSmoothHassePrinciple ∧ FinalFormAsymptotic ∧ FinalCoverSerreBound ∧ FinalCoverAsymptotic
+'Birch.finalResults_of_higherDimensionalPrimeBounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.norm_univariate_characterSum_le_of_stepanov' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.uniformTwistedPrimeBound_one_of_stepanov' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.norm_separatedPrimeCharacterSum_le_of_stepanov' depends on axioms: [propext, Classical.choice, Quot.sound]
+finalResults_of_formCriticalMoments : (∀ (d : ℕ), FormCriticalMomentBounds d) →
+  FinalSmoothHassePrinciple ∧ FinalFormAsymptotic ∧ FinalCoverSerreBound ∧ FinalCoverAsymptotic
+'Birch.criticalMoment_of_scaledMetric' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.finalResults_of_formCriticalMoments' depends on axioms: [propext, Classical.choice, Quot.sound]
+finalResults_of_terminalPrimeBoundsWithLoss : (∀ (d : ℕ) (δ : ℝ), 0 < δ → TerminalPrimeBoundsWithLoss d δ) →
+  FinalSmoothHassePrinciple ∧ FinalFormAsymptotic ∧ FinalCoverSerreBound ∧ FinalCoverAsymptotic
+finalResults_of_regularAffineLevelCounts : (∀ (r : ℕ),
+    3 ≤ r → ∀ (n : ℕ), 3 ≤ n → EventualPrimeRegularAffineLevelCountsAtDimension r n) →
+  FinalSmoothHassePrinciple ∧ FinalFormAsymptotic ∧ FinalCoverSerreBound ∧ FinalCoverAsymptotic
+finalResults_of_smoothProjectiveSpectrum : (∀ (r : ℕ),
+    3 ≤ r → ∀ (m : ℕ), 4 ≤ m → EventualPrimeSmoothProjectiveSpectrumAtDimension r m) →
+  FinalSmoothHassePrinciple ∧ FinalFormAsymptotic ∧ FinalCoverSerreBound ∧ FinalCoverAsymptotic
+'Birch.finalResults_of_terminalPrimeBoundsWithLoss' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.finalResults_of_regularAffineLevelCounts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Birch.finalResults_of_smoothProjectiveSpectrum' depends on axioms: [propext, Classical.choice, Quot.sound]
 Verified proof route for Birch.finalSmoothHassePrinciple.
 Verified proof route for Birch.finalFormAsymptotic.
 Verified proof route for Birch.finalCoverSerreBound.
 Verified proof route for Birch.finalCoverAsymptotic.
-Checked axiom dependencies for 4474 local declarations.
-
-$ lake env leanchecker -v Birch.FinalQuadraticMetric Birch.FinalForms Birch.FinalFormGradient Birch.FinalCovers
-replaying Birch.FinalCovers
-replaying Birch.FinalFormGradient
-replaying Birch.FinalForms
-replaying Birch.FinalQuadraticMetric
+Verified proof route for Birch.finalResults_of_higherDimensionalPrimeBounds.
+Verified proof route for Birch.finalResults_of_formCriticalMoments.
+Verified proof route for Birch.finalResults_of_smoothProjectiveSpectrum.
+Checked axiom dependencies for 6227 local declarations.

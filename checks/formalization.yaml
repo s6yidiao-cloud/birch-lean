@@ -1,42 +1,62 @@
 source:
   title: Forms and polynomial covers in many variables
-  sha256: 10d428d1fcdb41cadeb8b478703fc0cd4a2a71c30b436338e53ceb5d81891f8d
+  arxiv: https://arxiv.org/abs/2611.33114v1
+  source_file: final.tex
+  sha256: 442568d412d44d1fa98a0f220f2ee4411f14c24d241c699c683278fbacf45e3f
 toolchain:
-  lean: leanprover/lean4:v4.32.0
-  mathlib_commit: 81a5d257c8e410db227a6665ed08f64fea08e997
-external_input:
-  statement: "∀ r, 3 ≤ r → Birch.PrimeDeligneEstimate r"
-  weil_i: "Theorem 8.4"
-  weil_i_url: https://www.numdam.org/item/PMIHES_1974__43__273_0.pdf#page=31
-  weil_ii: "(3.7.2.1)"
-  weil_ii_url: https://publications.ias.edu/sites/default/files/Number40.pdf#page=79
+  lean: leanprover/lean4:v4.35.0
+  mathlib_commit: 56a005855ea17e0b0958f73ec801ae140b0a1679
+vendored_sources:
+  weil:
+    revision: ae6479530ccaaa19b6d7ca02bc3248cbf49611c9
+    provenance: formalization/Vendor/IndependentWeil/NOTICE.md
+  stepanov:
+    revision: 012108f61d7f92a6ffc35ec3f263b6da5d438125
+    provenance: formalization/Vendor/AxiomMath/PROVENANCE.md
+  wooley:
+    revision: 6a90ee91cdb8a4037189c1076595bd3846c96c16
+    provenance: formalization/Vendor/Wooley/PROVENANCE.md
+release_proof:
+  declaration: Birch.nativeUnconditionalFinalResults
+  file: formalization/Birch/FinalUnconditional.lean
+  projective_spectrum: Birch.nativeSmoothHypersurfaceSpectrum
 results:
   - label: "thm:main"
     declaration: Birch.finalSmoothHassePrinciple
-    file: formalization/Birch/FinalForms.lean
+    file: formalization/Birch/FinalUnconditional.lean
     minimum_form_degree: 2
     threshold: "n - σ ≥ 2^(d+1) - 3"
-    status: conditional
+    status: unconditional
   - label: "eq:asymptotic"
     declaration: Birch.finalFormAsymptotic
-    file: formalization/Birch/FinalFormGradient.lean
+    file: formalization/Birch/FinalUnconditional.lean
     minimum_form_degree: 2
     weight_support: Birch.HasNonvanishingGradientOnSupport
     threshold: "n - σ ≥ 2^(d+1) - 3"
-    status: conditional
+    status: unconditional
   - label: "thm:serre"
     declaration: Birch.finalCoverSerreBound
-    file: formalization/Birch/FinalCovers.lean
+    file: formalization/Birch/FinalUnconditional.lean
     minimum_form_degree: 2
+    minimum_cover_degree: 2
     threshold: "n - σ ≥ (2^(d+1) - 4) * (1/d + 1/(2e))"
-    status: conditional
+    status: unconditional
   - label: "thm:cover_asymptotic"
     declaration: Birch.finalCoverAsymptotic
-    file: formalization/Birch/FinalCovers.lean
+    file: formalization/Birch/FinalUnconditional.lean
     minimum_form_degree: 2
+    minimum_cover_degree: 2
     weight_support: Birch.HasNonvanishingGradientOnSupport
     threshold: "n - σ > (2^(d+1) - 4) * (1 - 1/min(2^e, e(e+1)))"
-    status: conditional
+    status: unconditional
+higher_dimensional_completion:
+  declaration: Birch.finalResults_of_higherDimensionalPrimeBounds
+  status: conditional
+  minimum_terminal_degree: 3
+  minimum_slice_dimension: 2
+  hypothesis: Birch.UniformTwistedPrimeBound
+  proved_one_dimensional_input: Birch.uniformTwistedPrimeBound_one_of_stepanov
+  source: formalization/Vendor/AxiomMath/PROVENANCE.md
 quadratic_completion:
   pointwise: Birch.quadraticPointwiseEstimate
   uniform_metric: Birch.quadraticMetricDistribution_uniform
@@ -47,8 +67,4 @@ verification:
   audit: checks/BirchAudit.lean
   transcript: checks/verification.txt
   snapshot: checks/SHA256SUMS
-  checked_lean_files: 246
-  audited_local_declarations: 4474
-  authored_placeholders: 0
   allowed_axioms: [propext, Classical.choice, Quot.sound]
-  review: independently_checked_source_statement_and_proof_dependencies
