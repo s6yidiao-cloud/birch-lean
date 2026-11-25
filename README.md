@@ -1,19 +1,19 @@
 # Forms and polynomial covers in many variables
 
-Lean 4 formalization of the main results in *Forms and polynomial covers in many variables* by Yijie Diao and Lena Wurzinger. The declarations are available after `import Birch`.
+Lean 4 formalization of the main results in [*Forms and polynomial covers in many variables*](https://arxiv.org/abs/2611.33114) by Yijie Diao and Lena Wurzinger. The declarations are available after `import Birch`.
 
 | Manuscript result | Lean declaration |
 | --- | --- |
-| Theorem 1.1, smooth Hasse principle | [`Birch.finalSmoothHassePrinciple`](formalization/Birch/FinalForms.lean) |
-| Equation (1.1), asymptotic formula for forms | [`Birch.finalFormAsymptotic`](formalization/Birch/FinalFormGradient.lean) |
-| Theorem 1.2, Serre's conjecture for covers | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalCovers.lean) |
-| Theorem 1.3, asymptotic formula for covers | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalCovers.lean) |
+| Theorem 1.1, smooth Hasse principle | [`Birch.finalSmoothHassePrinciple`](formalization/Birch/FinalUnconditional.lean#L27) |
+| Equation (1.1), asymptotic formula for forms | [`Birch.finalFormAsymptotic`](formalization/Birch/FinalUnconditional.lean#L31) |
+| Theorem 1.2, Serre's conjecture for covers | [`Birch.finalCoverSerreBound`](formalization/Birch/FinalUnconditional.lean#L35) |
+| Theorem 1.3, asymptotic formula for covers | [`Birch.finalCoverAsymptotic`](formalization/Birch/FinalUnconditional.lean#L39) |
 
-In the formalization, we take [Theorem 8.4 in Deligne’s *La conjecture de Weil. I*](formalization/Birch/DeligneFiniteField.lean#L48) as an explicit hypothesis.
+Outside this repository, the formalization depends only on Mathlib.
 
 ## Build and verify
 
-Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean and Mathlib to v4.32.0. From the repository root, run
+Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean to v4.35.0 and records the Mathlib revision in its [manifest](formalization/lake-manifest.json). From the repository root, run
 
 ```sh
 cd formalization
