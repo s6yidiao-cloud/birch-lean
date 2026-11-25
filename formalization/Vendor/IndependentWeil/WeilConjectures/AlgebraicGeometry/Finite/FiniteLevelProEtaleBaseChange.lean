@@ -1,0 +1,106 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+
+public import WeilConjectures.AlgebraicGeometry.Ringed.RingedEtaleOriginWitness
+public import WeilConjectures.AlgebraicGeometry.ProEtale.ProEtaleAmbientRingedExchange
+public import WeilConjectures.AlgebraicGeometry.WeilSheaf.ProfiniteCoefficientInverseImageSupplement
+public import Mathlib.AlgebraicGeometry.Morphisms.Proper
+import WeilConjectures.Mathlib.Algebra.Homology.DerivedCategory.ExactFunctor
+import WeilConjectures.AlgebraicGeometry.Finite.Coefficient.FiniteCoefficientExchangeTransport
+
+/-!
+# Finite-level pro-etale proper base change
+
+## Main statements
+
+- `AlgebraicGeometry.Scheme.finiteLevelProEtaleBaseChange`: finite-coefficient proper
+  exchange is invertible on objects with a bounded-below etale-origin witness.
+
+## References
+
+* Stacks Project, Tags 098T, 07A7, 09C8 and 09C9 (the finite-coefficient step)
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option linter.style.haveILetI false
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace AlgebraicGeometry.Scheme
+
+variable (Λ : Type (u + 1)) [CommRing Λ] [Finite Λ]
+
+/-- The canonical inverse image of the finite constant coefficient sheaf. -/
+noncomputable def finiteCoefficientRingIso {U V : Scheme.{u}} (h : U ⟶ V) :
+    (proEtaleSheafInverseImage h CommRingCat.{u + 1}).obj (finiteOriginFunctionRing V Λ) ≅
+      finiteOriginFunctionRing U Λ :=
+  (proEtaleSheafInverseImage h CommRingCat.{u + 1}).mapIso
+      (finiteOriginConstantIso V Λ).symm ≪≫
+    (letI : ∀ n : ℕᵒᵖ,
+        Finite (((Functor.const ℕᵒᵖ).obj (CommRingCat.of Λ)).obj n) :=
+      fun _ ↦ inferInstanceAs (Finite Λ)
+    @asIso _ _ _ _ ((proEtaleConstantComparison h).app (CommRingCat.of Λ))
+      ((proEtale_profinite_coefficient_inverse_image
+        ((Functor.const ℕᵒᵖ).obj (CommRingCat.of Λ))).1 U V h (Opposite.op 0))) ≪≫
+    finiteOriginConstantIso U Λ
+
+private theorem finiteCoefficientRingIso_comp {V W Z : Scheme.{u}}
+    (h : Z ⟶ W) (k : W ⟶ V) :
+    proEtaleRingCompositeCoefficients h k (finiteOriginFunctionRing V Λ)
+        (finiteOriginFunctionRing W Λ) (finiteOriginFunctionRing Z Λ)
+        (finiteCoefficientRingIso Λ k) (finiteCoefficientRingIso Λ h) =
+      finiteCoefficientRingIso Λ (h ≫ k) := by
+  let Q := (Functor.const ℕᵒᵖ).obj (CommRingCat.of Λ)
+  let : ∀ n : ℕᵒᵖ, Finite (Q.obj n) := fun _ ↦ inferInstanceAs (Finite Λ)
+  have hc := (proEtale_profinite_coefficient_inverse_image Q).2.2.2.2.2.2.2.2.2.1
+    Z W V h k (Opposite.op 0)
+  dsimp [Q, proEtaleCoefficientTower] at hc
+  apply Iso.ext
+  dsimp [proEtaleRingCompositeCoefficients, finiteCoefficientRingIso]
+  simp only [Functor.map_comp, Category.assoc]
+  rw [← Functor.map_comp_assoc (proEtaleSheafInverseImage h CommRingCat.{u + 1})
+    (finiteOriginConstantIso W Λ).hom (finiteOriginConstantIso W Λ).inv]
+  simp only [Iso.hom_inv_id]
+  rw [CategoryTheory.Functor.map_id, Category.id_comp]
+  have hn := (proEtaleRingInverseImageComp h k).hom.naturality
+    (finiteOriginConstantIso V Λ).inv
+  simp only [Functor.comp_map] at hn
+  rw [← reassoc_of% hn]
+  rw [hc]
+  simp only [Category.assoc]
+
+variable {X' X Y' Y : Scheme.{u}} {g' : X' ⟶ X} {f' : X' ⟶ Y'}
+  {f : X ⟶ Y} {g : Y' ⟶ Y} (sq : ChosenCartesianSquare g' f' f g)
+
+include sq in
+/-- Finite coefficient identifications agree around the chosen square. -/
+theorem finiteCoefficientRingIso_coherent :
+    HEq (proEtaleRingCompositeCoefficients g' f (finiteOriginFunctionRing Y Λ)
+      (finiteOriginFunctionRing X Λ) (finiteOriginFunctionRing X' Λ)
+      (finiteCoefficientRingIso Λ f) (finiteCoefficientRingIso Λ g'))
+    (proEtaleRingCompositeCoefficients f' g (finiteOriginFunctionRing Y Λ)
+      (finiteOriginFunctionRing Y' Λ) (finiteOriginFunctionRing X' Λ)
+      (finiteCoefficientRingIso Λ g) (finiteCoefficientRingIso Λ f')) := by
+  rw [finiteCoefficientRingIso_comp, finiteCoefficientRingIso_comp]
+  exact (show ∀ {a b : X' ⟶ Y}, a = b →
+    HEq (finiteCoefficientRingIso Λ a) (finiteCoefficientRingIso Λ b) from
+      fun w ↦ by cases w; rfl) sq.toCommSq.w
+
+/-- The existing ambient exchange specialized to the canonical finite coefficients. -/
+noncomputable abbrev finiteCoefficientExchange :=
+  proEtaleAmbientRingedExchange sq (finiteOriginFunctionRing X Λ) (finiteOriginFunctionRing Y Λ)
+    (finiteOriginFunctionRing X' Λ) (finiteOriginFunctionRing Y' Λ)
+    (finiteCoefficientRingIso Λ f) (finiteCoefficientRingIso Λ g)
+    (finiteCoefficientRingIso Λ g') (finiteCoefficientRingIso Λ f')
+    (finiteCoefficientRingIso_coherent Λ sq)
+
+
+end AlgebraicGeometry.Scheme

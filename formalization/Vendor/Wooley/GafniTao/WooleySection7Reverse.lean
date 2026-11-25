@@ -77,9 +77,9 @@ theorem wooley_equation_7_21_native
             ((((p ^ a : ℕ) : ℤ) * (zeta.val : ℤ) + xi : ℤ) :
               ZMod (p ^ (a + H)))
             (eta : ZMod (p ^ b)) := by
-  letI : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
+  let : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
     ⟨pow_ne_zero _ hpPrime.ne_zero⟩
-  letI : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+  let : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
   obtain ⟨Psi, hPsi, huniform⟩ :=
     wooley_exists_uniform_shifted_normalized_identity
       hpPrime hc hr hrk hkp hMB hgammaK hBPrime

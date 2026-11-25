@@ -43,7 +43,7 @@ private theorem directionStratumCounts {n r j s : ℕ} (hr : 2 < r) (hj : j ≤ 
   have hD'pos : 0 < D' := hq.trans hD'
   refine ⟨max B B', D'^n, D'^n * (3*(n*B'+1))^l, by positivity, by positivity, ?_⟩
   intro p hp hrp hpmax G hG hs
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let g : MvPolynomial (Fin n) K := MvPolynomial.map (Int.castRingHom K) G
   let f (i : Fin m) : MvPolynomial (Fin n) K := directionTest g (index i)
@@ -69,7 +69,7 @@ private theorem directionStratumCounts {n r j s : ℕ} (hr : 2 < r) (hj : j ≤ 
         (j : WithBot ℕ∞) ≤ ringKrullDim (MvPolynomial (Fin n) L ⧸
           Ideal.span (Set.range fun i : Fin n => pderiv i
             (directionalDerivativeOver u (MvPolynomial.map (algebraMap K L) g)))) := by
-    letI : CharP L p := charP_of_injective_algebraMap (algebraMap K L).injective p
+    let : CharP L p := charP_of_injective_algebraMap (algebraMap K L).injective p
     have h := directionTests_zero_iff hgp hr hk hD hBn (fun v hv => (htest v hv).mp) u
     rwa [hjk] at h
   have hdim : ringKrullDim (MvPolynomial (Fin n) K ⧸ J) ≤ (l : WithBot ℕ∞) := by
@@ -99,7 +99,7 @@ private theorem directionStratumCounts {n r j s : ℕ} (hr : 2 < r) (hj : j ≤ 
     change (f i).eval uK = 0
     rw [← aeval_eq_eval]
     exact (hexact uK).mpr huK (index i)
-  letI : NeZero p := ⟨hp.ne_zero⟩
+  let : NeZero p := ⟨hp.ne_zero⟩
   constructor
   · intro H hH hpH
     let P (u : Fin n → ℤ) := PrimeGradientDimension p hp (directionalDerivative u G) j

@@ -86,7 +86,7 @@ private lemma centralBinom_le_primeBand (n : ℕ) (hn : 2 < n) :
   have hsmall : (∏ p ∈ S, f p) ≤ (2*n)^((2*n).sqrt) * 4^(2*n/3) := by
     rw [← Finset.prod_filter_mul_prod_filter_not S (· ≤ (2*n).sqrt)]
     apply mul_le_mul'
-    · refine (Finset.prod_le_prod' fun p _ => (?_ : f p ≤ 2*n)).trans ?_
+    · refine (Finset.prod_le_prod fun p _ => (?_ : f p ≤ 2*n)).trans ?_
       · exact Nat.pow_factorization_choose_le (by omega)
       rw [Finset.prod_const]
       apply pow_right_mono₀ hn2
@@ -96,15 +96,15 @@ private lemma centralBinom_le_primeBand (n : ℕ) (hn : 2 < n) :
         exact Finset.mem_Icc.mpr ⟨((hS p).mp hpS).2.one_lt.le, hup⟩
       simpa using Finset.card_le_card hsubs
     · refine le_trans ?_ (primorial_le_four_pow (2*n/3))
-      refine (Finset.prod_le_prod' fun p hp => (?_ : f p ≤ p)).trans ?_
+      refine (Finset.prod_le_prod fun p hp => (?_ : f p ≤ p)).trans ?_
       · rcases Finset.mem_filter.mp hp with ⟨hpS, hpSize⟩
         refine (pow_right_mono₀ ((hS p).mp hpS).2.one_lt.le ?_).trans (pow_one p).le
         exact Nat.factorization_choose_le_one (Nat.sqrt_lt'.mp (not_le.mp hpSize))
-      exact Finset.prod_le_prod_of_subset_of_one_le' (Finset.filter_subset _ _) fun p hp _ =>
+      exact Finset.prod_le_prod_of_subset_of_one_le (Finset.filter_subset _ _) fun p hp _ =>
         (Finset.mem_filter.mp hp).2.one_lt.le
   have hlarge : (∏ p ∈ T, f p) ≤ (2*n)^T.card := by
     rw [← Finset.prod_const]
-    exact Finset.prod_le_prod' fun _ _ => Nat.pow_factorization_choose_le (by omega)
+    exact Finset.prod_le_prod fun _ _ => Nat.pow_factorization_choose_le (by omega)
   rw [hfact]
   exact mul_le_mul' hsmall hlarge
 

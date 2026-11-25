@@ -97,12 +97,12 @@ theorem coverMajorArcExponent_lt_quarter (d e : ℕ) :
     coverMajorArcExponent d e < 1 / 4 :=
   lt_of_le_of_lt (div_le_div_of_nonneg_right (min_le_left _ _) (by norm_num)) (by norm_num)
 
-/-- The concrete cover minor-arc estimate from Weil II and a one-variable
+/-- The cover minor-arc estimate from the form moment and a one-variable
 moment of exponent `q`. -/
-theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
+theorem v2CoverMinorIntegral_of_formCriticalMoments_atExponent {d e q n σ : ℕ}
     (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
     (hν : (1 - 1 / (q : ℝ)) * dimensionThreshold d < (n - σ : ℕ))
-    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    (hCritical : FormCriticalMomentBounds d) :
     ∃ δ > 0, ∀ (F : IntForm n) (g : ℤ[X]) (w : (Fin n → ℝ) → ℝ),
       F.IsHomogeneous d → RationalGradientDimension F σ → CompactWeight w →
       CubeSupported w → CoverMeanValueBoundAtExponent e q g → ∀ B > 0, ∃ C > 0,
@@ -123,7 +123,7 @@ theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
   obtain ⟨τ, hτ, hpointwise⟩ := initialMinor_of_weyl_v2 hd
     (coverMajorArcExponent_pos (by omega : 0 < d) (by omega : 0 < e))
     (coverMajorArcExponent_lt_quarter d e)
-  obtain ⟨δ, hδ, hminor⟩ := coverMinorArcBound_of_metric_atExponent (e := e) hd hm hν' hτ
+  obtain ⟨δ, hδ, hminor⟩ := coverMinorArcBound_of_criticalMoment_atExponent (e := e) hd hm hν' hτ
   refine ⟨δ, hδ, ?_⟩
   intro F g w hF hσ hw hwbox hg B hB
   let f := fun P α => ENNReal.ofReal ‖normalizedSum F w P α‖
@@ -131,12 +131,7 @@ theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
   have hfc (P : ℝ) : Continuous (normalizedSum F w P) :=
     (continuous_exponentialSum F w P).const_smul (P ^ (-(n : ℝ)) : ℝ)
   have htc (P : ℝ) : Continuous (coverYSum g (B * P ^ ((d : ℝ) / e))) := continuous_coverYSum g _
-  obtain ⟨K, hK, hKbound⟩ := norm_normalizedSum_eventually_bounded F hw
-  have htriv : ∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x, f P x ≤ (C : ℝ≥0∞) :=
-    ⟨K.toNNReal, Real.toNNReal_pos.2 hK, hKbound.mono fun _ hP x => by
-      rw [ENNReal.ofNNReal_toNNReal]
-      exact ENNReal.ofReal_le_ofReal (hP x)⟩
-  have hmetric := v2MetricDistribution_of_weilII hν₀ hd hF hσ hw.smooth hwbox hWeilII
+  have hform := hCritical hν₀ hd hF hσ hw hwbox
   obtain ⟨A, hA, hAarc⟩ := hpointwise hν₀ (v2WeylEstimate hν₀ hd hF hσ hw.smooth hwbox)
   let m := fun P => (v2MajorArcs d Δ P)ᶜ
   have hweyl : ∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ α ∈ m P,
@@ -148,7 +143,7 @@ theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
   have hmoment := hminor circleMeasure m f t (fun P => (measurableSet_v2MajorArcs d Δ P).compl)
     (fun P => (hfc P).norm.measurable.ennreal_ofReal)
     (fun P => (htc P).norm.measurable.ennreal_ofReal)
-    htriv hmetric hweyl (hg.rescale (by omega : 0 < d) (by omega : 0 < e) hB)
+    hform hweyl (hg.rescale (by omega : 0 < d) (by omega : 0 < e) hB)
   obtain ⟨C, hC, hbound⟩ := hmoment.toReal
   refine ⟨C, hC, hbound.mono fun P hP => ?_⟩
   have hcont : Continuous (fun α => normalizedSum F w P α * coverYSum g (B * P ^ ((d : ℝ) / e)) α) :=
@@ -157,6 +152,33 @@ theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
     hcont.norm.aestronglyMeasurable]
   simp_rw [norm_mul, ENNReal.ofReal_mul (norm_nonneg _)]
   exact hP
+
+theorem v2CoverMinorIntegral_of_terminalPrimeBounds_atExponent {d e q n σ : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
+    (hν : (1 - 1 / (q : ℝ)) * dimensionThreshold d < (n - σ : ℕ))
+    (hPrime : TerminalPrimeBounds d) :
+    ∃ δ > 0, ∀ (F : IntForm n) (g : ℤ[X]) (w : (Fin n → ℝ) → ℝ),
+      F.IsHomogeneous d → RationalGradientDimension F σ → CompactWeight w →
+      CubeSupported w → CoverMeanValueBoundAtExponent e q g → ∀ B > 0, ∃ C > 0,
+      ∀ᶠ P : ℝ in atTop,
+        (∫ α in (v2MajorArcs d (coverMajorArcExponent d e) P)ᶜ,
+          ‖normalizedSum F w P α * coverYSum g (B * P ^ ((d : ℝ) / e)) α‖ ∂circleMeasure) ≤
+          C * P ^ ((d : ℝ) / e - d - δ) :=
+  v2CoverMinorIntegral_of_formCriticalMoments_atExponent hd he hq hν
+    (FormCriticalMomentBounds.of_terminalPrimeBounds hPrime)
+
+theorem v2CoverMinorIntegral_of_weilII_atExponent {d e q n σ : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
+    (hν : (1 - 1 / (q : ℝ)) * dimensionThreshold d < (n - σ : ℕ))
+    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    ∃ δ > 0, ∀ (F : IntForm n) (g : ℤ[X]) (w : (Fin n → ℝ) → ℝ),
+      F.IsHomogeneous d → RationalGradientDimension F σ → CompactWeight w →
+      CubeSupported w → CoverMeanValueBoundAtExponent e q g → ∀ B > 0, ∃ C > 0,
+      ∀ᶠ P : ℝ in atTop,
+        (∫ α in (v2MajorArcs d (coverMajorArcExponent d e) P)ᶜ,
+          ‖normalizedSum F w P α * coverYSum g (B * P ^ ((d : ℝ) / e)) α‖ ∂circleMeasure) ≤
+          C * P ^ ((d : ℝ) / e - d - δ) :=
+  v2CoverMinorIntegral_of_terminalPrimeBounds_atExponent hd he hq hν (TerminalPrimeBounds.of_deligne hWeilII)
 
 /-- The minor-arc estimate at the exponent selected in `v2.tex`. -/
 theorem v2CoverMinorIntegral_of_weilII {d e n σ : ℕ} (hd : 2 ≤ d) (he : 2 ≤ e)

@@ -66,7 +66,7 @@ theorem critical_eq_zero_of_primeGradientDimension_zero {n d p : ℕ} (hp : p.Pr
     {G : IntForm n} (hG : G.IsHomogeneous d) (hdim : PrimeGradientDimension p hp G 0) :
     letI : Fact p.Prime := ⟨hp⟩
     ∀ x : Fin n → AlgebraicClosure (ZMod p), (∀ j, evalForm (pderiv j G) x = 0) → x = 0 := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   intro x hgrad
   by_contra hx
   have h := one_le_gradientQuotient_dim_of_nonzero_critical hG hx hgrad

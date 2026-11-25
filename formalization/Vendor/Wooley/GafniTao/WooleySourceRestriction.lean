@@ -55,7 +55,7 @@ theorem wooleySourceMassSq_residueSequence
   apply Finset.sum_congr rfl
   intro n hn
   simp only [Finset.mem_filter] at hn
-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
+  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
 
 /-- The global polynomial sum of the restricted sequence is the source
 residue-class polynomial sum, with no error or change of normalization. -/
@@ -71,7 +71,7 @@ theorem wooleySourcePolynomialSum_residueSequence
   apply Finset.sum_congr rfl
   intro n hn
   simp only [Finset.mem_filter] at hn
-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
+  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
 
 /-- Consequently the normalized global sum of a residue restriction is
 literally the normalized residue sum in (3.4). -/

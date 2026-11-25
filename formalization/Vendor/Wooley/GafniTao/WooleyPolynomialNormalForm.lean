@@ -48,7 +48,7 @@ theorem wooleyPolynomialLowPart_coeff
     (wooleyPolynomialLowPart d f).coeff n = f.coeff n := by
   have h := congrArg (fun g : Polynomial ℤ => g.coeff n)
     (wooleyPolynomial_low_add_tail d f)
-  simpa only [coeff_add, coeff_X_pow_mul', if_neg (not_le.mpr hn), add_zero]
+  simpa only [coeff_add, coeff_X_pow_mul', ite_eq_right (not_le.mpr hn), add_zero]
     using h
 
 /-- Constant coefficient in the canonical degree-`k` low part. -/
@@ -122,7 +122,7 @@ theorem WooleyPolynomialSystem.Spaced.constant_eq_mul
   rw [wooleyPolynomialLowPart_coeff (by omega), hpsi j]
   rw [coeff_add, coeff_X_pow]
   have hne : 0 ≠ (j : ℕ) + 1 := by omega
-  rw [if_neg hne, coeff_C_mul]
+  rw [ite_eq_right hne, coeff_C_mul]
   ring
 
 

@@ -125,7 +125,7 @@ def singularSeriesTerm (F : IntForm n) (m : ℕ) : ℂ :=
   if h : m = 0 then 0 else @unitConductorSum n F m ⟨h⟩
 
 private theorem singularSeriesTerm_posModulus (F : IntForm n) (m : ℕ) [NeZero m] :
-    singularSeriesTerm F m = unitConductorSum F m := dif_neg (NeZero.ne m)
+    singularSeriesTerm F m = unitConductorSum F m := dite_eq_right (NeZero.ne m)
 
 private theorem summable_norm_singularSeriesTerm (F : IntForm n)
     (hA : Summable (fun m : ℕ => ‖unitConductorSum F (m+1)‖)) :
@@ -137,7 +137,7 @@ private theorem tsum_singularSeriesTerm (F : IntForm n)
     (hA : Summable (fun m : ℕ => ‖singularSeriesTerm F m‖)) :
     (∑' m : ℕ, singularSeriesTerm F m) = singularSeries F := by
   rw [hA.of_norm.tsum_eq_zero_add]
-  simp only [singularSeriesTerm, dif_pos, zero_add]
+  simp only [singularSeriesTerm, dite_eq_left, zero_add]
   rfl
 
 private theorem singularSeriesTerm_mul (F : IntForm n) {a b : ℕ} (h : a.Coprime b) :
@@ -146,8 +146,8 @@ private theorem singularSeriesTerm_mul (F : IntForm n) {a b : ℕ} (h : a.Coprim
   · simp [ha, singularSeriesTerm]
   by_cases hb : b = 0
   · simp [hb, singularSeriesTerm]
-  letI : NeZero a := ⟨ha⟩
-  letI : NeZero b := ⟨hb⟩
+  let : NeZero a := ⟨ha⟩
+  let : NeZero b := ⟨hb⟩
   simpa only [singularSeriesTerm_posModulus] using unitConductorSum_mul F h
 
 /-- The prime factor given by the conductor series of its powers. -/
@@ -198,8 +198,8 @@ private theorem localSeriesFactor_of_posModulus (F : IntForm n) (p : Nat.Primes)
 private theorem localSeriesFactor_im_zero (F : IntForm n) (p : Nat.Primes) (hn : 1 ≤ n)
     (hS : Summable (fun j : ℕ => singularSeriesTerm F ((p : ℕ)^j))) :
     (localSeriesFactor F p).im = 0 := by
-  letI : Fact (p : ℕ).Prime := ⟨p.prop⟩
-  letI : NeZero (p : ℕ) := ⟨p.prop.ne_zero⟩
+  let : Fact (p : ℕ).Prime := ⟨p.prop⟩
+  let : NeZero (p : ℕ) := ⟨p.prop.ne_zero⟩
   have hT : Tendsto (fun m => ∑ j ∈ Finset.range (m+1), singularSeriesTerm F ((p : ℕ)^j))
       atTop (𝓝 (localSeriesFactor F p)) :=
     hS.hasSum.tendsto_sum_nat.comp (tendsto_add_atTop_nat 1)
@@ -234,8 +234,8 @@ theorem singularSeries_positive_of_nonsingularZeros {d : ℕ} (F : IntForm n) (h
     rw [(hPrime p).tsum_eq_zero_add, pow_zero, hOne, add_sub_cancel_left]
     exact norm_tsum_le_tsum_norm (hTail p)
   have hpPos (p : Nat.Primes) : 0 < (localSeriesFactor F p).re := by
-    letI : Fact (p : ℕ).Prime := ⟨p.prop⟩
-    letI : NeZero (p : ℕ) := ⟨p.prop.ne_zero⟩
+    let : Fact (p : ℕ).Prime := ⟨p.prop⟩
+    let : NeZero (p : ℕ) := ⟨p.prop.ne_zero⟩
     rw [localSeriesFactor_of_posModulus F p]
     apply primePower_localFactor_pos_of_nonsingularZero F hn hF (hLoc p)
     simpa only [singularSeriesTerm_posModulus] using hPrime p

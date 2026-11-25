@@ -34,6 +34,17 @@ def UniformTwistedResidueBound (modulus : ℕ → ℕ) (r l : ℕ) : Prop :=
     ∀ (a : ℤ), (a : ZMod p) ≠ 0 → ∀ z : Fin l → ℤ,
       ‖twistedCompleteSum g (modulus p) a z‖ ≤ D * (modulus p : ℝ)^(-(l : ℝ)/2)
 
+/-- A uniform residue bound with a specified multiplier depending on the prime. -/
+def UniformTwistedResidueBoundWithMultiplier (modulus : ℕ → ℕ) (r l : ℕ)
+    (multiplier : ℕ → ℝ) : Prop :=
+  ∃ D > 0, ∀ (p : ℕ) [Fact p.Prime] [NeZero (modulus p)], r < p →
+    ∀ (g : IntForm l), g.totalDegree ≤ r →
+      (∀ x : Fin l → AlgebraicClosure (ZMod p),
+        (∀ i, evalForm (pderiv i (homogeneousComponent r g)) x = 0) → x = 0) →
+      ∀ (a : ℤ), (a : ZMod p) ≠ 0 → ∀ z : Fin l → ℤ,
+        ‖twistedCompleteSum g (modulus p) a z‖ ≤
+          (D * multiplier p) * (modulus p : ℝ)^(-(l : ℝ)/2)
+
 /-- The terminal square-root estimate when the sum is taken modulo the prime. -/
 def UniformTwistedPrimeBound (r l : ℕ) : Prop := UniformTwistedResidueBound (fun p => p) r l
 
@@ -53,7 +64,7 @@ theorem deligneTwistedDegree_two : DeligneTwistedDegree 2 := by
 theorem deligneConductorOne_of_twisted {n d : ℕ} {F : IntForm n} (hF : F.IsHomogeneous d)
     (h : DeligneTwistedDegree d) : DeligneConductorOne d F := by
   intro p hp _ hdp hgrad a ha
-  letI : Fact p.Prime := hp
+  let : Fact p.Prime := hp
   let a₀ : ℤ := a.val
   have ha₀ : (a₀ : ZMod p) = a := by simp [a₀]
   have htop : ∀ x : Fin n → AlgebraicClosure (ZMod p),
@@ -63,14 +74,14 @@ theorem deligneConductorOne_of_twisted {n d : ℕ} {F : IntForm n} (hF : F.IsHom
   simpa only [twistedCompleteSum_zero, ha₀] using hs
 
 /-- For a fixed finite family of frames, a smooth section of the top form
-gives the full terminal saving. The bound is uniform in the prime, the chain,
-the frame, and the frozen lattice coordinates. -/
-theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : ℕ}
+transfers a multiplier in the residue bound to the terminal chain estimate. -/
+theorem terminal_chain_bound_of_good_frames_of_residue_bound_with_multiplier {l s d r : ℕ}
     {F : IntForm (l+s)} {w : (Fin (l+s) → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hrd : r ≤ d)
     (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
     (frames : Finset (Matrix (Fin (l+s)) (Fin (l+s)) ℤ))
     {modulus : ℕ → ℕ} {L : ℝ} (hModulus : 0 < L)
-    (hTwisted : UniformTwistedResidueBound modulus r l) :
+    (multiplier : ℕ → ℝ) (hMultiplier : ∀ p, 0 ≤ multiplier p)
+    (hTwist : UniformTwistedResidueBoundWithMultiplier modulus r l multiplier) :
     ∃ T > 0, ∀ {P Q : ℝ}, 1 ≤ P → 1 ≤ Q → Q ≤ Real.sqrt P →
       ∀ (p : ℕ) [Fact p.Prime] [NeZero (modulus p)], r < p →
       (P/Q)^2 ≤ (modulus p : ℝ) → (modulus p : ℝ) ≤ L*(P/Q)^2 →
@@ -83,12 +94,12 @@ theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : 
             ∀ x : Fin l → AlgebraicClosure (ZMod p),
               (∀ i, evalForm (pderiv i (linearSection (sectionFreeColumns A)
                 (homogeneousComponent r (t (d-r)).form))) x = 0) → x = 0) →
-          (t (d-r)).magnitude P ≤ T * Q^(-(l : ℝ)) := by
+          (t (d-r)).magnitude P ≤ T * Q^(-(l : ℝ)) * multiplier p := by
   classical
   obtain ⟨R,hR,hframes⟩ := uniform_affineFrame_bounds frames
   obtain ⟨E,hE,hdecay⟩ := uniform_terminalSliceAmplitude_decay (l := l) hF hrd hw hwbox (2*l) R hR
   obtain ⟨C,hC,hCframes⟩ := uniform_latticeBox_bound_of_slices frames
-  obtain ⟨D,hD,htwisted⟩ := hTwisted
+  obtain ⟨D,hD,htwisted⟩ := hTwist
   refine ⟨C*(D*E*(4*Real.sqrt L)^l), by positivity, ?_⟩
   intro P Q hP hQ hQmax p _ _ hpr hpL hpU m hm α a ha t u ht hclose hgood
   have hPpos : 0 < P := zero_lt_one.trans_le hP
@@ -118,6 +129,9 @@ theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : 
   obtain ⟨hL,hAffine⟩ := hframes A hA hd
   obtain ⟨rep,hrep,hsum⟩ := hCframes A hA hd
   change ‖∑ x ∈ latticeBox (l+s) P, f x‖ / P^(l+s) ≤ _
+  rw [show C * (D*E*(4*Real.sqrt L)^l) * Q^(-(l : ℝ)) * multiplier p =
+      C * ((D * multiplier p)*E*(4*Real.sqrt L)^l) * Q^(-(l : ℝ)) by ring]
+  have hpMultiplier : 0 ≤ multiplier p := hMultiplier p
   apply hsum hP hQpos (by positivity) f hf
   intro c v hv
   let L := freeFrameMap A
@@ -132,7 +146,7 @@ theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : 
   obtain ⟨hcont,hcomp,hfourier⟩ := hdecay P Q hPpos hQpos m hm α t u ht β hclose
     L b hL hb (hsupp g.weight hwG)
   have hChar (z : Fin l → ℤ) : ‖((modulus p : ℂ)^l)⁻¹ * ∑ x : Fin l → ZMod (modulus p),
-      weight x * phase (∑ i, (z i : ℝ)*((x i).val : ℝ)/(modulus p : ℝ))‖ ≤ D * (modulus p : ℝ)^(-(l : ℝ)/2) := by
+      weight x * phase (∑ i, (z i : ℝ)*((x i).val : ℝ)/(modulus p : ℝ))‖ ≤ (D * multiplier p) * (modulus p : ℝ)^(-(l : ℝ)/2) := by
     unfold weight
     rw [section_twistedCompleteSum]
     apply htwisted p hpr _ (affineSection_totalDegree_le _ _ _ |>.trans hG) _ a ha z
@@ -158,7 +172,32 @@ theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : 
     ring
   simp_rw [hterm]
   exact terminal_slice_bound_of_modulus_range hcont.continuous hcomp hModulus.le hPpos hQpos hQmax
-    (modulus p) hpL hpU weight hD.le hE.le le_rfl hChar hfourier
+    (modulus p) hpL hpU weight (mul_nonneg hD.le (hMultiplier p)) hE.le le_rfl hChar hfourier
+
+/-- The terminal estimate with a constant independent of the prime. -/
+theorem terminal_chain_bound_of_good_frames_of_uniform_residue_bound {l s d r : ℕ}
+    {F : IntForm (l+s)} {w : (Fin (l+s) → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hrd : r ≤ d)
+    (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
+    (frames : Finset (Matrix (Fin (l+s)) (Fin (l+s)) ℤ))
+    {modulus : ℕ → ℕ} {L : ℝ} (hModulus : 0 < L)
+    (hTwisted : UniformTwistedResidueBound modulus r l) :
+    ∃ T > 0, ∀ {P Q : ℝ}, 1 ≤ P → 1 ≤ Q → Q ≤ Real.sqrt P →
+      ∀ (p : ℕ) [Fact p.Prime] [NeZero (modulus p)], r < p →
+      (P/Q)^2 ≤ (modulus p : ℝ) → (modulus p : ℝ) ≤ L*(P/Q)^2 →
+      ∀ (m : ℕ → ℤ), (∀ i < d-r, 0 < m i ∧ (m i : ℝ)*differencingHeight (d-r) Q i ≤ P) →
+      ∀ (α : ℝ) (a : ℤ), (a : ZMod p) ≠ 0 →
+        ∀ (t : ℕ → PolynomialDifferencingState (l+s)) (u : ℕ → Fin (l+s) → ℤ),
+          IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
+          |(t (d-r)).frequency - (a : ℝ)/(modulus p : ℝ)| ≤ completionRadius d r P Q →
+          (∃ A ∈ frames, (A.det : ZMod p) ≠ 0 ∧
+            ∀ x : Fin l → AlgebraicClosure (ZMod p),
+              (∀ i, evalForm (pderiv i (linearSection (sectionFreeColumns A)
+                (homogeneousComponent r (t (d-r)).form))) x = 0) → x = 0) →
+          (t (d-r)).magnitude P ≤ T * Q^(-(l : ℝ)) := by
+  simpa only [mul_one] using
+    terminal_chain_bound_of_good_frames_of_residue_bound_with_multiplier hF hrd hw hwbox
+      frames hModulus (fun _ => 1) (fun _ => zero_le_one)
+      (by simpa only [UniformTwistedResidueBound, UniformTwistedResidueBoundWithMultiplier, mul_one] using hTwisted)
 
 theorem terminal_chain_bound_of_good_frames_of_uniform_twisted {l s d r : ℕ}
     {F : IntForm (l+s)} {w : (Fin (l+s) → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hrd : r ≤ d)
@@ -205,6 +244,36 @@ theorem boundedSmoothSection_zero {n p B : ℕ} [Fact p.Prime] (G : IntForm n) :
 
 /-- The uniform terminal estimate given the bounded section asserted in the
 manuscript. Its bound depends on the entry bound, across all chain and prime choices. -/
+theorem terminal_chain_bound_of_bounded_sections_of_residue_bound_with_multiplier {n l d r B : ℕ}
+    (hl : l ≤ n) (hB : 1 ≤ B)
+    {F : IntForm n} {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hr : 2 ≤ r) (hrd : r ≤ d)
+    (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
+    {modulus : ℕ → ℕ} {L : ℝ} (hL : 0 < L)
+    (multiplier : ℕ → ℝ) (hMultiplier : ∀ p, 0 ≤ multiplier p)
+    (hTwisted : UniformTwistedResidueBoundWithMultiplier modulus r l multiplier) :
+    ∃ T > 0, ∀ {P Q : ℝ}, 1 ≤ P → 1 ≤ Q → Q ≤ Real.sqrt P →
+      ∀ (p : ℕ) [Fact p.Prime] [NeZero (modulus p)], r < p →
+      (P/Q)^2 ≤ (modulus p : ℝ) → (modulus p : ℝ) ≤ L*(P/Q)^2 →
+      ∀ (m : ℕ → ℤ), (∀ i < d-r, 0 < m i ∧ (m i : ℝ)*differencingHeight (d-r) Q i ≤ P) →
+      ∀ (α : ℝ) (a : ℤ), (a : ZMod p) ≠ 0 →
+        ∀ (t : ℕ → PolynomialDifferencingState n) (u : ℕ → Fin n → ℤ),
+          IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
+          |(t (d-r)).frequency - (a : ℝ)/(modulus p : ℝ)| ≤ completionRadius d r P Q →
+          BoundedSmoothSection p l B (homogeneousComponent r (t (d-r)).form) →
+          (t (d-r)).magnitude P ≤ T * Q^(-(l : ℝ)) * multiplier p := by
+  obtain ⟨s,rfl⟩ := Nat.exists_eq_add_of_le hl
+  let frames := boundedSectionFrames (l+s) B
+  obtain ⟨T,hT,hterm⟩ := terminal_chain_bound_of_good_frames_of_residue_bound_with_multiplier (s := s)
+    hF hrd hw hwbox frames hL multiplier hMultiplier hTwisted
+  refine ⟨T,hT,?_⟩
+  intro P Q hP hQ hQmax p _ _ hpr hpL hpU m hm α a ha t u ht hclose hsec
+  apply hterm hP hQ hQmax p hpr hpL hpU m hm α a ha t u ht hclose
+  obtain ⟨U,hU,hs⟩ := hsec
+  have hind := linearSection_cols_linearIndependent U _ hr (homogeneousComponent_isHomogeneous _ _) hs
+  obtain ⟨A,hA,hcols,hdet⟩ := exists_bounded_integral_section_frame hB U hU hind
+  exact ⟨A,hA,hdet,by simpa only [sectionFreeColumns_eq_of_cols A U hcols] using hs⟩
+
+/-- A bounded section transfers a square-root estimate uniform in the prime. -/
 theorem terminal_chain_bound_of_bounded_sections_of_uniform_residue_bound {n l d r B : ℕ}
     (hl : l ≤ n) (hB : 1 ≤ B)
     {F : IntForm n} {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hr : 2 ≤ r) (hrd : r ≤ d)
@@ -221,17 +290,11 @@ theorem terminal_chain_bound_of_bounded_sections_of_uniform_residue_bound {n l d
           |(t (d-r)).frequency - (a : ℝ)/(modulus p : ℝ)| ≤ completionRadius d r P Q →
           BoundedSmoothSection p l B (homogeneousComponent r (t (d-r)).form) →
           (t (d-r)).magnitude P ≤ T * Q^(-(l : ℝ)) := by
-  obtain ⟨s,rfl⟩ := Nat.exists_eq_add_of_le hl
-  let frames := boundedSectionFrames (l+s) B
-  obtain ⟨T,hT,hterm⟩ := terminal_chain_bound_of_good_frames_of_uniform_residue_bound (s := s)
-    hF hrd hw hwbox frames hL hTwisted
-  refine ⟨T,hT,?_⟩
-  intro P Q hP hQ hQmax p _ _ hpr hpL hpU m hm α a ha t u ht hclose hsec
-  apply hterm hP hQ hQmax p hpr hpL hpU m hm α a ha t u ht hclose
-  obtain ⟨U,hU,hs⟩ := hsec
-  have hind := linearSection_cols_linearIndependent U _ hr (homogeneousComponent_isHomogeneous _ _) hs
-  obtain ⟨A,hA,hcols,hdet⟩ := exists_bounded_integral_section_frame hB U hU hind
-  exact ⟨A,hA,hdet,by simpa only [sectionFreeColumns_eq_of_cols A U hcols] using hs⟩
+  simpa only [mul_one] using
+    terminal_chain_bound_of_bounded_sections_of_residue_bound_with_multiplier
+      hl hB hF hr hrd hw hwbox hL (fun _ => 1) (fun _ => zero_le_one)
+      (by simpa only [UniformTwistedResidueBound, UniformTwistedResidueBoundWithMultiplier, mul_one]
+        using hTwisted)
 
 theorem terminal_chain_bound_of_bounded_sections_of_uniform_twisted {n l d r B : ℕ}
     (hl : l ≤ n) (hB : 1 ≤ B)

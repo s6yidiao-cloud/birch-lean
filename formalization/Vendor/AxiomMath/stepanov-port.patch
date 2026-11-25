@@ -1,0 +1,530 @@
+--- a/StacksFrontier/RingTheory/Polynomial/BivariateWeightedDegree.lean
++++ b/StacksFrontier/RingTheory/Polynomial/BivariateWeightedDegree.lean
+@@ -198,7 +198,7 @@
+   have ht0 : t ≠ 0 := fun h => hlc (by rw [← htlc, h, leadingCoeff_zero])
+   have hdeg : (g - t).natDegree < g.natDegree := by
+     refine (natDegree_lt_iff_degree_lt hz).mpr ?_
+-    refine (degree_eq_natDegree hg0).symm ▸ degree_sub_lt ?_ hg0 htlc.symm
++    refine (degree_eq_natDegree hg0).symm ▸ degree_sub_lt_left ?_ hg0 htlc.symm
+     rw [degree_eq_natDegree hg0, degree_eq_natDegree ht0, htdeg]
+   exact ih _ (hd ▸ hdeg) (hg.sub ht) rfl
+ 
+@@ -227,7 +227,7 @@
+     {c : ℕ × ℕ → K} (h : ∑ ij ∈ s, c ij • (monomialXY ij : K[X][Y]) = 0) {ij : ℕ × ℕ}
+     (hij : ij ∈ s) : c ij = 0 := by
+   have := congrArg (fun g : K[X][Y] => (g.coeff ij.2).coeff ij.1) h
+-  simp only [finset_sum_coeff, coeff_smul, smul_eq_mul, coeff_coeff_monomialXY, mul_ite,
++  simp only [finsetSum_coeff, coeff_smul, smul_eq_mul, coeff_coeff_monomialXY, mul_ite,
+     mul_one, mul_zero, Finset.sum_ite_eq', Polynomial.coeff_zero, Prod.mk.eta] at this
+   simpa [hij] using this
+ 
+--- a/StacksFrontier/RingTheory/Polynomial/CurveDerivation.lean
++++ b/StacksFrontier/RingTheory/Polynomial/CurveDerivation.lean
+@@ -45,11 +45,11 @@
+ /-- The `j`-th coefficient of `∂_X g` is the derivative of the `j`-th coefficient of `g`. -/
+ @[simp]
+ theorem coeff_derivX (g : R[X][Y]) (j : ℕ) : (derivX g).coeff j = derivative (g.coeff j) := by
+-  rw [derivX, finset_sum_coeff]
++  rw [derivX, finsetSum_coeff]
+   simp only [coeff_monomial]
+   by_cases hj : j ∈ g.support
+-  · rw [Finset.sum_eq_single j (fun b _ hb => if_neg hb) (fun h => absurd hj h), if_pos rfl]
+-  · rw [Finset.sum_eq_zero fun b hb => if_neg fun h => hj (by rw [← h]; exact hb)]
++  · rw [Finset.sum_eq_single j (fun b _ hb => ite_eq_right hb) (fun h => absurd hj h), ite_eq_left rfl]
++  · rw [Finset.sum_eq_zero fun b hb => ite_eq_right fun h => hj (by rw [← h]; exact hb)]
+     rw [notMem_support_iff.mp hj, derivative_zero]
+ 
+ /-- `∂_X` is additive. -/
+@@ -153,7 +153,7 @@
+ 
+ /-- The derivative of `h(a + s)` is `h'(a + s)`. -/
+ theorem derivative_aeval_C_add_X (a : K) (h : K[X]) :
+-    PowerSeries.derivative K (aeval (PowerSeries.C a + PowerSeries.X : PowerSeries K) h) =
++    PowerSeries.derivative (aeval (PowerSeries.C a + PowerSeries.X : PowerSeries K) h) =
+       aeval (PowerSeries.C a + PowerSeries.X : PowerSeries K) (derivative h) := by
+   induction h using Polynomial.induction_on' with
+   | add p q hp hq => simp [hp, hq]
+@@ -169,8 +169,8 @@
+ /-- **The chain rule along a branch**: the derivative of `g(a + s, β(s))` is
+ `g_X(a + s, β(s)) + g_Y(a + s, β(s)) β'(s)`. -/
+ theorem derivative_branchEval (a : K) (β : PowerSeries K) (g : K[X][Y]) :
+-    PowerSeries.derivative K (branchEval a β g) =
+-      branchEval a β (derivX g) + branchEval a β (derivative g) * PowerSeries.derivative K β := by
++    PowerSeries.derivative (branchEval a β g) =
++      branchEval a β (derivX g) + branchEval a β (derivative g) * PowerSeries.derivative β := by
+   induction g using Polynomial.induction_on with
+   | C h =>
+     simp [branchEval]
+@@ -187,7 +187,7 @@
+ theorem branchEval_curveDeriv {Ψ : K[X][Y]} {a : K} {β : PowerSeries K}
+     (hβ : branchEval a β Ψ = 0) (g : K[X][Y]) :
+     branchEval a β (curveDeriv Ψ g) =
+-      branchEval a β (derivative Ψ) * PowerSeries.derivative K (branchEval a β g) := by
++      branchEval a β (derivative Ψ) * PowerSeries.derivative (branchEval a β g) := by
+   have h0 := derivative_branchEval a β Ψ
+   rw [hβ, map_zero] at h0
+   rw [curveDeriv_apply, map_sub, map_mul, map_mul, derivative_branchEval,
+@@ -199,7 +199,7 @@
+ theorem branchEval_iterate_curveDeriv {Ψ : K[X][Y]} {a : K} {β : PowerSeries K}
+     (hβ : branchEval a β Ψ = 0) (g : K[X][Y]) (j : ℕ) :
+     branchEval a β ((curveDeriv Ψ)^[j] g) =
+-      (fun G => branchEval a β (derivative Ψ) * PowerSeries.derivative K G)^[j]
++      (fun G => branchEval a β (derivative Ψ) * PowerSeries.derivative G)^[j]
+         (branchEval a β g) := by
+   induction j with
+   | zero => rfl
+--- a/StacksFrontier/RingTheory/Polynomial/GaloisResolvent.lean
++++ b/StacksFrontier/RingTheory/Polynomial/GaloisResolvent.lean
+@@ -258,7 +258,7 @@
+ variable (m) in
+ /-- `R_τ(t(π)) = Δ · t(π τ)` for the universal polynomials. -/
+ theorem eval_R (τ π : Equiv.Perm (Fin m)) : (R m τ).eval (t m π) = Δ m * t m (π * τ) := by
+-  rw [R_eq, eval_finset_sum, Finset.sum_eq_single π]
++  rw [R_eq, eval_finsetSum, Finset.sum_eq_single π]
+   · rw [eval_mul, eval_C, lagNum, eval_prod, Δ_eq_mul_discOff m π]
+     simp only [eval_sub, eval_X, eval_C]
+     ring
+@@ -291,7 +291,7 @@
+     (hP : ∀ k, (P.coeff k).IsSymmetric) (k : ℕ) :
+     (specPoly f c P hP).coeff k =
+       if k ∈ range (m ! + 1) then MvPolynomial.eval c (κ f (desym m _ (hP k))) else 0 := by
+-  simp only [specPoly, finset_sum_coeff, coeff_C_mul_X_pow]
++  simp only [specPoly, finsetSum_coeff, coeff_C_mul_X_pow]
+   rw [Finset.sum_ite_eq]
+ 
+ end GaloisResolvent
+@@ -348,9 +348,9 @@
+   nontriviality A
+   have hdeg : (galoisResolvent f c).natDegree ≤ m ! := by
+     refine natDegree_le_iff_coeff_eq_zero.mpr fun k hk => ?_
+-    rw [galoisResolvent, coeff_specPoly, if_neg (by simpa using hk)]
++    rw [galoisResolvent, coeff_specPoly, ite_eq_right (by simpa using hk)]
+   refine monic_of_natDegree_le_of_coeff_eq_one _ hdeg ?_
+-  rw [galoisResolvent, coeff_specPoly, if_pos (by simp)]
++  rw [galoisResolvent, coeff_specPoly, ite_eq_left (by simp)]
+   have h1 : (Φ m).coeff (m !) = 1 := by
+     rw [← natDegree_Φ m]; exact monic_Φ m
+   have : desym m _ (isSymmetric_coeff_Φ m (m !)) = 1 := by
+@@ -535,12 +535,12 @@
+     obtain ⟨i, hi⟩ : ∃ i, π i ≠ π' i := by
+       by_contra! h; exact hne (Equiv.ext fun i => (h i).symm)
+     refine ⟨fun h0 => ?_, ?_⟩
+-    · have := congrArg (MvPolynomial.coeff (Finsupp.single i 1)) h0
+-      simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_X',
+-        MvPolynomial.coeff_zero, Finsupp.single_left_inj one_ne_zero, mul_ite, mul_one, mul_zero,
+-        Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
++    · have := congrArg (fun g => g.coeff (Finsupp.single i 1)) h0
++      simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_X,
++        AddMonoidAlgebra.coeff_zero, Finsupp.single_left_inj one_ne_zero, mul_ite, mul_one, mul_zero,
++        Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
+       exact hi (hbinj (sub_eq_zero.mp this))
+-    · refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun j _ => ?_)
++    · refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun j _ => ?_)
+       refine (MvPolynomial.totalDegree_mul _ _).trans ?_
+       rw [MvPolynomial.totalDegree_C, MvPolynomial.totalDegree_X]
+   have hQ0 : resolventDiscPoly m f ≠ 0 := by
+--- a/StacksFrontier/RingTheory/Polynomial/MonicNormalization.lean
++++ b/StacksFrontier/RingTheory/Polynomial/MonicNormalization.lean
+@@ -57,8 +57,8 @@
+   have hmi : 1 ≤ m i := Nat.one_le_iff_ne_zero.mpr fun h0 => hp (h0 ▸ dvd_zero p)
+   have hle : Finsupp.single i 1 ≤ m := Finsupp.single_le_iff.mpr hmi
+   have hc := coeff_pderiv (i := i) f (m - Finsupp.single i 1)
+-  rw [h i, coeff_zero, tsub_add_cancel_of_le hle, Finsupp.tsub_apply, Finsupp.single_eq_same,
+-    eq_comm, mul_eq_zero] at hc
++  rw [h i, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, tsub_add_cancel_of_le hle,
++    Finsupp.tsub_apply, Finsupp.single_eq_same, eq_comm, mul_eq_zero] at hc
+   rcases hc with hc | hc
+   · exact (mem_support_iff.mp hm) hc
+   · rw [← Nat.cast_succ, Nat.succ_eq_add_one, Nat.sub_add_cancel hmi,
+@@ -71,7 +71,7 @@
+     {f : MvPolynomial σ R} (h : ∀ i, pderiv i f = 0) : ∃ g : MvPolynomial σ R, g ^ p = f := by
+   classical
+   set g' : MvPolynomial σ R := ∑ m ∈ f.support,
+-    monomial (Finsupp.mapRange (· / p) (Nat.zero_div p) m) (coeff m f)
++    monomial (Finsupp.mapRange (· / p) (Nat.zero_div p) m) (f.coeff m)
+   have hg' : expand p g' = f := by
+     conv_rhs => rw [← support_sum_monomial_coeff f]
+     simp only [g', map_sum, expand_monomial]
+@@ -142,7 +142,7 @@
+     (shear a f).totalDegree ≤ f.totalDegree := by
+   conv_lhs => rw [← sum_homogeneousComponent f]
+   rw [map_sum]
+-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun i hi => ?_)
++  refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun i hi => ?_)
+   exact (isHomogeneous_shear a (homogeneousComponent_isHomogeneous i f)).totalDegree_le.trans
+     (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi))
+ 
+@@ -157,16 +157,16 @@
+ /-- The coefficient of `y ^ d` in a homogeneous polynomial of degree `d` in `x, y` is its value
+ at `(0, 1)`. -/
+ theorem IsHomogeneous.coeff_single_one_eq_eval {G : MvPolynomial (Fin 2) R} {d : ℕ}
+-    (hG : G.IsHomogeneous d) : coeff (Finsupp.single 1 d) G = eval ![0, 1] G := by
++    (hG : G.IsHomogeneous d) : G.coeff (Finsupp.single 1 d) = eval ![0, 1] G := by
+   conv_lhs => rw [← Polynomial.homogenize_eq_of_isHomogeneous hG rfl]
+   rw [Polynomial.coeff_homogenize]
+   simp only [Finsupp.single_eq_of_ne (show (0 : Fin 2) ≠ 1 by decide), Finsupp.single_eq_same,
+-    zero_add, if_true, Polynomial.coeff_zero_eq_eval_zero, eval_aeval_X_one]
++    zero_add, ite_true, Polynomial.coeff_zero_eq_eval_zero, eval_aeval_X_one]
+ 
+ /-- The coefficient of `y ^ d` after the shear is the top homogeneous component evaluated at
+ `(a, 1)`. -/
+ theorem coeff_single_one_shear (a : R) (f : MvPolynomial (Fin 2) R) (d : ℕ) :
+-    coeff (Finsupp.single 1 d) (shear a f) = eval ![a, 1] (homogeneousComponent d f) := by
++    (shear a f).coeff (Finsupp.single 1 d) = eval ![a, 1] (homogeneousComponent d f) := by
+   conv_lhs => rw [← sum_homogeneousComponent f]
+   rw [map_sum, coeff_sum, Finset.sum_eq_single d]
+   · rw [(isHomogeneous_shear a (homogeneousComponent_isHomogeneous d f)).coeff_single_one_eq_eval,
+@@ -177,7 +177,7 @@
+     simpa using Ne.symm hid
+   · intro hd'
+     rw [homogeneousComponent_eq_zero d f (by simpa [Nat.lt_succ_iff] using hd'), map_zero,
+-      coeff_zero]
++      AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
+ 
+ end Shear
+ 
+@@ -210,16 +210,16 @@
+   have hunit : ∀ u : MvPolynomial σ K, IsUnit (map φ u) → IsUnit u := by
+     intro u hu
+     obtain ⟨c, hc⟩ := isUnit_iff_eq_C_of_isReduced.mp hu
+-    have hu' : u = C (coeff 0 u) := by
++    have hu' : u = C (u.coeff 0) := by
+       ext m
+       by_cases hm : m = 0
+       · simp [hm]
+-      · rw [coeff_C, if_neg (Ne.symm hm)]
+-        have := congrArg (coeff m) hc.2
+-        rw [coeff_map, coeff_C, if_neg (Ne.symm hm)] at this
++      · rw [coeff_C, ite_eq_right (Ne.symm hm)]
++        have := congrArg (fun g => g.coeff m) hc.2
++        rw [coeff_map, coeff_C, ite_eq_right (Ne.symm hm)] at this
+         exact (map_eq_zero φ).mp this
+-    have h0 := congrArg (coeff 0) hc.2
+-    rw [coeff_map, coeff_C, if_pos rfl] at h0
++    have h0 := congrArg (fun g => g.coeff 0) hc.2
++    rw [coeff_map, coeff_C, ite_eq_left rfl] at h0
+     rw [hu']
+     refine (isUnit_iff_ne_zero.mpr fun h => ?_).map C
+     rw [h, map_zero] at h0
+@@ -259,7 +259,7 @@
+     · obtain ⟨a₀, h₀⟩ := hex
+       refine ⟨a₀, fun a ha h => ?_⟩
+       have h₁ : C (a - a₀) * pderiv 0 f = 0 := by
+-        rw [C_sub]; linear_combination h - h₀
++        rw [map_sub]; linear_combination h - h₀
+       rcases mul_eq_zero.mp h₁ with h₂ | h₂
+       · exact ha (sub_eq_zero.mp (C_eq_zero.mp h₂))
+       · rw [h₂, mul_zero, zero_add] at h₀
+@@ -271,7 +271,7 @@
+   have hd0 : d ≠ 0 := by
+     intro h0
+     rw [totalDegree_eq_zero_iff_eq_C.mp h0, map_C] at hf
+-    by_cases hb : φ (coeff 0 f) = 0
++    by_cases hb : φ (f.coeff 0) = 0
+     · exact hf.ne_zero (by rw [hb, map_zero])
+     · exact hf.not_isUnit ((isUnit_iff_ne_zero.mpr hb).map C)
+   -- The top homogeneous component `H` of `f`, and its dehomogenization `P(t) = H(t, 1)`.
+@@ -281,9 +281,9 @@
+     obtain ⟨m, hm, hmd⟩ := Finset.exists_mem_eq_sup f.support (support_nonempty.mpr hf0)
+       fun s => s.sum fun _ e => e
+     intro h
+-    have := congrArg (coeff m) h
+-    rw [coeff_homogeneousComponent, if_pos (show m.degree = d from hmd.symm),
+-      coeff_zero] at this
++    have := congrArg (fun g => g.coeff m) h
++    rw [coeff_homogeneousComponent, ite_eq_left (show m.degree = d from hmd.symm),
++      AddMonoidAlgebra.coeff_zero] at this
+     exact mem_support_iff.mp hm this
+   set P : Polynomial F := aeval ![Polynomial.X, 1] H
+   have hP0 : P ≠ 0 := fun h => hH0 <| by
+@@ -365,7 +365,7 @@
+     have hset : {p : Fin 2 → F | eval p f = 0} =
+         (fun P : F × F => ![P.1 + a * P.2, P.2]) '' {P : F × F | g.evalEval P.1 P.2 = 0} := by
+       ext p
+-      simp only [Set.mem_setOf_eq, Set.mem_image, hev, mul_eq_zero, inv_eq_zero, hc, false_or]
++      simp only [Set.mem_ofPred_eq, Set.mem_image, hev, mul_eq_zero, inv_eq_zero, hc, false_or]
+       have hp : ![p 0, p 1] = p := by ext i; fin_cases i <;> rfl
+       constructor
+       · intro h
+--- a/StacksFrontier/RingTheory/Polynomial/PlaneCurveIntersection.lean
++++ b/StacksFrontier/RingTheory/Polynomial/PlaneCurveIntersection.lean
+@@ -193,7 +193,7 @@
+ /-- The coefficient of `X₀ⁱ X₁ʲ` in `equivMvPolynomial R f` is the coefficient of `Xⁱ` in the
+ coefficient of `Yʲ` in `f`. -/
+ theorem coeff_equivMvPolynomial (f : R[X][Y]) (i j : ℕ) :
+-    MvPolynomial.coeff (Finsupp.single 0 i + Finsupp.single 1 j) (equivMvPolynomial R f) =
++    (equivMvPolynomial R f).coeff (Finsupp.single 0 i + Finsupp.single 1 j) =
+       (f.coeff j).coeff i := by
+   induction f using Polynomial.induction_on' with
+   | add f g hf hg => simp [hf, hg]
+@@ -207,13 +207,13 @@
+       rw [hmon, MvPolynomial.coeff_monomial, coeff_monomial]
+       by_cases hn : n = j
+       · subst hn
+-        rw [if_pos rfl, coeff_monomial]
++        rw [ite_eq_left rfl, coeff_monomial]
+         by_cases hm : m = i
+         · simp [hm]
+-        · rw [if_neg, if_neg hm]
++        · rw [ite_eq_right, ite_eq_right hm]
+           intro h
+           exact hm (by simpa using congrArg (· 0) h)
+-      · rw [if_neg hn, coeff_zero, if_neg]
++      · rw [ite_eq_right hn, coeff_zero, ite_eq_right]
+         intro h
+         exact hn (by simpa using congrArg (· 1) h)
+ 
+@@ -223,8 +223,8 @@
+     (f.coeff j).natDegree + j ≤ (equivMvPolynomial R f).totalDegree := by
+   have h := coeff_equivMvPolynomial f (f.coeff j).natDegree j
+   rw [coeff_natDegree] at h
+-  have hne : MvPolynomial.coeff (Finsupp.single 0 (f.coeff j).natDegree + Finsupp.single 1 j)
+-      (equivMvPolynomial R f) ≠ 0 := by
++  have hne : (equivMvPolynomial R f).coeff
++      (Finsupp.single 0 (f.coeff j).natDegree + Finsupp.single 1 j) ≠ 0 := by
+     rw [h]
+     exact leadingCoeff_ne_zero.mpr hj
+   simpa [Finsupp.sum_add_index, Finsupp.sum_single_index] using
+@@ -284,7 +284,7 @@
+     simp only [Finset.mem_image]
+     rintro _ ⟨p, hp, rfl⟩
+     have := hT hp
+-    simp only [Set.mem_setOf_eq, Z] at this
++    simp only [Set.mem_ofPred_eq, Z] at this
+     rw [← eval_equivMvPolynomial, ← eval_equivMvPolynomial]
+     simpa [e] using this
+   have hfin : Z.Finite := by
+--- a/StacksFrontier/RingTheory/Polynomial/PlaneCurvePointLowerBound.lean
++++ b/StacksFrontier/RingTheory/Polynomial/PlaneCurvePointLowerBound.lean
+@@ -76,8 +76,8 @@
+   have hone : ∀ π : Equiv.Perm (Fin m), ∑ Ψ ∈ 𝒪, (if Z Ψ π then 1 else 0 : ℕ) = 1 := by
+     intro π
+     obtain ⟨Ψ, ⟨hΨ, hZΨ⟩, huniq⟩ := hZ π
+-    rw [Finset.sum_eq_single Ψ (fun Ψ' hΨ' hne => if_neg fun h => hne (huniq Ψ' ⟨hΨ', h⟩))
+-      (fun h => absurd hΨ h), if_pos hZΨ]
++    rw [Finset.sum_eq_single Ψ (fun Ψ' hΨ' hne => ite_eq_right fun h => hne (huniq Ψ' ⟨hΨ', h⟩))
++      (fun h => absurd hΨ h), ite_eq_left hZΨ]
+   have key : ∀ (w : Equiv.Perm (Fin m) → ℕ),
+       ∑ Ψ ∈ 𝒪, ∑ τ : Equiv.Perm (Fin m), w τ *
+         (univ.filter fun π => Z Ψ π ∧ α * π = π * τ).card =
+--- a/StacksFrontier/RingTheory/Polynomial/PowerSeriesBranch.lean
++++ b/StacksFrontier/RingTheory/Polynomial/PowerSeriesBranch.lean
+@@ -97,7 +97,7 @@
+ 
+ /-- The multiplicities of finitely many roots of a nonzero polynomial add up to at most its
+ degree. -/
+-theorem sum_rootMultiplicity_le_natDegree {p : K[X]} (hp : p ≠ 0) (A : Finset K) :
++theorem sum_rootMultiplicity_le_natDegree {p : K[X]} (_hp : p ≠ 0) (A : Finset K) :
+     ∑ a ∈ A, p.rootMultiplicity a ≤ p.natDegree := by
+   classical
+   calc ∑ a ∈ A, p.rootMultiplicity a = ∑ a ∈ A, p.roots.count a := by simp [count_roots]
+@@ -181,7 +181,7 @@
+         refine Finset.sum_le_sum fun a _ => ?_
+         have hinj : Set.InjOn β (S.filter fun P => P.1 = a) := by
+           intro P hP P' hP' h
+-          simp only [Finset.coe_filter, Set.mem_setOf_eq] at hP hP'
++          simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hP hP'
+           have h2 : P.2 = P'.2 := by rw [← (hβ P hP.1).1, ← (hβ P' hP'.1).1, h]
+           exact Prod.ext (hP.2.trans hP'.2.symm) h2
+         rw [Finset.sum_congr rfl (g := fun P => ((g.map (aeval (R := K)
+--- a/StacksFrontier/RingTheory/Polynomial/ResultantWeightedDegree.lean
++++ b/StacksFrontier/RingTheory/Polynomial/ResultantWeightedDegree.lean
+@@ -55,7 +55,7 @@
+ in `Ψ` has `X`-degree at most `w (deg_Y Ψ - i)` and that of `Yʲ` in `g` has `X`-degree at most
+ `n - w j`, then `Res_Y(Ψ, g)` has `X`-degree at most `deg_Y Ψ * n`. -/
+ theorem natDegree_resultant_le_of_weightedDegree_le {R : Type*} [CommRing R] {Ψ g : R[X][X]}
+-    (hΨ : Ψ.Monic) {w n : ℕ}
++    (_hΨ : Ψ.Monic) {w n : ℕ}
+     (hΨw : ∀ i, Ψ.coeff i ≠ 0 → (Ψ.coeff i).natDegree + w * i ≤ w * Ψ.natDegree)
+     (hgw : ∀ j, g.coeff j ≠ 0 → (g.coeff j).natDegree + w * j ≤ n) :
+     (resultant Ψ g).natDegree ≤ Ψ.natDegree * n := by
+--- a/StacksFrontier/RingTheory/Polynomial/StepanovUpperBound.lean
++++ b/StacksFrontier/RingTheory/Polynomial/StepanovUpperBound.lean
+@@ -44,11 +44,11 @@
+ 
+ /-- The twisted derivative `G ↦ u * G'` as a `K`-linear map. -/
+ noncomputable def twistedDerivative (u : PowerSeries K) : PowerSeries K →ₗ[K] PowerSeries K :=
+-  LinearMap.mulLeft K u ∘ₗ (PowerSeries.derivative K).toLinearMap
++  LinearMap.mulLeft K u ∘ₗ PowerSeries.derivative.toLinearMap
+ 
+ /-- The `j`-th iterate of `G ↦ u * G'` is the `j`-th power of `twistedDerivative u`. -/
+ theorem iterate_twistedDerivative (u : PowerSeries K) (j : ℕ) (G : PowerSeries K) :
+-    (fun G => u * PowerSeries.derivative K G)^[j] G = (twistedDerivative u ^ j) G := by
++    (fun G => u * PowerSeries.derivative G)^[j] G = (twistedDerivative u ^ j) G := by
+   rw [Module.End.pow_apply]; rfl
+ 
+ variable (p : ℕ) [Fact p.Prime] [CharP K p] [PerfectRing K p]
+@@ -118,7 +118,7 @@
+     · intro h0
+       rw [CharP.cast_eq_zero_iff K p] at h0
+       exact absurd (Nat.le_of_dvd ht h0) (by omega)
+-    · have hit : (fun G => ι₀ (derivative Ψ) * PowerSeries.derivative K G)^[j] G =
++    · have hit : (fun G => ι₀ (derivative Ψ) * PowerSeries.derivative G)^[j] G =
+           ∑ i, γ i • ι₀ ((curveDeriv Ψ)^[j] (v i)) := by
+         rw [iterate_twistedDerivative, map_sum]
+         refine Finset.sum_congr rfl fun i _ => ?_
+@@ -180,9 +180,9 @@
+     (h : ∑ i, c i • (monomialXY (f i) : K[X][Y]) = 0) (i : ι) : c i = 0 := by
+   classical
+   have := congrArg (fun g : K[X][Y] => (g.coeff (f i).2).coeff (f i).1) h
+-  simp only [finset_sum_coeff, coeff_smul, smul_eq_mul, coeff_coeff_monomialXY, Prod.mk.eta,
++  simp only [finsetSum_coeff, coeff_smul, smul_eq_mul, coeff_coeff_monomialXY, Prod.mk.eta,
+     mul_ite, mul_one, mul_zero, Polynomial.coeff_zero] at this
+-  rwa [Finset.sum_eq_single i (fun j _ hj => if_neg (hf.ne hj)) (by simp), if_pos rfl] at this
++  rwa [Finset.sum_eq_single i (fun j _ hj => ite_eq_right (hf.ne hj)) (by simp), ite_eq_left rfl] at this
+ 
+ /-- A monic irreducible `Ψ ∈ K[X][Y]` with `∂Ψ/∂Y ≠ 0` over an algebraically closed field has a
+ point where `∂Ψ/∂Y` does not vanish. -/
+@@ -269,6 +269,7 @@
+ 
+ variable (p : ℕ) [Fact p.Prime] [CharP K p] [PerfectRing K p]
+ 
++set_option backward.isDefEq.respectTransparency false in
+ /-- **The auxiliary polynomial.** If the number of unknowns exceeds the number of linear
+ conditions, there are `v ι` in the span of the monomials `Xⁱ Yʲ` (`i ≤ aV`, `j < m`), not all
+ zero, such that `Ψ` divides `∑ (δ_Ψ ^ j v ι) ^ ρ · Xⁱ Rʲ D^{m-1-j}` for every `j < k`. -/
+@@ -290,6 +291,8 @@
+   let M : Submodule K K[X][Y] := Submodule.span K
+     (((Finset.range (N + 1) ×ˢ Finset.range m).image (monomialXY (R := K)) : Finset K[X][Y]) :
+       Set K[X][Y])
++  let hMfinite : Module.Finite K M :=
++    Module.Finite.span_finset K ((Finset.range (N + 1) ×ˢ Finset.range m).image (monomialXY (R := K)))
+   let Lj : ℕ → ((Fin (aW + 1) × Fin m) × (Fin (aV + 1) × Fin m) → K) →ₗ[K] K[X][Y] := fun j =>
+     ((modByMonicHom Ψ).restrictScalars K) ∘ₗ ∑ x, (LinearMap.proj x).smulRight (vec j x)
+   have hLj : ∀ j d, Lj j d = (∑ x, d x • vec j x) %ₘ Ψ := by
+@@ -318,7 +321,11 @@
+     LinearMap.pi fun j => (Lj j).codRestrict M (hmem j j.2)
+   have hfin : Module.finrank K (Fin k → M) <
+       Module.finrank K ((Fin (aW + 1) × Fin m) × (Fin (aV + 1) × Fin m) → K) := by
+-    rw [Module.finrank_pi_fintype, Module.finrank_fintype_fun_eq_card]
++    have hprod : Module.finrank K (Fin k → M) = ∑ _ : Fin k, Module.finrank K M :=
++      @Module.finrank_pi_fintype K _ _ (Fin k) _ (fun _ => ↥M)
++        (fun _ => inferInstance) (fun _ => inferInstance)
++        (fun _ => Module.Free.of_divisionRing K M) (fun _ => hMfinite)
++    rw [hprod, Module.finrank_fintype_fun_eq_card]
+     simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul,
+       Fintype.card_prod]
+     have hM : Module.finrank K M ≤ (N + 1) * m := by
+@@ -328,8 +335,12 @@
+       _ = k * (m * (N + 1)) := by ring
+       _ < (m * (aW + 1)) * (m * (aV + 1)) := hcount
+       _ = (aW + 1) * m * ((aV + 1) * m) := by ring
+-  obtain ⟨d, hd, hd0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
+-    (LinearMap.ker_ne_bot_of_finrank_lt (f := L) hfin)
++  let hpiFinite : Module.Finite K (Fin k → ↥M) :=
++    @Module.Finite.pi K _ (Fin k) (fun _ => ↥M) _ (fun _ => inferInstance)
++      (fun _ => inferInstance) (fun _ => hMfinite)
++  have hker : LinearMap.ker L ≠ ⊥ :=
++    @LinearMap.ker_ne_bot_of_finrank_lt K _ _ _ _ (Fin k → ↥M) _ _ _ hpiFinite L hfin
++  obtain ⟨d, hd, hd0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hker
+   have hdvd : ∀ j < k, Ψ ∣ ∑ x, d x • vec j x := by
+     intro j hj
+     have h0 := congrArg (fun f : Fin k → M => ((f ⟨j, hj⟩ : M) : K[X][Y]))
+@@ -488,7 +499,7 @@
+   have h1 : ((S.card * k : ℕ) : ℕ∞) ≤ ((resultant Ψ g).natDegree : ℕ∞) := by
+     refine le_trans (le_of_eq ?_) (hlow.trans hsum)
+     simp [nsmul_eq_mul]
+-  have h2 : S.card * k ≤ (resultant Ψ g).natDegree := ENat.coe_le_coe.mp h1
++  have h2 : S.card * k ≤ (resultant Ψ g).natDegree := ENat.natCast_le_natCast.mp h1
+   rw [mul_comm k]
+   exact h2.trans hdegR
+ 
+--- a/StacksFrontier/RingTheory/PowerSeries/FrobeniusIndependence.lean
++++ b/StacksFrontier/RingTheory/PowerSeries/FrobeniusIndependence.lean
+@@ -53,18 +53,18 @@
+   -- an element `e` of `U` of minimal order `o₀`
+   have hex : ∃ o : ℕ, ∃ u ∈ U, u ≠ 0 ∧ u.order = o := by
+     obtain ⟨v, hv, hv0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hbot
+-    exact ⟨v.order.toNat, v, hv, hv0, (ENat.coe_toNat (order_eq_top.not.mpr hv0)).symm⟩
++    exact ⟨v.order.toNat, v, hv, hv0, (ENat.natCast_toNat (order_eq_top.not.mpr hv0)).symm⟩
+   classical
+   set o₀ := Nat.find hex
+   obtain ⟨e, he, he0, heo⟩ := Nat.find_spec hex
+   have hmin : ∀ v ∈ U, v ≠ 0 → (o₀ : ℕ∞) ≤ v.order := by
+     intro v hv hv0
+     have hfin : v.order ≠ ⊤ := order_eq_top.not.mpr hv0
+-    rw [← ENat.coe_toNat hfin]
+-    exact_mod_cast Nat.find_min' hex ⟨v, hv, hv0, (ENat.coe_toNat hfin).symm⟩
++    rw [← ENat.natCast_toNat hfin]
++    exact_mod_cast Nat.find_min' hex ⟨v, hv, hv0, (ENat.natCast_toNat hfin).symm⟩
+   have hγ : coeff o₀ e ≠ 0 := by
+     have := coeff_order he0
+-    rwa [heo, ENat.toNat_coe] at this
++    rwa [heo, ENat.toNat_natCast] at this
+   -- the subspace `U'` of elements of `U` whose coefficient of index `o₀` vanishes
+   set U' : Submodule K K⟦X⟧ := U ⊓ LinearMap.ker (coeff o₀)
+   have hU'le : U' ≤ U := inf_le_left
+@@ -78,7 +78,7 @@
+     intro v hv hv0
+     refine lt_of_le_of_ne (hmin v (hU'le hv) hv0) fun h => ?_
+     have hc := coeff_order hv0
+-    rw [← h, ENat.toNat_coe] at hc
++    rw [← h, ENat.toNat_natCast] at hc
+     exact hc (LinearMap.mem_ker.mp (Submodule.mem_inf.mp hv).2)
+   -- decompose `u i = c i • e + u' i`
+   set c : ι → K := fun i => coeff o₀ (u i) / coeff o₀ e
+@@ -118,23 +118,23 @@
+     have hzfin : z.order ≠ ⊤ := order_eq_top.not.mpr hz
+     set t := z.order.toNat
+     have hA : (e * z ^ σ).order = (o₀ + σ * t : ℕ) := by
+-      rw [order_mul, order_pow, heo, ← ENat.coe_toNat hzfin, nsmul_eq_mul]
++      rw [order_mul, order_pow, heo, ← ENat.natCast_toNat hzfin, nsmul_eq_mul]
+       push_cast; ring
+     have key : ∃ v ∈ U, v ≠ 0 ∧ ∃ N : ℕ,
+         (∑ i, u i * y i ^ σ).order = (v.order.toNat + σ * N : ℕ) := by
+       rw [hsplit]
+-      have heord : e.order.toNat = o₀ := by rw [heo, ENat.toNat_coe]
++      have heord : e.order.toNat = o₀ := by rw [heo, ENat.toNat_natCast]
+       by_cases hB : ∑ i, u' i * y i ^ σ = 0
+       · exact ⟨e, he, he0, t, by rw [hB, add_zero, hA, heord]⟩
+       · obtain ⟨v, hv, hv0, N, hN⟩ := ih2 hB
+         have hvfin : v.order ≠ ⊤ := order_eq_top.not.mpr hv0
+         have hvlt : v.order.toNat < σ := by
+           have := hU' v hv hv0
+-          rw [← ENat.coe_toNat hvfin] at this
++          rw [← ENat.natCast_toNat hvfin] at this
+           exact_mod_cast this
+         have hvgt : o₀ < v.order.toNat := by
+           have := hU'o v hv hv0
+-          rw [← ENat.coe_toNat hvfin] at this
++          rw [← ENat.natCast_toNat hvfin] at this
+           exact_mod_cast this
+         have ho₀σ : o₀ < σ := hvgt.trans hvlt
+         have hne : (e * z ^ σ).order ≠ (∑ i, u' i * y i ^ σ).order := by
+@@ -149,7 +149,7 @@
+     refine ⟨fun h0 => ?_, fun _ => key⟩
+     obtain ⟨v, -, -, N, hN⟩ := key
+     rw [h0, order_zero] at hN
+-    exact absurd hN (ENat.top_ne_coe _)
++    exact absurd hN (ENat.top_ne_natCast _)
+ 
+ /-- **Independence of Frobenius powers.** Let `K` be a perfect field of characteristic `p`, let
+ `U ⊆ K⟦X⟧` be a finite-dimensional subspace whose nonzero elements have order `< p ^ a`, and let
+--- a/StacksFrontier/RingTheory/PowerSeries/OrderOfDerivative.lean
++++ b/StacksFrontier/RingTheory/PowerSeries/OrderOfDerivative.lean
+@@ -29,7 +29,7 @@
+ with nonzero constant term. -/
+ theorem order_mul_derivative_eq {u F : K⟦X⟧} (hu : constantCoeff u ≠ 0) {t : ℕ}
+     (hF : F.order = (t + 1 : ℕ)) (ht : ((t + 1 : ℕ) : K) ≠ 0) :
+-    (u * d⁄dX K F).order = t := by
++    (u * d⁄dX F).order = t := by
+   have hu0 : u.order = 0 := by
+     by_contra h
+     exact hu (order_ne_zero_iff_constCoeff_eq_zero.mp h)
+@@ -45,14 +45,14 @@
+ `F, D F, …, D^{k-1} F` vanish, then `F` has order at least `k`. -/
+ theorem nat_le_order_of_constantCoeff_iterate_eq_zero {u : K⟦X⟧} (hu : constantCoeff u ≠ 0)
+     (F : K⟦X⟧) {k : ℕ} (hk : ∀ t : ℕ, 0 < t → t < k → (t : K) ≠ 0)
+-    (h : ∀ j < k, constantCoeff ((fun G => u * d⁄dX K G)^[j] F) = 0) :
++    (h : ∀ j < k, constantCoeff ((fun G => u * d⁄dX G)^[j] F) = 0) :
+     (k : ℕ∞) ≤ F.order := by
+   by_contra hlt
+   push Not at hlt
+   obtain ⟨r, hr⟩ : ∃ r : ℕ, F.order = r := ENat.ne_top_iff_exists.mp (ne_top_of_lt hlt) |>.imp
+     fun _ h => h.symm
+   have hrk : r < k := by exact_mod_cast hr ▸ hlt
+-  have key : ∀ i ≤ r, ((fun G => u * d⁄dX K G)^[i] F).order = (r - i : ℕ) := by
++  have key : ∀ i ≤ r, ((fun G => u * d⁄dX G)^[i] F).order = (r - i : ℕ) := by
+     intro i hi
+     induction i with
+     | zero => simpa using hr

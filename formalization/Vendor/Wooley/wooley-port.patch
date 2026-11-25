@@ -1,5 +1,14 @@
 --- upstream/WooleyBinomialMatrix.lean
 +++ ported/WooleyBinomialMatrix.lean
+@@ -108,7 +108,7 @@
+ theorem wooleySection7_binomialMatrix_det_ne_zero
+     {k r p : ℕ} (hp : p.Prime) (hrk : r ≤ k) (hkp : k < p) :
+     (wooleySection7BinomialMatrix k r p).det ≠ 0 := by
+-  letI : Fact p.Prime := ⟨hp⟩
++  let : Fact p.Prime := ⟨hp⟩
+   let v : Fin r → ZMod p :=
+     fun l => (wooleySection7Node k r l : ZMod p)
+   let P : Fin r → Polynomial (ZMod p) :=
 @@ -138,7 +138,6 @@
    have hdet := congrArg
      (fun A : Matrix (Fin r) (Fin r) (ZMod p) => A.det)
@@ -8,6 +17,44 @@
    rw [Matrix.det_mul, Matrix.det_mul, hbin, zero_mul] at hdet
    exact (mul_ne_zero hDiagDet hEvalDet) hdet.symm
  
+@@ -147,7 +146,7 @@
+ theorem wooleySection7_binomialMatrix_isUnit
+     {k r p : ℕ} (hp : p.Prime) (hrk : r ≤ k) (hkp : k < p) :
+     IsUnit (wooleySection7BinomialMatrix k r p) := by
+-  letI : Fact p.Prime := ⟨hp⟩
++  let : Fact p.Prime := ⟨hp⟩
+   rw [Matrix.isUnit_iff_isUnit_det]
+   exact isUnit_iff_ne_zero.mpr
+     (wooleySection7_binomialMatrix_det_ne_zero hp hrk hkp)
+@@ -181,7 +180,7 @@
+     IsUnit (wooleyIntMatrixMod Omega (p ^ L)) := by
+   have hdetp : (Omega.det : ZMod p) ≠ 0 :=
+     wooleySection7_sourceMatrix_det_mod_prime_ne_zero hp hrk hkp Omega hOmega
+-  letI : Fact p.Prime := ⟨hp⟩
++  let : Fact p.Prime := ⟨hp⟩
+   have hunitp : IsUnit (Omega.det : ZMod p) := isUnit_iff_ne_zero.mpr hdetp
+   have hcoprime : IsCoprime (p : ℤ) Omega.det :=
+     (ZMod.coe_int_isUnit_iff_isCoprime Omega.det p).mp hunitp
+--- upstream/WooleyConditioningTower.lean
++++ ported/WooleyConditioningTower.lean
+@@ -41,7 +41,7 @@
+   unfold wooleySourcePolynomialConditionedMean
+     wooleySourcePolynomialResidueMean
+   by_cases hmass : wooleySourceMassSq gamma = 0
+-  · rw [if_pos hmass, hmass, zero_mul]
++  · rw [ite_eq_left hmass, hmass, zero_mul]
+     have hsum : ∑ xi : ZMod qH,
+         wooleySourceResidueMassSq gamma qH xi = 0 := by
+       rw [wooleySource_sum_residueMassSq, hmass]
+@@ -53,7 +53,7 @@
+           hsum xi (Finset.mem_univ xi)
+     simp_rw [hzero]
+     simp
+-  · rw [if_neg hmass, ← mul_assoc, mul_inv_cancel₀ hmass, one_mul]
++  · rw [ite_eq_right hmass, ← mul_assoc, mul_inv_cancel₀ hmass, one_mul]
+ 
+ /-- Equation (4.2) after Fourier averaging: a residue-class mean is the
+ ordinary mean of the affine pullback sequence and affine polynomial system. -/
 --- upstream/WooleyCriticalBase.lean
 +++ ported/WooleyCriticalBase.lean
 @@ -1,4 +1,4 @@
@@ -16,19 +63,65 @@
  
  /-!
  # The degree-one base of the critical Vinogradov mean value theorem
+--- upstream/WooleyEquation39.lean
++++ ported/WooleyEquation39.lean
+@@ -103,7 +103,7 @@
+                       qB k gamma alpha xi‖ ^ (2 * s) :=
+       Finset.sum_le_sum fun alpha _ => hpoint alpha
+     unfold wooleyWeightedGridMean wooleyWeightedConditionedGridMean
+-    rw [if_neg hmass]
++    rw [ite_eq_right hmass]
+     calc
+       (((qB ^ k : ℕ) : ℝ))⁻¹ *
+           ∑ alpha : Fin k → ZMod qB,
 --- upstream/WooleyFiniteMean.lean
 +++ ported/WooleyFiniteMean.lean
-@@ -46,7 +46,7 @@
+@@ -44,9 +44,9 @@
+   by_cases hd : d = 0
+   · subst d
      simp
-   · rw [if_neg hd]
+-  · rw [if_neg hd]
++  · rw [ite_eq_right hd]
      obtain ⟨j, hj⟩ : ∃ j, d j ≠ 0 := by
 -      simpa only [Function.ne_iff] using hd
 +      simpa only [Function.ne_iff, Pi.zero_apply] using hd
      rw [prod_eq_zero (mem_univ j)]
      simp [hj]
  
+@@ -176,7 +176,7 @@
+     (wooleyModularCount s k Q q : ℂ) =
+       ∑ xy : FordVinogradovTuple s Q × FordVinogradovTuple s Q,
+         if wooleyModularDisplacement q s k Q xy = 0 then 1 else 0 := by
+-  letI : Fintype (WooleyModularSolution s k Q q) := Fintype.ofFinite _
++  let : Fintype (WooleyModularSolution s k Q q) := Fintype.ofFinite _
+   rw [wooleyModularCount, Nat.card_eq_fintype_card]
+   unfold WooleyModularSolution
+   rw [Fintype.card_subtype, Finset.card_eq_sum_ones]
+@@ -302,7 +302,7 @@
+     letI : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
+     wooleyMonomialNormalizedGridMean s k Q (p ^ B) =
+       (wooleyPadicCount s k Q p B : ℝ) / ((Q ^ s : ℕ) : ℝ) := by
+-  letI : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
++  let : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
+   rw [wooleyMonomialNormalizedGridMean_eq_count hQ,
+     wooleyModularCount_primePower_eq_padic]
+ 
 --- upstream/WooleyInitialConditioning.lean
 +++ ported/WooleyInitialConditioning.lean
+@@ -255,11 +255,11 @@
+     exact ne_comm
+   by_cases h : wooleyResiduesSeparated nu eta xi
+   · have h' := hsep.mp h
+-    rw [if_pos h, if_pos h']
++    rw [ite_eq_left h, ite_eq_left h']
+     ring
+   · have h' : ¬ wooleyResiduesSeparated nu xi eta := by
+       exact fun hxiEta => h (hsep.mpr hxiEta)
+-    rw [if_neg h, if_neg h']
++    rw [ite_eq_right h, ite_eq_right h']
+ 
+ /-- Cauchy followed by the exact critical three-factor Hölder inequality.
+ This is the abstract finite inequality underlying (6.8), including the
 @@ -392,7 +392,7 @@
        have hinner (i : ι) (hi : i ∈ t) :
            (∑ j ∈ t, ‖z i‖ * ‖z j‖) =
@@ -38,6 +131,20 @@
          congr 1
          · ring
          · apply Finset.sum_congr
+@@ -512,11 +512,11 @@
+     exact ne_comm
+   by_cases h : wooleyResiduesSeparated nu eta xi
+   · have h' := hsep.mp h
+-    rw [if_pos h, if_pos h']
++    rw [ite_eq_left h, ite_eq_left h']
+     ring
+   · have h' : ¬ wooleyResiduesSeparated nu xi eta := by
+       exact fun hxiEta => h (hsep.mpr hxiEta)
+-    rw [if_neg h, if_neg h']
++    rw [ite_eq_right h, ite_eq_right h']
+ 
+ /-- The separated pair mass is bounded by the square of the total mass;
+ the omitted diagonal has nonnegative weight. -/
 @@ -830,8 +830,12 @@
    let bb : NNReal := ⟨b, hb⟩
    have h := NNReal.rpow_add_le_mul_rpow_add_rpow aa bb
@@ -63,6 +170,90 @@
  
  /-!
  # Arithmetic ledger for Wooley Sections 9 and 10
+--- upstream/WooleyLemma63.lean
++++ ported/WooleyLemma63.lean
+@@ -27,7 +27,7 @@
+     z.val % (p ^ nu) = xi.val := by
+   have hcast :
+       ZMod.castHom (pow_dvd_pow p hnu) (ZMod (p ^ nu)) z = xi := by
+-    simpa [wooleyResidueRefinementFiber] using hz
++    simpa only [wooleyResidueRefinementFiber, Finset.mem_filter_univ] using hz
+   have hpnu : 0 < p ^ nu := pow_pos (NeZero.pos p) nu
+   have hxiVal : xi.val < p ^ nu := ZMod.val_lt xi
+   have hzval :
+@@ -81,7 +81,7 @@
+       (wooleyResidueRefinementFiber p nu theta hnu xy.2)
+   have href (z : ZMod (p ^ theta)) (xi : ZMod (p ^ nu)) :
+       z ∈ wooleyResidueRefinementFiber p nu theta hnu xi ↔ red z = xi := by
+-    simp [wooleyResidueRefinementFiber, red]
++    simp only [wooleyResidueRefinementFiber, Finset.mem_filter_univ, red]
+   have hsep (z w : ZMod (p ^ theta)) :
+       wooleyResiduesSeparated nu (red z) (red w) ↔
+         wooleyResiduesSeparated nu z w := by
+@@ -142,8 +142,8 @@
+           ∑ zw ∈ pairFiber xy, F zw.1 zw.2
+         else 0 := by
+     by_cases hxy : wooleyResiduesSeparated nu xy.1 xy.2
+-    · rw [if_pos hxy, hfiber xy hxy]
+-    · rw [if_neg hxy, hfiber_empty xy hxy]
++    · rw [ite_eq_left hxy, hfiber xy hxy]
++    · rw [ite_eq_right hxy, hfiber_empty xy hxy]
+       simp
+   have hgroup := Finset.sum_fiberwise finePairs redPair
+     (fun zw => F zw.1 zw.2)
+--- upstream/WooleyNormalFormChange.lean
++++ ported/WooleyNormalFormChange.lean
+@@ -134,7 +134,7 @@
+   obtain ⟨theta, htheta⟩ := hphi
+   rw [htheta j, coeff_add, coeff_X_pow]
+   have hne : n ≠ (j : ℕ) + 1 := by omega
+-  rw [if_neg hne, zero_add, coeff_C_mul]
++  rw [ite_eq_right hne, zero_add, coeff_C_mul]
+   exact dvd_mul_right _ _
+ 
+ /-- The same high-degree divisibility is preserved by the lifted row
+@@ -227,7 +227,7 @@
+   have hfhigh (i : Fin k) (n : ℕ) (hn : k + 1 ≤ n) :
+       (p : ℤ) ^ c ∣ (f i).coeff n := by
+     simp only [f, coeff_sub, coeff_C]
+-    rw [if_neg (by omega : n ≠ 0), sub_zero]
++    rw [ite_eq_right (by omega : n ≠ 0), sub_zero]
+     exact wooleyNormalFormCombination_high_coeff_dvd hphi G i n hn
+   choose psi htail using fun i : Fin k =>
+     wooleyPolynomial_exists_positiveLow_add_scalar_X_tail
+@@ -244,7 +244,7 @@
+     intro d hd
+     congr 2
+     simp only [f, coeff_sub, coeff_C]
+-    rw [if_neg (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
++    rw [ite_eq_right (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
+   have hf := htail i
+   rw [hpositive, hlow i] at hf
+   dsimp only [f] at hf
+--- upstream/WooleyOrthogonalityInsertion.lean
++++ ported/WooleyOrthogonalityInsertion.lean
+@@ -117,8 +117,8 @@
+             apply Finset.sum_congr rfl
+             intro omega homega
+             by_cases hQ : Q omega
+-            · simp only [if_pos hQ]
+-            · simp only [if_neg hQ, zero_mul]
++            · simp only [ite_eq_left hQ]
++            · simp only [ite_eq_right hQ, zero_mul]
+       _ = ∑ omega : Ω,
+           if P omega then (if Q omega then weight omega else 0) else 0 :=
+             finite_weighted_filter A
+@@ -132,8 +132,8 @@
+           apply Finset.sum_congr rfl
+           intro omega homega
+           by_cases hP : P omega
+-          · rw [if_pos hP, if_pos hP, if_pos (hforced omega hP)]
+-          · rw [if_neg hP, if_neg hP]
++          · rw [ite_eq_left hP, ite_eq_left hP, ite_eq_left (hforced omega hP)]
++          · rw [ite_eq_right hP, ite_eq_right hP]
+     _ = A * (E * ∑ i : I, ∑ j : J, ∑ omega : Ω,
+         weight omega * first i omega * second j omega) := hright.symm
+ 
 --- upstream/WooleyPadicToCritical.lean
 +++ ported/WooleyPadicToCritical.lean
 @@ -104,13 +104,6 @@
@@ -79,6 +270,149 @@
  end
  
  end GafniTao
+--- upstream/WooleyPolynomialBasic.lean
++++ ported/WooleyPolynomialBasic.lean
+@@ -149,7 +149,7 @@
+       wooleyPolynomial_equation_3_9 (qH := qH) phi gamma alpha hs hmass
+     unfold wooleyPolynomialWeightedGridMean
+       wooleyPolynomialConditionedGridMean
+-    rw [if_neg hmass]
++    rw [ite_eq_right hmass]
+     have hscale : (0 : ℝ) ≤ (((qB ^ k : ℕ) : ℝ))⁻¹ := by positivity
+     calc
+       (((qB ^ k : ℕ) : ℝ))⁻¹ *
+--- upstream/WooleyPolynomialInitial.lean
++++ ported/WooleyPolynomialInitial.lean
+@@ -119,11 +119,11 @@
+     exact ne_comm
+   by_cases h : wooleyResiduesSeparated nu eta xi
+   · have h' := hsep.mp h
+-    rw [if_pos h, if_pos h']
++    rw [ite_eq_left h, ite_eq_left h']
+     ring
+   · have h' : ¬ wooleyResiduesSeparated nu xi eta :=
+       fun hxiEta => h (hsep.mpr hxiEta)
+-    rw [if_neg h, if_neg h']
++    rw [ite_eq_right h, ite_eq_right h']
+ 
+ /-- Polynomial-system equation (6.6). -/
+ theorem wooleyPolynomial_equation_6_6 {Q k : ℕ}
+--- upstream/WooleyPolynomialNormalForm.lean
++++ ported/WooleyPolynomialNormalForm.lean
+@@ -48,7 +48,7 @@
+     (wooleyPolynomialLowPart d f).coeff n = f.coeff n := by
+   have h := congrArg (fun g : Polynomial ℤ => g.coeff n)
+     (wooleyPolynomial_low_add_tail d f)
+-  simpa only [coeff_add, coeff_X_pow_mul', if_neg (not_le.mpr hn), add_zero]
++  simpa only [coeff_add, coeff_X_pow_mul', ite_eq_right (not_le.mpr hn), add_zero]
+     using h
+ 
+ /-- Constant coefficient in the canonical degree-`k` low part. -/
+@@ -122,7 +122,7 @@
+   rw [wooleyPolynomialLowPart_coeff (by omega), hpsi j]
+   rw [coeff_add, coeff_X_pow]
+   have hne : 0 ≠ (j : ℕ) + 1 := by omega
+-  rw [if_neg hne, coeff_C_mul]
++  rw [ite_eq_right hne, coeff_C_mul]
+   ring
+ 
+ 
+--- upstream/WooleyPolynomialRefinement.lean
++++ ported/WooleyPolynomialRefinement.lean
+@@ -57,8 +57,8 @@
+   · intro z hzne
+     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
+         (ZMod (p ^ a)) z = xi
+-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
+-    · rw [if_neg hzxi]
++    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
++    · rw [ite_eq_right hzxi]
+ 
+ theorem wooleyPolynomial_refined_normalized_residue_decomposition
+     {Q p a b qB k : ℕ} [NeZero p] [NeZero qB]
+--- upstream/WooleyRefinementTower.lean
++++ ported/WooleyRefinementTower.lean
+@@ -131,16 +131,16 @@
+             (if ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z = kappa
+               then F z else 0)
+           else 0 := by
+-    by_cases hk :
+-        ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi <;>
+-      simp [hk]
++    by_cases hk : ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
++    · simp only [ite_eq_left hk]
++    · simp only [ite_eq_right hk, Finset.sum_const_zero]
+   simp_rw [hdistribute]
+   rw [Finset.sum_comm]
+   apply Finset.sum_congr rfl
+   intro z hz
+   by_cases hza :
+       ZMod.castHom (pow_dvd_pow p (ham.trans hmb)) (ZMod (p ^ a)) z = xi
+-  · rw [if_pos hza]
++  · rw [ite_eq_left hza]
+     have hcompose :
+         ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a))
+             (ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z) = xi := by
+@@ -148,27 +148,27 @@
+       exact hza
+     rw [Fintype.sum_eq_single
+       (ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z)]
+-    · rw [if_pos hcompose, if_pos rfl]
++    · rw [ite_eq_left hcompose, ite_eq_left rfl]
+     · intro kappa hkappa
+       by_cases hkm :
+           ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
+-      · rw [if_pos hkm]
+-        rw [if_neg (fun h => hkappa h.symm)]
+-      · rw [if_neg hkm]
+-  · rw [if_neg hza]
++      · rw [ite_eq_left hkm]
++        rw [ite_eq_right (fun h => hkappa h.symm)]
++      · rw [ite_eq_right hkm]
++  · rw [ite_eq_right hza]
+     apply Finset.sum_eq_zero
+     intro kappa hkappa
+     by_cases hkm :
+         ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
+-    · rw [if_pos hkm]
++    · rw [ite_eq_left hkm]
+       by_cases hzk :
+           ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z = kappa
+       · exfalso
+         apply hza
+         rw [wooley_castHom_tower ham hmb z, hzk]
+         exact hkm
+-      · rw [if_neg hzk]
+-    · rw [if_neg hkm]
++      · rw [ite_eq_right hzk]
++    · rw [ite_eq_right hkm]
+ 
+ 
+ end
+--- upstream/WooleyResidueRefinement.lean
++++ ported/WooleyResidueRefinement.lean
+@@ -103,8 +103,8 @@
+   · intro z hzne
+     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
+         (ZMod (p ^ a)) z = xi
+-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
+-    · rw [if_neg hzxi]
++    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
++    · rw [ite_eq_right hzxi]
+ 
+ theorem wooley_sum_refined_residue_grid
+     {Q p a b qB k : ℕ} [NeZero p] [NeZero qB]
+@@ -146,8 +146,8 @@
+   · intro z hzne
+     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
+         (ZMod (p ^ a)) z = xi
+-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
+-    · rw [if_neg hzxi]
++    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
++    · rw [ite_eq_right hzxi]
+ 
+ /-- The exact refinement identity used before Wooley (6.11). -/
+ theorem wooley_refined_normalized_residue_decomposition
 --- upstream/WooleySection10HierarchySelection.lean
 +++ ported/WooleySection10HierarchySelection.lean
 @@ -233,9 +233,8 @@
@@ -105,6 +439,17 @@
      have hright : ((k : ℝ) ^ 2 / 2) * (delta * Lambda ^ 2 * mu) <
          (k : ℝ) ^ 2 * delta * Lambda * mu * Lambda := by
        nlinarith [mul_pos (mul_pos (mul_pos (sq_pos_of_pos (by linarith : (0 : ℝ) < k))
+--- upstream/WooleySection10Theorem.lean
++++ ported/WooleySection10Theorem.lean
+@@ -99,7 +99,7 @@
+   let H : ℕ := B ⌈/⌉ k
+   let thetaNat : ℕ := wooleyIterationTheta mu H
+   let nu : ℕ := wooleyInitialNu eta Lambda H
+-  letI : NeZero (p ^ B) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
++  let : NeZero (p ^ B) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
+   have hBupper : Bupper ≤ B :=
+     (le_max_left _ _).trans hB
+   have hBtau' : Btau ≤ B :=
 --- upstream/WooleySection4Congruence.lean
 +++ ported/WooleySection4Congruence.lean
 @@ -110,7 +110,6 @@
@@ -115,6 +460,94 @@
      rw [wooleyIntegerTupleDisplacement_polynomial_add,
        wooleyIntegerTupleDisplacement_polynomial_add,
        wooleyIntegerTupleDisplacement_polynomial_C,
+--- upstream/WooleySection4Holder.lean
++++ ported/WooleySection4Holder.lean
+@@ -128,7 +128,7 @@
+       simpa only [M] using hmass
+     unfold wooleySourcePolynomialMixedMean
+       wooleySourcePolynomialConditionedMean
+-    simp only [hmass', if_pos]
++    simp only [hmass', ite_eq_left]
+     exact mul_nonneg (Real.rpow_nonneg le_rfl _)
+       (Real.rpow_nonneg le_rfl _)
+   · have hs : 1 ≤ s := by
+@@ -195,7 +195,7 @@
+       simp only [t, I, w, f]
+       rw [htriple, hsumMass]
+       unfold wooleySourcePolynomialConditionedMean
+-      rw [if_neg (by simpa only [M] using hmass)]
++      rw [ite_eq_right (by simpa only [M] using hmass)]
+       simp only [M, q]
+       field_simp [hmass]
+       simp only [Nat.mul_comm]
+@@ -219,7 +219,7 @@
+       simp only [t, I, w, g]
+       rw [htriple, hsumMass]
+       unfold wooleySourcePolynomialConditionedMean
+-      rw [if_neg (by simpa only [M] using hmass)]
++      rw [ite_eq_right (by simpa only [M] using hmass)]
+       simp only [M, q]
+       field_simp [hmass]
+       simp only [Nat.mul_comm]
+@@ -231,7 +231,7 @@
+           M⁻¹ ^ 2 * (((q ^ k : ℕ) : ℝ)⁻¹) *
+             ∑ z ∈ t, w z * h z := by
+       unfold wooleySourcePolynomialMixedMean
+-      rw [if_neg hmass]
++      rw [ite_eq_right hmass]
+       dsimp [M, q, s, R, t, I, w, h,
+         wooleySourcePolynomialMixedResidueMoment]
+       rw [mul_assoc]
+--- upstream/WooleySection7ConditionedExpansion.lean
++++ ported/WooleySection7ConditionedExpansion.lean
+@@ -60,7 +60,7 @@
+       wooleySourceResidueSequence_twist]
+   unfold wooleySourcePolynomialConditionedMean
+     wooleySourcePolynomialMean
+-  rw [hmassTwist, if_neg hleft]
++  rw [hmassTwist, ite_eq_right hleft]
+   simp_rw [hresidue, hsum]
+   rw [← mul_assoc, mul_inv_cancel₀ hleft, one_mul]
+ 
+--- upstream/WooleySection7Easy.lean
++++ ported/WooleySection7Easy.lean
+@@ -54,7 +54,7 @@
+     ZMod.castHom (pow_dvd_pow p haa') (ZMod (p ^ a))
+   have href (z : ZMod (p ^ a')) (xi : ZMod (p ^ a)) :
+       z ∈ wooleyResidueRefinementFiber p a a' haa' xi ↔ red z = xi := by
+-    simp [wooleyResidueRefinementFiber, red]
++    simp only [wooleyResidueRefinementFiber, Finset.mem_filter_univ, red]
+   have hsep (z : ZMod (p ^ a')) (eta : ZMod (p ^ b)) :
+       wooleyResiduesSeparated nu (red z) eta ↔
+         wooleyResiduesSeparated nu z eta := by
+@@ -78,14 +78,14 @@
+       dsimp [fine]
+       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+       by_cases hxi : wooleyResiduesSeparated nu xi eta
+-      · rw [if_pos hxi]
++      · rw [ite_eq_left hxi]
+         constructor
+         · rintro ⟨hzsep, hzred⟩
+           exact (href z xi).2 hzred
+         · intro hz
+           have hzred := (href z xi).1 hz
+           exact ⟨(hsep z eta |>.1 (by simpa only [hzred] using hxi)), hzred⟩
+-      · rw [if_neg hxi]
++      · rw [ite_eq_right hxi]
+         simp only [Finset.notMem_empty, iff_false]
+         rintro ⟨hzsep, hzred⟩
+         apply hxi
+@@ -99,8 +99,8 @@
+             apply Finset.sum_congr rfl
+             intro xi hxiMem
+             by_cases hxi : wooleyResiduesSeparated nu xi eta
+-            · simp only [hxi, if_true]
+-            · simp only [hxi, if_false, Finset.sum_empty]
++            · simp only [hxi, ite_true]
++            · simp only [hxi, ite_false, Finset.sum_empty]
+       _ = ∑ z ∈ fine, F z eta := hgroup
+       _ = _ := by simp [fine, Finset.sum_filter]
+   simp_rw [Finset.sum_filter]
 --- upstream/WooleySection7Hard.lean
 +++ ported/WooleySection7Hard.lean
 @@ -112,8 +112,7 @@
@@ -127,6 +560,75 @@
    obtain ⟨gammaVal, hgammaVal, hlocal⟩ :=
      wooley_equation_7_23_native hpPrime hc hr hrk hkp hMB hgammaK
        hBPrime phi hphi gamma xi eta hseparated hxiMass hetaMass
+--- upstream/WooleySection7LocalBound.lean
++++ ported/WooleySection7LocalBound.lean
+@@ -85,8 +85,8 @@
+     (pow_pos hpPrime.pos a) (xi.val : ℤ)
+   let right := wooleyAffinePullback gamma (p ^ b)
+     (pow_pos hpPrime.pos b) (eta.val : ℤ)
+-  letI : NeZero qPrime := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+-  letI : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
++  let : NeZero qPrime := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
++  let : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+   obtain ⟨Psi, hPsi, horiginal, hreverse⟩ :=
+     wooley_equation_7_21_native
+       (s := s) (H := H) hpPrime hc hr hrk hkp hMB
+--- upstream/WooleySection7LocalIdentity.lean
++++ ported/WooleySection7LocalIdentity.lean
+@@ -92,7 +92,7 @@
+     dsimp only [right]
+     rw [wooleySourceMassSq_affinePullback]
+     simpa using hetaMass
+-  letI : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
++  let : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
+     ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+   obtain ⟨Psi, hPsi, hidentity⟩ :=
+     wooley_equation_7_17_shifted_normalized_nonzero_native
+@@ -131,7 +131,7 @@
+     hlower tau (epsilon ^ 2) htau (sq_pos_of_pos hepsilon)
+   refine ⟨C, hC, B0, ?_⟩
+   intro BPrime Psi alpha hBPrime hPsi
+-  letI : NeZero (p ^ BPrime) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
++  let : NeZero (p ^ BPrime) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
+   exact hbound BPrime Psi
+     (wooleySection7Coefficient phi gamma p a
+       (Nat.pos_of_ne_zero (NeZero.ne p)) xi alpha)
+--- upstream/WooleySection7MomentIdentity.lean
++++ ported/WooleySection7MomentIdentity.lean
+@@ -316,7 +316,7 @@
+       (wooleySourceMassSq gamma)⁻¹ ^ R *
+         ‖wooleySourcePolynomialSum phi gamma alpha‖ ^ (2 * R) := by
+   unfold wooleySourceNormalizedPolynomialSum
+-  rw [if_neg hmass, norm_mul, norm_inv]
++  rw [ite_eq_right hmass, norm_mul, norm_inv]
+   have hnonneg : 0 ≤ wooleySourceMassSq gamma :=
+     wooleySourceMassSq_nonneg gamma
+   rw [Complex.norm_real]
+--- upstream/WooleySection7Omega.lean
++++ ported/WooleySection7Omega.lean
+@@ -108,7 +108,7 @@
+     have hne : (i : ℕ) + 1 ≠ 0 := by omega
+     unfold wooleyTaylorDifference
+     rw [coeff_sub, coeff_C]
+-    simp only [if_neg hne, sub_zero]
++    simp only [ite_eq_right hne, sub_zero]
+   rw [hpositive]
+   change C (((taylor h
+       (X ^ (wooleySection7Node k r l + 1) +
+--- upstream/WooleySection7Reverse.lean
++++ ported/WooleySection7Reverse.lean
+@@ -77,9 +77,9 @@
+             ((((p ^ a : ℕ) : ℤ) * (zeta.val : ℤ) + xi : ℤ) :
+               ZMod (p ^ (a + H)))
+             (eta : ZMod (p ^ b)) := by
+-  letI : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
++  let : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
+     ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+-  letI : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
++  let : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+   obtain ⟨Psi, hPsi, huniform⟩ :=
+     wooley_exists_uniform_shifted_normalized_identity
+       hpPrime hc hr hrk hkp hMB hgammaK hBPrime
 --- upstream/WooleySection7SourceShift.lean
 +++ ported/WooleySection7SourceShift.lean
 @@ -201,9 +201,9 @@
@@ -157,6 +659,132 @@
  
  /-- The exact finite normalized identity displayed in (7.17), packaged only
  to keep its two occurrences in the native theorem synchronized. -/
+--- upstream/WooleySection7Translated.lean
++++ ported/WooleySection7Translated.lean
+@@ -59,7 +59,7 @@
+         (p : ℤ) ^ (a * (i + 1)) := by
+   unfold wooleySection7TranslatedDilatedPolynomial
+   rw [coeff_sub, comp_C_mul_X_coeff, coeff_C]
+-  rw [if_neg (by omega : i + 1 ≠ 0), sub_zero]
++  rw [ite_eq_right (by omega : i + 1 ≠ 0), sub_zero]
+   rw [pow_mul]
+ 
+ /-- Constants cancel from equal-length tuple displacements, so evaluating
+--- upstream/WooleySection8.lean
++++ ported/WooleySection8.lean
+@@ -63,8 +63,8 @@
+   have hsep := wooleyResiduesSeparated_symm
+     (p := p) (nu := nu) (a := a) (b := b) (xi := xi) (eta := eta)
+   by_cases h : wooleyResiduesSeparated nu xi eta
+-  · rw [if_pos h, if_pos (hsep.mp h)]
+-  · rw [if_neg h, if_neg (fun hs => h (hsep.mpr hs))]
++  · rw [ite_eq_left h, ite_eq_left (hsep.mp h)]
++  · rw [ite_eq_right h, ite_eq_right (fun hs => h (hsep.mpr hs))]
+ 
+ 
+ /-- Hölder interpolation with the common finite-average normalizer retained.
+@@ -512,9 +512,9 @@
+       have hsep := wooleyResiduesSeparated_symm
+         (p := p) (nu := nu) (a := a) (b := b) (xi := xi) (eta := eta)
+       by_cases hs : wooleyResiduesSeparated nu xi eta
+-      · rw [if_pos hs, if_pos (hsep.mp hs)]
++      · rw [ite_eq_left hs, ite_eq_left (hsep.mp hs)]
+         ring
+-      · rw [if_neg hs, if_neg (fun h => hs (hsep.mpr h))]
++      · rw [ite_eq_right hs, ite_eq_right (fun h => hs (hsep.mpr h))]
+         ring
+     rw [hrewrite]
+     have hxi (eta : ZMod (p ^ b)) :
+--- upstream/WooleySection9Admissible.lean
++++ ported/WooleySection9Admissible.lean
+@@ -96,7 +96,7 @@
+               wooleySourcePolynomialMixedMean phi s r p B
+                 (wooleyNextB k r b) b nu gamma := by
+   let I := {r : ℕ // r ∈ wooleyGradeRange (k - 1)}
+-  letI : Fintype I := Fintype.ofFinset
++  let : Fintype I := Fintype.ofFinset
+     (wooleyGradeRange (k - 1)) (by intro i; rfl)
+   have hex : ∀ i : I,
+       ∃ C : ℝ, 1 ≤ C ∧ ∃ B0 : ℕ,
+@@ -211,7 +211,7 @@
+             wooleySourcePolynomialMixedMean phi s r p B
+               (wooleyNextB k r b) b nu gamma := by
+   let I := {r : ℕ // r ∈ wooleyGradeRange (k - 1)}
+-  letI : Fintype I := Fintype.ofFinset
++  let : Fintype I := Fintype.ofFinset
+     (wooleyGradeRange (k - 1)) (by intro i; rfl)
+   have hex : ∀ i : I,
+       ∃ C : ℝ, 1 ≤ C ∧ ∃ B0 : ℕ,
+--- upstream/WooleySourceAffine.lean
++++ ported/WooleySourceAffine.lean
+@@ -35,7 +35,8 @@
+       (n : ZMod q) = (xi : ZMod q) := by
+   constructor
+   · rintro ⟨y, rfl⟩
+-    simp [wooleyAffineEmbedding]
++    simp only [wooleyAffineEmbedding_apply, Int.cast_add, Int.cast_mul, Int.cast_natCast,
++      ZMod.natCast_self, zero_mul, zero_add]
+   · intro hn
+     rw [ZMod.intCast_eq_intCast_iff_dvd_sub] at hn
+     obtain ⟨d, hd⟩ := hn
+--- upstream/WooleySourceCriticalBase.lean
++++ ported/WooleySourceCriticalBase.lean
+@@ -209,8 +209,8 @@
+                       (((phi 0).eval m : ℤ) : ZMod q))) = 0 := by
+                   funext j
+                   simp [hd]
+-              rw [if_pos hfun] at hsum
+-              rw [if_pos hd]
++              rw [ite_eq_left hfun] at hsum
++              rw [ite_eq_left hd]
+               exact hsum
+             · have hfun :
+                   (fun _ : Fin 1 =>
+@@ -220,8 +220,8 @@
+                   have := congrFun hzero (0 : Fin 1)
+                   simp only [Pi.zero_apply, sub_eq_zero] at this
+                   exact hd this
+-              rw [if_neg hfun] at hsum
+-              rw [if_neg hd]
++              rw [ite_eq_right hfun] at hsum
++              rw [ite_eq_right hd]
+               exact hsum
+           rw [hsum']
+           split_ifs <;> simp
+@@ -302,12 +302,12 @@
+   apply Finset.sum_congr rfl
+   intro n hn
+   simp only [Finset.mem_filter] at hn
+-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
++  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
+   apply Finset.sum_congr rfl
+   intro m hm
+   simp only [Finset.mem_filter] at hm
+-  rw [wooleySourceResidueSequence_apply, if_pos hm.2]
+-  rw [if_pos (hn.2.trans hm.2.symm)]
++  rw [wooleySourceResidueSequence_apply, ite_eq_left hm.2]
++  rw [ite_eq_left (hn.2.trans hm.2.symm)]
+ 
+ theorem wooley_sum_residueCollision_residueSequence
+     (q : ℕ) [NeZero q] (gamma : WooleySourceSequence) :
+@@ -446,7 +446,7 @@
+ theorem wooleyPolynomialCorollary32At_degree_one
+     (p : ℕ) (hpPrime : p.Prime) :
+     @WooleyPolynomialCorollary32At 1 p ⟨hpPrime.ne_zero⟩ := by
+-  letI : NeZero p := ⟨hpPrime.ne_zero⟩
++  let : NeZero p := ⟨hpPrime.ne_zero⟩
+   intro tau epsilon htau hepsilon
+   obtain ⟨B0 : ℕ, hB0⟩ := exists_nat_ge (1 / tau)
+   refine ⟨1, by norm_num, B0, ?_⟩
+@@ -515,7 +515,7 @@
+   induction k using Nat.strong_induction_on with
+   | h k ih =>
+       intro p hpPrime hk hkp
+-      letI : NeZero p := ⟨hpPrime.ne_zero⟩
++      let : NeZero p := ⟨hpPrime.ne_zero⟩
+       by_cases hkOne : k = 1
+       · subst k
+         exact wooleyPolynomialCorollary32At_degree_one p hpPrime
 --- upstream/WooleySourceMean.lean
 +++ ported/WooleySourceMean.lean
 @@ -1,4 +1,5 @@
@@ -165,6 +793,74 @@
  
  /-!
  # Wooley's source-level finitely supported means
+--- upstream/WooleySourceRefinement.lean
++++ ported/WooleySourceRefinement.lean
+@@ -36,8 +36,9 @@
+           if ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi then
+             (if (n : ZMod (p ^ b)) = z then ‖gamma n‖ ^ 2 else 0)
+           else 0 := by
+-    by_cases hz : ZMod.castHom (pow_dvd_pow p hab)
+-        (ZMod (p ^ a)) z = xi <;> simp [hz]
++    by_cases hz : ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi
++    · simp only [ite_eq_left hz]
++    · simp only [ite_eq_right hz, Finset.sum_const_zero]
+   simp_rw [hdistribute]
+   rw [Finset.sum_comm]
+   apply Finset.sum_congr rfl
+@@ -52,8 +53,8 @@
+   · intro z hzne
+     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
+         (ZMod (p ^ a)) z = xi
+-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
+-    · rw [if_neg hzxi]
++    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
++    · rw [ite_eq_right hzxi]
+ 
+ theorem wooleySource_sum_refined_polynomialResidueSum
+     {k p a b qB : ℕ} [NeZero p] [NeZero qB]
+@@ -76,8 +77,9 @@
+             (if (n : ZMod (p ^ b)) = z then
+               gamma n * wooleySourcePolynomialPhase phi alpha n else 0)
+           else 0 := by
+-    by_cases hz : ZMod.castHom (pow_dvd_pow p hab)
+-        (ZMod (p ^ a)) z = xi <;> simp [hz]
++    by_cases hz : ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi
++    · simp only [ite_eq_left hz]
++    · simp only [ite_eq_right hz, Finset.sum_const_zero]
+   simp_rw [hdistribute]
+   rw [Finset.sum_comm]
+   apply Finset.sum_congr rfl
+@@ -92,8 +94,8 @@
+   · intro z hzne
+     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
+         (ZMod (p ^ a)) z = xi
+-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
+-    · rw [if_neg hzxi]
++    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
++    · rw [ite_eq_right hzxi]
+ 
+ theorem wooleySourcePolynomialResidueSum_eq_zero_of_massSq_eq_zero
+     {k qH qB : ℕ} [NeZero qB]
+--- upstream/WooleySourceRestriction.lean
++++ ported/WooleySourceRestriction.lean
+@@ -55,7 +55,7 @@
+   apply Finset.sum_congr rfl
+   intro n hn
+   simp only [Finset.mem_filter] at hn
+-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
++  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
+ 
+ /-- The global polynomial sum of the restricted sequence is the source
+ residue-class polynomial sum, with no error or change of normalization. -/
+@@ -71,7 +71,7 @@
+   apply Finset.sum_congr rfl
+   intro n hn
+   simp only [Finset.mem_filter] at hn
+-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
++  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
+ 
+ /-- Consequently the normalized global sum of a residue restriction is
+ literally the normalized residue sum in (3.4). -/
 --- upstream/WooleySourceToPadic.lean
 +++ ported/WooleySourceToPadic.lean
 @@ -19,8 +19,7 @@
@@ -177,6 +873,15 @@
  
  /-- The full source-faithful polynomial Corollary 3.2 discharges the exact
  coefficient-one p-adic input used by the critical VMVT consumer. -/
+@@ -35,7 +34,7 @@
+     rw [wooleyPadicCount_degree_zero]
+     simp [fordVinogradovKappa]
+   · have hk : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hkzero
+-    letI : NeZero p := ⟨hp.ne_zero⟩
++    let : NeZero p := ⟨hp.ne_zero⟩
+     obtain ⟨C, hC, B0, hmain⟩ :=
+       hsource k p hp hk hkp 1 delta (by norm_num) hdelta
+     refine ⟨C, hC, B0, ?_⟩
 @@ -76,7 +75,9 @@
      have hQpowPos : (0 : ℝ) < ((Q ^ wooleyTriangular k : ℕ) : ℝ) := by
        positivity
@@ -190,6 +895,15 @@
  end
 --- upstream/WooleyTaylorCoefficient.lean
 +++ ported/WooleyTaylorCoefficient.lean
+@@ -68,7 +68,7 @@
+   rw [hasseDeriv_coeff]
+   have hlt : d + i < k + 1 := by omega
+   rw [coeff_X_pow_mul']
+-  simp only [if_neg (not_le.mpr hlt), mul_zero]
++  simp only [ite_eq_right (not_le.mpr hlt), mul_zero]
+ 
+ /-- Literal coefficient factorization defining the source integer `Ω`. -/
+ theorem wooley_taylorCoefficient_exists_omega
 @@ -92,7 +92,6 @@
          C ((p : ℤ) ^ c) * X ^ (k + 1) * psi =
            ((p : ℤ) ^ c) • (X ^ (k + 1) * psi) := by
@@ -206,6 +920,84 @@
    have hderivScalar :
        hasseDeriv i (((p : ℤ) ^ c) • (X ^ (k + 1) * psi)) =
          ((p : ℤ) ^ c) • hasseDeriv i (X ^ (k + 1) * psi) :=
+--- upstream/WooleyThreeFactorHolder.lean
++++ ported/WooleyThreeFactorHolder.lean
+@@ -31,8 +31,8 @@
+   classical
+   let subF : Fintype {i : ι // i ∈ t} :=
+     Finset.fintypeCoeSort t
+-  letI : Fintype {i : ι // i ∈ t} := subF
+-  letI : MeasurableSpace {i : ι // i ∈ t} := ⊤
++  let : Fintype {i : ι // i ∈ t} := subF
++  let : MeasurableSpace {i : ι // i ∈ t} := ⊤
+   let fs : Fin 3 → {i : ι // i ∈ t} → ℝ≥0∞ := fun j x =>
+     Fin.cases (f₀ x.1)
+       (fun j' => Fin.cases (f₁ x.1) (fun _ => f₂ x.1) j') j
+--- upstream/WooleyTranslatedNormalChange.lean
++++ ported/WooleyTranslatedNormalChange.lean
+@@ -57,7 +57,7 @@
+   have hfhigh (i : Fin k) (n : ℕ) (hn : k + 1 ≤ n) :
+       (p : ℤ) ^ c ∣ (f i).coeff n := by
+     simp only [f, coeff_sub, coeff_C]
+-    rw [if_neg (by omega : n ≠ 0), sub_zero]
++    rw [ite_eq_right (by omega : n ≠ 0), sub_zero]
+     exact wooleyNormalFormCombination_high_coeff_dvd_of_each
+       theta hhigh G i n hn
+   choose psi htail using fun i : Fin k =>
+@@ -75,7 +75,7 @@
+     intro d hd
+     congr 2
+     simp only [f, coeff_sub, coeff_C]
+-    rw [if_neg (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
++    rw [ite_eq_right (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
+   have hf := htail i
+   rw [hpositive, hlow i] at hf
+   dsimp only [f] at hf
+--- upstream/WooleyTranslationMatrix.lean
++++ ported/WooleyTranslationMatrix.lean
+@@ -33,7 +33,7 @@
+     (wooleyPolynomialTranslationMatrix k q eta).BlockTriangular id := by
+   intro i j hji
+   unfold wooleyPolynomialTranslationMatrix
+-  rw [if_neg]
++  rw [ite_eq_right]
+   exact Nat.not_le_of_gt hji
+ 
+ @[simp] theorem wooleyPolynomialTranslationMatrix_diag
+@@ -44,7 +44,7 @@
+ theorem wooleyPolynomialTranslationMatrix_det
+     (k q : ℕ) (eta : ℤ) :
+     (wooleyPolynomialTranslationMatrix k q eta).det = 1 := by
+-  rw [Matrix.det_of_upperTriangular
++  rw [Matrix.det_of_isUpperTriangular
+     (wooleyPolynomialTranslationMatrix_blockTriangular k q eta)]
+   simp
+ 
+@@ -79,9 +79,9 @@
+   rw [hpPow, zero_mul, add_zero]
+   unfold wooleyPolynomialTranslationMatrix
+   by_cases hij : (i : ℕ) ≤ (j : ℕ)
+-  · rw [if_pos hij]
++  · rw [ite_eq_left hij]
+     ring
+-  · rw [if_neg hij]
++  · rw [ite_eq_right hij]
+     have hlt : (j : ℕ) + 1 < (i : ℕ) + 1 := by omega
+     rw [Nat.choose_eq_zero_of_lt hlt]
+     simp
+--- upstream/WooleyTwoFactorHolder.lean
++++ ported/WooleyTwoFactorHolder.lean
+@@ -22,8 +22,8 @@
+       (∑ i ∈ t, f i) ^ u * (∑ i ∈ t, g i) ^ (1 - u) := by
+   classical
+   let subF : Fintype {i : ι // i ∈ t} := Finset.fintypeCoeSort t
+-  letI : Fintype {i : ι // i ∈ t} := subF
+-  letI : MeasurableSpace {i : ι // i ∈ t} := ⊤
++  let : Fintype {i : ι // i ∈ t} := subF
++  let : MeasurableSpace {i : ι // i ∈ t} := ⊤
+   let fs : Fin 2 → {i : ι // i ∈ t} → ℝ≥0∞ :=
+     fun j x => Fin.cases (f x.1) (fun _ => g x.1) j
+   let exps : Fin 2 → ℝ := ![u, 1 - u]
 --- upstream/WooleyWeightedHolder.lean
 +++ ported/WooleyWeightedHolder.lean
 @@ -1,4 +1,5 @@

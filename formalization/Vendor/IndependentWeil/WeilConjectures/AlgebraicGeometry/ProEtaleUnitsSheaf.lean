@@ -1,0 +1,48 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+public import Mathlib.Algebra.Category.Grp.Adjunctions
+public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
+public import Mathlib.Algebra.Category.Grp.Ulift
+public import WeilConjectures.AlgebraicGeometry.ProEtaleStructureSheaf
+import WeilConjectures.Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
+
+/-! # Units of the pro-etale structure sheaf
+
+## References
+
+* Stacks Project, Tags 03PK and 03O3.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.Scheme
+
+/-- The units presheaf, written additively and lifted to the ambient sheaf universe.
+Its sections are `ULift (Additive Γ(U, O_U)ˣ)`; addition means multiplication of units
+(Stacks, Tag 03PK). -/
+def proEtaleUnitsPresheaf (S : Scheme.{u}) : S.ProEtᵒᵖ ⥤ AddCommGrpCat.{u + 1} :=
+  (proEtaleStructureSheaf S).obj ⋙ forget₂ CommRingCat CommMonCat ⋙
+    CommMonCat.units ⋙ CommGrpCat.toAddCommGrp ⋙ AddCommGrpCat.uliftFunctor.{u + 1}
+
+/-- Units satisfy descent on the pro-etale site (Stacks, Tags 03PK and 03O3). -/
+theorem proEtaleUnitsPresheaf_isSheaf (S : Scheme.{u}) :
+    Presheaf.IsSheaf (ProEt.topology S) (proEtaleUnitsPresheaf S) := by
+  exact Presheaf.isSheaf_comp_of_isSheaf (ProEt.topology S)
+    (proEtaleStructureSheaf S).obj
+    (forget₂ CommRingCat CommMonCat ⋙ CommMonCat.units ⋙
+      CommGrpCat.toAddCommGrp ⋙ AddCommGrpCat.uliftFunctor.{u + 1})
+    (proEtaleStructureSheaf S).property
+
+/-- The sheaf `G_m = O_Sˣ` of abelian groups on the small pro-etale site (Stacks, Tag 03PK). -/
+def proEtaleUnitsSheaf (S : Scheme.{u}) : Sheaf (ProEt.topology S) AddCommGrpCat.{u + 1} :=
+  ⟨proEtaleUnitsPresheaf S, proEtaleUnitsPresheaf_isSheaf S⟩
+
+end AlgebraicGeometry.Scheme

@@ -6,6 +6,9 @@ import Birch.DeligneFiniteField
 import Birch.DirectionStratumCount
 import Birch.WeylEstimateProof
 import Birch.FinalQuadraticMetric
+import Birch.UnivariateStepanov
+import Birch.DelignePrimeBoundWithLoss
+import Birch.MetricPrimeLoss
 
 /-! # Weyl, completion and the critical moment at singular codimension -/
 
@@ -30,16 +33,78 @@ theorem RationalGradientDimension.eventualPrimeLE {n d σ : ℕ} {F : IntForm n}
   dsimp [RationalGradientDimension] at hσ
   exact eventualPrimeGradientDimensionLE_of_geometric_dimension_le hn hF hd hσ.le
 
-/-- Completion from the prime-field Weil II estimate in terminal degrees at
-least three. The quadratic stage has its own proof. -/
+/-- The square-root estimates needed in the terminal degrees of a degree-`d` form. -/
+def TerminalPrimeBounds (d : ℕ) : Prop :=
+  ∀ r, 3 ≤ r → r < d → ∀ l, UniformTwistedPrimeBound r l
+
+/-- In dimensions at least two, the terminal estimate may lose a small power of the prime. -/
+def TerminalPrimeBoundsWithLoss (d : ℕ) (δ : ℝ) : Prop :=
+  ∀ r, 3 ≤ r → r < d → ∀ l, 2 ≤ l → UniformTwistedPrimeBoundWithLoss r l δ
+
+theorem TerminalPrimeBoundsWithLoss.of_terminalPrimeBounds {d : ℕ} {δ : ℝ}
+    (h : TerminalPrimeBounds d) (hδ : 0 ≤ δ) : TerminalPrimeBoundsWithLoss d δ :=
+  fun r hr hrd l _ => (h r hr hrd l).withLoss hδ
+
+theorem TerminalPrimeBounds.of_deligne {d : ℕ}
+    (h : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) : TerminalPrimeBounds d := by
+  intro r hr hrd l
+  exact uniformTwistedPrimeBound_of_deligneTwistedDegree (by omega)
+    (deligneTwistedDegree_of_primeDeligneEstimate (by omega) (h r hr hrd)) l
+
+/-- Only terminal dimensions at least two remain after the Stepanov estimate. -/
+theorem TerminalPrimeBounds.of_higherDimensional {d : ℕ}
+    (h : ∀ r, 3 ≤ r → r < d → ∀ l, 2 ≤ l → UniformTwistedPrimeBound r l) :
+    TerminalPrimeBounds d := by
+  intro r hr hrd l
+  rcases l with _ | _ | l
+  · exact uniformTwistedPrimeBound_zero (by omega)
+  · exact uniformTwistedPrimeBound_one_of_stepanov (by omega)
+  · exact h r hr hrd (l + 2) (by omega)
+
+/-- Completion from the uniform twisted prime-field bounds in terminal
+degrees at least three. The quadratic stage has its own proof. -/
+theorem v2CompletionEstimate_of_terminalPrimeBounds {n d σ : ℕ} {F : IntForm n}
+    (hn : 0 < n) (hd : 3 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
+    (hPrime : TerminalPrimeBounds d) :
+    CompletionEstimate d (n - σ) (fun P α => ‖normalizedSum F w P α‖) := by
+  apply completionEstimate_of_gradientDim hF (hσ.eventualPrimeLE hn (by omega) hF) hwbox
+  exact completionInputs_of_direction_bound_uniform_twisted hF hw hwbox (primeDirectionBound n d)
+    fun r hr hrd l _ => hPrime r hr hrd l
+
+/-- Completion transmits the terminal power loss with a constant uniform in the prime. -/
+theorem v2CompletionEstimateWithPrimeLoss {n d σ : ℕ} {F : IntForm n} {δ : ℝ}
+    (hn : 0 < n) (hd : 3 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
+    (hδ : 0 ≤ δ) (hPrime : TerminalPrimeBoundsWithLoss d δ) :
+    CompletionEstimateWithPrimeLoss d (n - σ) (fun P α => ‖normalizedSum F w P α‖) δ := by
+  have hnonneg (p : ℕ) : 0 ≤ (p : ℝ)^δ := Real.rpow_nonneg (Nat.cast_nonneg p) _
+  have hone (p : ℕ) (hp : p.Prime) : 1 ≤ (p : ℝ)^δ :=
+    Real.one_le_rpow (by exact_mod_cast hp.one_lt.le) hδ
+  intro r hr hrd
+  have hTwisted (l : ℕ) : UniformTwistedPrimeBoundWithLoss r l δ := by
+    rcases eq_or_lt_of_le hr with rfl | hr'
+    · exact (uniformTwistedPrimeBound_of_deligneTwistedDegree le_rfl
+        deligneTwistedDegree_two l).withLoss hδ
+    · rcases l with _ | _ | l
+      · exact (uniformTwistedPrimeBound_zero hr).withLoss hδ
+      · exact (uniformTwistedPrimeBound_one_of_stepanov hr).withLoss hδ
+      · exact hPrime r hr' hrd (l + 2) (by omega)
+  have hinput := completionInputsAt_of_uniform_primeBounds_withMultiplier hF hw hwbox hr hrd.le
+    (primeDirectionBound n d)
+    (primeSectionBound_of_interior hr
+      (primeInteriorSectionBound_of_geometric hr (primeGeometricInteriorSections n r hr)))
+    hnonneg (fun l _ => (hTwisted l).withMultiplier)
+  simpa only [mul_right_comm] using
+    completionEstimateAt_of_gradientDim_withMultiplier hF (hσ.eventualPrimeLE hn (by omega) hF)
+      hwbox hone hinput
+
 theorem v2CompletionEstimate_of_weilII {n d σ : ℕ} {F : IntForm n}
     (hn : 0 < n) (hd : 3 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
     {w : (Fin n → ℝ) → ℝ} (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
     (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
-    CompletionEstimate d (n - σ) (fun P α => ‖normalizedSum F w P α‖) := by
-  apply completionEstimate_of_gradientDim hF (hσ.eventualPrimeLE hn (by omega) hF) hwbox
-  exact completionInputs_of_direction_bound_deligne hF hw hwbox (primeDirectionBound n d)
-    fun r hr hrd => deligneTwistedDegree_of_primeDeligneEstimate (by omega) (hWeilII r hr hrd)
+    CompletionEstimate d (n - σ) (fun P α => ‖normalizedSum F w P α‖) :=
+  v2CompletionEstimate_of_terminalPrimeBounds hn hd hF hσ hw hwbox (TerminalPrimeBounds.of_deligne hWeilII)
 
 /-- The Weyl estimate retains the gradient codimension for weights
 that meet the critical locus. -/
@@ -63,10 +128,10 @@ theorem v2MetricDistribution_of_completion {d ν : ℕ} {f : ℝ → ℝ → ℝ
   · omega
 
 /-- The level estimates for forms include the direct quadratic case. -/
-theorem v2MetricDistribution_of_weilII {n d σ : ℕ} {F : IntForm n}
+theorem v2MetricDistribution_of_terminalPrimeBounds {n d σ : ℕ} {F : IntForm n}
     (hν : 0 < n - σ) (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
     {w : (Fin n → ℝ) → ℝ} (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
-    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    (hPrime : TerminalPrimeBounds d) :
     V2MetricDistribution circleMeasure d (n - σ)
       (fun P α => ENNReal.ofReal ‖normalizedSum F w P α‖) := by
   by_cases h₂ : d = 2
@@ -85,7 +150,15 @@ theorem v2MetricDistribution_of_weilII {n d σ : ℕ} {F : IntForm n}
       simpa only [hpoint, hexcept, Nat.cast_ofNat] using hlevel
   · have hd₃ : 3 ≤ d := by omega
     exact v2MetricDistribution_of_completion hd₃
-      (v2CompletionEstimate_of_weilII (by omega) hd₃ hF hσ hw hwbox hWeilII)
+      (v2CompletionEstimate_of_terminalPrimeBounds (by omega) hd₃ hF hσ hw hwbox hPrime)
+
+theorem v2MetricDistribution_of_weilII {n d σ : ℕ} {F : IntForm n}
+    (hν : 0 < n - σ) (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : ContDiff ℝ ∞ w) (hwbox : CubeSupported w)
+    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    V2MetricDistribution circleMeasure d (n - σ)
+      (fun P α => ENNReal.ofReal ‖normalizedSum F w P α‖) :=
+  v2MetricDistribution_of_terminalPrimeBounds hν hd hF hσ hw hwbox (TerminalPrimeBounds.of_deligne hWeilII)
 
 /-- The trivial bound for the normalized form sum at every frequency. -/
 theorem norm_normalizedSum_eventually_bounded {n : ℕ} (F : IntForm n)
@@ -141,8 +214,57 @@ theorem v2CriticalMoment_of_completion {n d σ : ℕ} {F : IntForm n}
         criticalMomentExponent d (n - σ) ∂circleMeasure) (-(d : ℝ) + ε) :=
   v2CriticalMoment_of_formMetric hν (by omega) hw (v2MetricDistribution_of_completion hd hcompletion)
 
-/-- The critical full-circle moment from the terminal prime-field
-estimates of Deligne. -/
+/-- The critical full-circle moment from the uniform terminal estimates. -/
+theorem v2CriticalMoment_of_terminalPrimeBounds {n d σ : ℕ} {F : IntForm n}
+    (hν : 0 < n - σ) (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w) (hwbox : CubeSupported w)
+    (hPrime : TerminalPrimeBounds d) :
+    ∀ ε > 0, coverPowerBound
+      (fun P => ∫⁻ α, ENNReal.ofReal ‖normalizedSum F w P α‖ ^
+        criticalMomentExponent d (n - σ) ∂circleMeasure) (-(d : ℝ) + ε) :=
+  v2CriticalMoment_of_formMetric hν hd hw
+    (v2MetricDistribution_of_terminalPrimeBounds hν hd hF hσ hw.smooth hwbox hPrime)
+
+/-- The critical full-circle moment at the reduced gradient codimension. -/
+def FormCriticalMomentBounds (d : ℕ) : Prop :=
+  ∀ {n σ : ℕ} {F : IntForm n}, 0 < n - σ → 2 ≤ d →
+    F.IsHomogeneous d → RationalGradientDimension F σ →
+    ∀ {w : (Fin n → ℝ) → ℝ}, CompactWeight w → CubeSupported w →
+    ∀ ε > 0, coverPowerBound
+      (fun P => ∫⁻ α, ENNReal.ofReal ‖normalizedSum F w P α‖ ^
+        criticalMomentExponent d (n - σ) ∂circleMeasure) (-(d : ℝ) + ε)
+
+theorem FormCriticalMomentBounds.of_terminalPrimeBounds {d : ℕ}
+    (hPrime : TerminalPrimeBounds d) : FormCriticalMomentBounds d := by
+  intro n σ F hν hd hF hσ w hw hwbox
+  exact v2CriticalMoment_of_terminalPrimeBounds hν hd hF hσ hw hwbox hPrime
+
+/-- Arbitrarily small terminal losses give the full critical-moment estimate at the same exponent. -/
+theorem FormCriticalMomentBounds.of_terminalPrimeBoundsWithLoss {d : ℕ}
+    (hPrime : ∀ δ : ℝ, 0 < δ → TerminalPrimeBoundsWithLoss d δ) :
+    FormCriticalMomentBounds d := by
+  intro n σ F hν hd hF hσ w hw hwbox
+  by_cases hd₂ : d = 2
+  · subst d
+    exact v2CriticalMoment_of_terminalPrimeBounds hν hd hF hσ hw hwbox
+      (by intro r hr hrd; omega)
+  have hd₃ : 3 ≤ d := by omega
+  apply criticalMoment_of_scaledMetric hd hν circleMeasure
+  · intro P
+    unfold normalizedSum
+    exact ((continuous_exponentialSum F w P).const_smul (P ^ (-(n : ℝ)) : ℝ)).norm.measurable.ennreal_ofReal
+  · obtain ⟨C, hC, hbound⟩ := norm_normalizedSum_eventually_bounded F hw
+    exact ⟨C.toNNReal, Real.toNNReal_pos.2 hC,
+      hbound.mono fun P hP α => by
+        rw [ENNReal.ofNNReal_toNNReal]
+        exact ENNReal.ofReal_le_ofReal (hP α)⟩
+  · intro ζ hζ
+    have hδ : 0 < ζ/2 := by positivity
+    have hCompletion := v2CompletionEstimateWithPrimeLoss (by omega) hd₃ hF hσ hw.smooth hwbox
+      hδ.le (hPrime (ζ/2) hδ)
+    simpa only [show 2 * (ζ / 2) = ζ by ring, ENNReal.ofReal_mul' (norm_nonneg _)] using
+      v2MetricDistribution_of_completion hd₃ (hCompletion.scaled hδ.le)
+
 theorem v2CriticalMoment_of_weilII {n d σ : ℕ} {F : IntForm n}
     (hν : 0 < n - σ) (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
     {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w) (hwbox : CubeSupported w)
@@ -150,8 +272,7 @@ theorem v2CriticalMoment_of_weilII {n d σ : ℕ} {F : IntForm n}
     ∀ ε > 0, coverPowerBound
       (fun P => ∫⁻ α, ENNReal.ofReal ‖normalizedSum F w P α‖ ^
         criticalMomentExponent d (n - σ) ∂circleMeasure) (-(d : ℝ) + ε) :=
-  v2CriticalMoment_of_formMetric hν hd hw
-    (v2MetricDistribution_of_weilII hν hd hF hσ hw.smooth hwbox hWeilII)
+  v2CriticalMoment_of_terminalPrimeBounds hν hd hF hσ hw hwbox (TerminalPrimeBounds.of_deligne hWeilII)
 
 end
 

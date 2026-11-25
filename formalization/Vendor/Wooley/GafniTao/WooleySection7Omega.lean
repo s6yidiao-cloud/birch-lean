@@ -108,7 +108,7 @@ theorem wooleySection7_taylor_laurent_expansion
     have hne : (i : ℕ) + 1 ≠ 0 := by omega
     unfold wooleyTaylorDifference
     rw [coeff_sub, coeff_C]
-    simp only [if_neg hne, sub_zero]
+    simp only [ite_eq_right hne, sub_zero]
   rw [hpositive]
   change C (((taylor h
       (X ^ (wooleySection7Node k r l + 1) +

@@ -1,0 +1,97 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+
+public import WeilConjectures.SixFunctors.ProEtale.ModuleObject.Colimit.TwoColimit
+public import WeilConjectures.NumberTheory.Padics.FiniteCoefficientFields
+public import Mathlib.NumberTheory.Padics.PadicNumbers
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
+
+/-! # Canonical derived condensed coefficient comparisons
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace AlgebraicGeometry.ProEtale
+
+open Scheme
+open scoped CategoryTheory.Obj CategoryTheory.Functor
+
+variable (T : Scheme.{u}) (ℓ : ℕ) [Fact ℓ.Prime]
+
+/-- Composition of finite coefficient inclusions. -/
+theorem condensedCoefficientMap_comp
+    {E F G : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)}
+    (h : E ≤ F) (k : F ≤ G) :
+    padicSubfieldRingObjMap T ℓ h ≫ padicSubfieldRingObjMap T ℓ k =
+      padicSubfieldRingObjMap T ℓ (h.trans k) := by
+  rw [← coefficientMap_comp, ← Profinite.padicSubfieldRingObjMap_comp]
+
+/-- Identity coefficient inclusion. -/
+theorem condensedCoefficientMap_id
+    (E : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)) :
+    padicSubfieldRingObjMap T ℓ (le_refl E) = 𝟙 _ := by
+  change coefficientMap (Profinite.padicSubfieldRingObjMap ℓ (le_refl E)) T = _
+  rw [Profinite.padicSubfieldRingObjMap_id, coefficientMap_id]
+
+/-- Exactness of the composite finite coefficient extension. -/
+theorem condensedCoefficientCompositeExact
+    {E F G : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)}
+    (h : E ≤ F) (k : F ≤ G) :
+    PreservesFiniteLimits
+      (Mod.extendScalars (padicSubfieldRingObjMap T ℓ h ≫
+        padicSubfieldRingObjMap T ℓ k)) := by
+  exact preservesFiniteLimits_of_natIso
+    (Mod.extendScalarsIsoOfEq (condensedCoefficientMap_comp T ℓ h k)).symm
+
+attribute [instance] condensedCoefficientCompositeExact
+
+/-- The canonical derived multiplication comparison for three finite coefficient fields. -/
+noncomputable def condensedCoefficientCompIso
+    {E F G : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)}
+    (h : E ≤ F) (k : F ≤ G) :
+    derivedExtendScalarsSubfield T ℓ h ⋙ derivedExtendScalarsSubfield T ℓ k ≅
+      derivedExtendScalarsSubfield T ℓ (h.trans k) :=
+  (Functor.leftDerivedFunctorCompIso _ _).symm ≪≫
+    Functor.leftDerivedFunctorNatIso _
+      ((Mod.extendScalarsComp _ _).symm ≪≫
+        Mod.extendScalarsIsoOfEq (condensedCoefficientMap_comp T ℓ h k))
+
+/-- Canonical derived scalar unit comparison, induced by `a ⊗ p ↦ ap`. -/
+noncomputable def condensedCoefficientUnitIso
+    (E : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)) :
+    derivedExtendScalarsSubfield T ℓ (le_refl E) ≅
+      𝟭 (DerivedCategory
+        (Mod (Sheaf (ProEt.topology T) Ab.{u + 1}) (padicSubfieldRingObj T ℓ E))) :=
+  Functor.leftDerivedFunctorNatIso _
+      (Mod.extendScalarsIsoOfEq (condensedCoefficientMap_id T ℓ E) ≪≫
+        Mod.extendScalarsId) ≪≫
+    (𝟭 (Mod (Sheaf (ProEt.topology T) Ab.{u + 1})
+      (padicSubfieldRingObj T ℓ E))).leftDerivedFunctorIsoMapDerivedCategory ≪≫
+    Functor.mapDerivedCategoryIdIso _
+
+/-- The canonical shifts of finite coefficient extension, transported from termwise tensor. -/
+noncomputable instance condensedCoefficientCommShift
+    {E F : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)} (h : E ≤ F) :
+    (derivedExtendScalarsSubfield T ℓ h).CommShift ℤ :=
+  Functor.CommShift.ofIso
+    ((Mod.extendScalars
+      (padicSubfieldRingObjMap T ℓ h)).leftDerivedFunctorIsoMapDerivedCategory.symm) ℤ
+
+/-- The canonical shifts of extension to the closure, transported from termwise tensor. -/
+noncomputable instance condensedAlgClCoefficientCommShift
+    (E : Padic.FiniteCoefficientFields ℓ (PadicAlgCl ℓ)) :
+    (derivedExtendScalarsToPadicAlgCl T ℓ E).CommShift ℤ :=
+  Functor.CommShift.ofIso
+    ((Mod.extendScalars
+      (padicSubfieldRingObjToPadicAlgCl T ℓ E)).leftDerivedFunctorIsoMapDerivedCategory.symm) ℤ
+
+end AlgebraicGeometry.ProEtale

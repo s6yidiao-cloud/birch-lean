@@ -74,12 +74,15 @@ private theorem card_weylNearTensorBox_split {n k : ℕ} (G : IntForm n) (α δ 
       simpa only [Fin.insertNth_apply_same] using congrFun h i⟩
   have he (x : Fin n → ℤ) : e x ∈ S ↔ x ∈ U := by
     rw [mem_weylNearTensorBox, mem_weylNearInputBox]
-    change ((∀ j, (Fin.insertNth i x r : Fin (k+1) → Fin n → ℤ) j ∈ latticeBox n (H j)) ∧ _) ↔ _
+    let t : Fin (k+1) → Fin n → ℤ := Fin.insertNth i x r
+    change ((∀ j, t j ∈ latticeBox n (H j)) ∧
+      (∀ j, nearestIntegerDistance (α * (weylFrequency (List.ofFn t) G j : ℝ)) ≤ δ)) ↔ _
+    dsimp only [t]
     rw [Fin.forall_iff_succAbove i]
     simp only [Fin.insertNth_apply_same, Fin.insertNth_apply_succAbove]
     have hrest : ∀ j, r j ∈ latticeBox n (H (i.succAbove j)) := Fintype.mem_piFinset.mp hr
     rw [mem_latticeBox_iff_abs]
-    simp [hrest, e, weylBlockMatrix_frequency G α i]
+    simp [hrest, weylBlockMatrix_frequency G α i]
   have hfiber : (S.filter fun t => rest t = r) = U.map e := by
     ext t
     constructor
@@ -138,7 +141,7 @@ theorem card_weylNearTensorBox_le_shrink_all {n k : ℕ} (G : IntForm n) (α : �
     have hC : 0 ≤ C := by dsimp [C]; positivity
     have hstep (S : Finset (Fin (k+1))) (i : Fin (k+1)) (hi : i ∉ S) :
         N S ≤ C * N (insert i S) := by
-      have hRi : R S i = P := if_neg hi
+      have hRi : R S i = P := ite_eq_right hi
       have hTpos : 0 < T S := div_pos (pow_pos hθ _) hp
       have hTle : T S ≤ 1/P := div_le_div_of_nonneg_right (pow_le_one₀ hθ.le hθ') hp.le
       have hTsmall : T S < 1/2 := hTle.trans_lt ((div_lt_iff₀ hp).mpr (by linarith))

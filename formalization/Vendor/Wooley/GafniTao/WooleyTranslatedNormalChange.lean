@@ -57,7 +57,7 @@ theorem wooley_exists_tail_normal_change_of_leftInverse_high
   have hfhigh (i : Fin k) (n : ℕ) (hn : k + 1 ≤ n) :
       (p : ℤ) ^ c ∣ (f i).coeff n := by
     simp only [f, coeff_sub, coeff_C]
-    rw [if_neg (by omega : n ≠ 0), sub_zero]
+    rw [ite_eq_right (by omega : n ≠ 0), sub_zero]
     exact wooleyNormalFormCombination_high_coeff_dvd_of_each
       theta hhigh G i n hn
   choose psi htail using fun i : Fin k =>
@@ -75,7 +75,7 @@ theorem wooley_exists_tail_normal_change_of_leftInverse_high
     intro d hd
     congr 2
     simp only [f, coeff_sub, coeff_C]
-    rw [if_neg (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
+    rw [ite_eq_right (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
   have hf := htail i
   rw [hpositive, hlow i] at hf
   dsimp only [f] at hf

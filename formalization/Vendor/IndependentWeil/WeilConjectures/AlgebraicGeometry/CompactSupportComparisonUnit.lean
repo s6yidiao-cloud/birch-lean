@@ -1,0 +1,45 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+public import WeilConjectures.SixFunctors.ProEtale.FiniteCoefficient.Derived.Comparison
+
+/-! # The comparison unit in fixed-coefficient module sheaves
+
+This exposes the canonical unit in the fixed-ring presentation used by compact support.
+The recorded coefficient realization identifies this presentation with constant-ring
+module sheaves.
+
+## References
+
+* Stacks Project, Tag 099V
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.ProEtale
+
+/-- The actual bounded below comparison-adjunction unit is invertible on all objects
+(Stacks, Tag 099V). -/
+theorem isIso_compactSupportComparisonUnit (T : Scheme.{u})
+    (Λ : Type (u + 1)) [CommRing Λ] [Finite Λ] :
+    IsIso (derivedComparisonAdjunctionPlus (ModuleCat.{u + 1} Λ) T).unit := by
+  have := isIso_comparisonAdjunction_unit (ModuleCat.{u + 1} Λ) T
+  rw [NatTrans.isIso_iff_isIso_app]
+  intro M
+  change IsIso
+    ((comparisonAdjunction (ModuleCat.{u + 1} Λ) T).derivedAdjunctionPlus.unit.app M)
+  rw [(comparisonAdjunction (ModuleCat.{u + 1} Λ) T).derivedAdjunctionPlus_eq_derivedPlus]
+  exact (comparisonAdjunction (ModuleCat.{u + 1} Λ) T).isIso_derivedPlus_unit_app_of_rightAcyclic
+    (fun _ _ ↦ inferInstance)
+    (fun I _ ↦ rightAcyclic_comparisonUpperStar_obj_of_injective (ModuleCat.{u + 1} Λ) T I) M
+
+end AlgebraicGeometry.ProEtale

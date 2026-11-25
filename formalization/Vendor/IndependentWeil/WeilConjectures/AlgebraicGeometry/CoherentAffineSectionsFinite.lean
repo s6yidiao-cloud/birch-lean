@@ -1,0 +1,70 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.AlgebraicGeometry.AffineScheme
+public import WeilConjectures.AlgebraicGeometry.Coherent
+import WeilConjectures.AlgebraicGeometry.Modules.FiniteDescent
+import all WeilConjectures.AlgebraicGeometry.CoherentFiniteTypeLocallyNoetherian
+public import Mathlib.AlgebraicGeometry.AffineScheme
+
+/-! # Finite affine sections of a coherent module
+
+## References
+
+* Stacks Project, Tags 01BV, 01PB and 01Y8
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.Scheme.Modules
+
+/-- A coherent module has finitely generated sections on each affine open.
+(Stacks, Tag 01Y8) -/
+theorem coherent_affine_sections_finite (X : Scheme.{u}) (F : X.Modules)
+    (hF : RingedSpace.IsCoherent X.toRingedSpace F)
+    (U : X.Opens) (hU : IsAffineOpen U) : Module.Finite Γ(X, U) Γ(F, U) := by
+  classical
+  have (V : X.Opens) :
+      HasSheafify ((Opens.grothendieckTopology X).over V)
+        AddCommGrpCat.{u} := inferInstance
+  have (V : X.Opens) :
+      ((Opens.grothendieckTopology X).over V).WEqualsLocallyBijective
+        AddCommGrpCat.{u} := inferInstance
+  have (V : X.Opens) (W : CategoryTheory.Over V) :
+      HasSheafify (((Opens.grothendieckTopology X).over V).over W)
+        AddCommGrpCat.{u} := inferInstance
+  have (V : X.Opens) (W : CategoryTheory.Over V) :
+      (((Opens.grothendieckTopology X).over V).over W).WEqualsLocallyBijective
+        AddCommGrpCat.{u} := inferInstance
+  have : F.IsFiniteType := hF.1
+  obtain ⟨q, hq⟩ := SheafOfModules.IsFiniteType.exists_localGeneratorsData F
+  have hfp (i : q.I) : (F.over (q.X i)).IsFinitePresentation := by
+    have := hq.isFiniteType i
+    let _ := Fintype.ofFinite (q.generators i).I
+    let n := Fintype.card (q.generators i).I
+    let e := (SheafOfModules.freeFunctor (R := X.ringCatSheaf.over (q.X i))).mapIso
+      ((Equiv.ulift.trans (Fintype.equivFin (q.generators i).I).symm).toIso)
+    let f := e.hom ≫ (q.generators i).π
+    have : Epi f := inferInstanceAs (Epi (e.hom ≫ (q.generators i).π))
+    let G := SheafOfModules.GeneratingSections.ofEpiFree f
+    have : G.IsFiniteType := ⟨inferInstanceAs (Finite (ULift.{u} (Fin n)))⟩
+    have : (Limits.kernel G.π).IsFiniteType := by
+      simpa only [G, SheafOfModules.GeneratingSections.ofEpiFree_π]
+        using hF.2 (q.X i) n f
+    exact isFinitePresentation_of_generators_kernel.{u} (F.over (q.X i)) G
+  have : F.IsFinitePresentation := by
+    exact @SheafOfModules.IsFinitePresentation.of_coversTop _ _ _ _ _ _ _ _
+      F q.I q.X q.coversTop hfp
+  have := finitePresentation_sections_of_isFinitePresentation F hU
+  infer_instance
+
+end AlgebraicGeometry.Scheme.Modules

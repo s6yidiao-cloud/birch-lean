@@ -61,7 +61,9 @@ private theorem card_weylNearInputBox_le_rough {n : ℕ} (A : Matrix (Fin n) (Fi
     obtain ⟨x,hx,rfl⟩ := Finset.mem_map.mp hp
     have h := mem_weylNearInputBox.mp hx
     apply (norm_normalizedWeylPair_le_iff A hH hδ zero_le_one _).mpr
-    simpa only [weylAliases, Function.Embedding.coeFn_mk, mul_one, nearestIntegerDistance] using h
+    change (∀ i, |(x i : ℝ)| ≤ H * 1) ∧
+      (∀ i, |realMatrixFrequency A x i - (round (realMatrixFrequency A x i) : ℝ)| ≤ δ * 1)
+    simpa only [mul_one, nearestIntegerDistance] using h
   have hU (p q : WeylPair n) (hp : p ∈ S) (hq : q ∈ S)
       (hd : ‖normalizedWeylPair A H δ (p-q)‖ < θ) : p-q ∈ U := by
     obtain ⟨x,hx,rfl⟩ := Finset.mem_map.mp hp

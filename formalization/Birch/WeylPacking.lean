@@ -17,7 +17,7 @@ theorem separated_finset_card_le_pow {E : Type*} [NormedAddCommGroup E] [NormedS
     (hR : 0 ≤ R) (hδ : 0 < δ) (hT : ∀ x ∈ T, ‖x‖ ≤ R)
     (hsep : ∀ x ∈ T, ∀ y ∈ T, x ≠ y → δ ≤ dist x y) :
     (T.card : ℝ) ≤ (1 + 2 * R / δ)^finrank ℝ E := by
-  letI : ProperSpace E := FiniteDimensional.proper ℝ E
+  let : ProperSpace E := FiniteDimensional.proper ℝ E
   let r : ℝ := δ/2
   have hr : 0 < r := half_pos hδ
   have hRr : 0 < R + r := by linarith

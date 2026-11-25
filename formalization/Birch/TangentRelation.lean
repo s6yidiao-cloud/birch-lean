@@ -14,8 +14,10 @@ private theorem dimension_hypersurface_le {n : ℕ} {K : Type} [Field K]
     {G : MvPolynomial (Fin (n+1)) K} (hG : G ≠ 0) :
     ringKrullDim (MvPolynomial (Fin (n+1)) K ⧸ Ideal.span {G}) ≤ (n : WithBot ℕ∞) := by
   have h := ringKrullDim_quotient_succ_le_of_nonZeroDivisor (mem_nonZeroDivisors_iff_ne_zero.mpr hG)
+  have hc : ENat.card (Fin (n+1)) = (n+1 : ℕ) := by
+    simp [ENat.card_eq_coe_fintype_card]
   rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field K,
-    zero_add, Nat.card_fin] at h
+    zero_add, hc] at h
   by_contra! h_bad
   have h₁ := ENat.WithBot.add_one_le_iff.mpr h_bad
   have h₂ := (add_le_add h₁ (le_rfl (a := (1 : WithBot ℕ∞)))).trans h
@@ -60,11 +62,11 @@ private theorem exists_tangent_relation {n : ℕ} {K : Type} [Field K]
       ∀ y : Fin (n+1) → K, G.eval y = 0 → T.eval (fun i => (pderiv i G).eval y) = 0 := by
   classical
   let J : Ideal (MvPolynomial (Fin (n+1)) K) := Ideal.span {G}
-  letI : Fintype J.minimalPrimes :=
+  let : Fintype J.minimalPrimes :=
     (Ideal.finite_minimalPrimes_of_isNoetherianRing _ J).fintype
   have ht (P : J.minimalPrimes) :
       ∃ T : MvPolynomial (Fin (n+1)) K, T ≠ 0 ∧ aeval (fun i => pderiv i G) T ∈ P.val := by
-    letI : P.val.IsPrime := P.prop.1.1
+    let : P.val.IsPrime := P.prop.1.1
     exact exists_relation_mod_prime hG P.val (P.prop.1.2 (Ideal.subset_span (Set.mem_singleton G)))
   choose V hV hgrad using ht
   let T := ∏ P : J.minimalPrimes, V P

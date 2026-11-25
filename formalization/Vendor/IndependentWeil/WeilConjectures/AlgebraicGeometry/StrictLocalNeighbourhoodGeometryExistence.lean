@@ -1,0 +1,87 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+
+public import WeilConjectures.AlgebraicGeometry.StrictHenselizationBaseChangeCone
+
+
+public import WeilConjectures.AlgebraicGeometry.StrictLocalNeighbourhoodGeometry
+import WeilConjectures.AlgebraicGeometry.StrictHenselizationCanonicalBaseChangeCone
+import Mathlib.AlgebraicGeometry.Morphisms.Affine
+
+/-! # Existence of the canonical strict-local neighbourhood geometry
+
+## References
+
+* [Stacks, Tag 03Q9]
+-/
+
+@[expose] public section
+
+universe v
+
+open CategoryTheory CategoryTheory.Limits Opposite
+open AlgebraicGeometry
+
+namespace AlgebraicGeometry.Etale
+
+set_option backward.defeqAttrib.useBackward true in
+set_option backward.isDefEq.respectTransparency false in
+/-- The pullback of the strict henselization is the limit of the small affine
+neighbourhood pullbacks, with qcqs stages and affine transition morphisms. -/
+theorem nonempty_strictLocalNeighbourhoodGeometry {X S : Scheme.{v}}
+    (f : X ⟶ S) [QuasiCompact f] [QuasiSeparated f]
+    {Ω : Type v} [Field Ω] [IsAlgClosed Ω] (s : Spec (.of Ω) ⟶ S) :
+    Nonempty (StrictLocalNeighbourhoodGeometry f s) := by
+  classical
+  obtain ⟨π, hπ, hp, hf⟩ := Scheme.strictHenselizationAffineBaseChangeCone_exists f s
+  let A := strictLocalNeighbourhoods s
+  let D := strictLocalNeighbourhoodDiagram f s
+  have hAff (i : SmallModel.{v} (Scheme.strictHenselizationNeighbourhoods s)) :
+      IsAffine (A.obj i).left := by
+    change IsAffine (Spec _)
+    infer_instance
+  let hComp (i : SmallModel.{v} (Scheme.strictHenselizationNeighbourhoods s)) :
+      CompactSpace (D.obj i) := by
+    let : IsAffine (A.obj i).left := hAff i
+    exact QuasiCompact.compactSpace_of_compactSpace
+      (Y := (A.obj i).left) (pullback.fst (A.obj i).hom f)
+  let hQS (i : SmallModel.{v} (Scheme.strictHenselizationNeighbourhoods s)) :
+      QuasiSeparatedSpace (D.obj i) := by
+    let : IsAffine (A.obj i).left := hAff i
+    exact quasiSeparatedSpace_of_quasiSeparated
+      (Y := (A.obj i).left) (pullback.fst (A.obj i).hom f)
+  let hTrans {i j : SmallModel.{v} (Scheme.strictHenselizationNeighbourhoods s)}
+      (a : i ⟶ j) : IsAffineHom (D.map a) := by
+    let : IsAffine (A.obj i).left := hAff i
+    let : IsAffine (A.obj j).left := hAff j
+    change IsAffineHom (pullback.lift _ _ _)
+    exact MorphismProperty.pullbackLift_fst_snd
+      (P := @IsAffineHom) f (MorphismProperty.Over.w (A.map a)).symm
+      (isAffineHom_of_isAffine
+        (X := (A.obj i).left) (Y := (A.obj j).left) _)
+  let c : Cone D := Cone.mk _ π
+  let e := pullbackSymmetry f (Scheme.strictLocalizationToBase s)
+  let c' := c.extend e.hom
+  refine ⟨{
+    legs := c'.π
+    isLimit := ?_
+    compact := hComp
+    quasiSeparated := hQS
+    affine := hTrans
+    first := ?_
+    over := ?_ }⟩
+  · exact hπ.some.ofIsoLimit (Cone.extendIso c e.symm)
+  · intro i
+    change e.hom ≫ π.app i ≫ pullback.fst (A.obj i).hom f = _
+    simpa [e, A, strictLocalNeighbourhoods, Scheme.strictHenselizationEtaleDiagram] using
+      congrArg (fun g ↦ e.hom ≫ g) (hf i)
+  · intro i
+    change e.hom ≫ π.app i ≫ pullback.snd (A.obj i).hom f = _
+    simpa [e, A, strictLocalNeighbourhoods, Scheme.strictHenselizationEtaleDiagram] using
+      congrArg (fun g ↦ e.hom ≫ g) (hp i)
+
+end AlgebraicGeometry.Etale

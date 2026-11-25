@@ -108,7 +108,7 @@ theorem wooleySection7_node_succ_ne_zero
 theorem wooleySection7_binomialMatrix_det_ne_zero
     {k r p : ℕ} (hp : p.Prime) (hrk : r ≤ k) (hkp : k < p) :
     (wooleySection7BinomialMatrix k r p).det ≠ 0 := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let v : Fin r → ZMod p :=
     fun l => (wooleySection7Node k r l : ZMod p)
   let P : Fin r → Polynomial (ZMod p) :=
@@ -146,7 +146,7 @@ has an actual matrix inverse. -/
 theorem wooleySection7_binomialMatrix_isUnit
     {k r p : ℕ} (hp : p.Prime) (hrk : r ≤ k) (hkp : k < p) :
     IsUnit (wooleySection7BinomialMatrix k r p) := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   rw [Matrix.isUnit_iff_isUnit_det]
   exact isUnit_iff_ne_zero.mpr
     (wooleySection7_binomialMatrix_det_ne_zero hp hrk hkp)
@@ -180,7 +180,7 @@ theorem wooleySection7_sourceMatrix_isUnit_primePower
     IsUnit (wooleyIntMatrixMod Omega (p ^ L)) := by
   have hdetp : (Omega.det : ZMod p) ≠ 0 :=
     wooleySection7_sourceMatrix_det_mod_prime_ne_zero hp hrk hkp Omega hOmega
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   have hunitp : IsUnit (Omega.det : ZMod p) := isUnit_iff_ne_zero.mpr hdetp
   have hcoprime : IsCoprime (p : ℤ) Omega.det :=
     (ZMod.coe_int_isUnit_iff_isCoprime Omega.det p).mp hunitp

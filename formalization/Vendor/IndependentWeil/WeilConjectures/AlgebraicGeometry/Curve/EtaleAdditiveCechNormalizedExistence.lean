@@ -1,0 +1,81 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechNormalization
+import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechAugmentationHomology
+import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechResolutionTransfer
+import WeilConjectures.AlgebraicGeometry.EtaleResolutionSectionCanonicalData
+
+/-! # Existence of normalized additive étale Čech edges
+
+## References
+
+* Stacks Project, Tags 03P2, 01EQ, 01FD
+-/
+
+@[expose] public section
+
+universe u
+open CategoryTheory Opposite
+namespace AlgebraicGeometry.Scheme.Modules
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.types false
+
+/-- The additive étale Čech edge equivalence has its augmentation normalization. -/
+theorem exists_etaleAdditiveCech_normalized
+    (X : Scheme.{u}) [CompactSpace X] [X.IsSeparated]
+    {ι : Type u} [Finite ι] (U : ι → X.Opens)
+    (hU : ∀ (k : ℕ) (y : Fin (k + 1) → ι), IsAffineOpen (⨅ l, U (y l)))
+    (hcover : iSup U = ⊤)
+    (n : ℕ) :
+    ∃ a : Sheaf.H X.etaleAdditiveSheaf n ≃+
+      (cechOver X.toSpecΓ U (SheafOfModules.unit X.ringCatSheaf)).homology n,
+      IsEtaleAdditiveCechNormalized U n a := by
+  classical
+  let J := injectiveResolution X.etaleAdditiveSheaf
+  obtain ⟨cJ⟩ := Etale.exists_resolutionSection_canonical_comparison X.etaleAdditiveSheaf J
+  obtain ⟨p, q, _, _, hp, hq⟩ :=
+    exists_additiveCech_augmentation_homology X U hU hcover J n
+  let a := ((cJ.globalEquiv n).symm.trans p).trans q.symm
+  refine ⟨a, ?_⟩
+  intro I cI s z tα tβ hα hβ ht
+  obtain ⟨f, t, hf, htβ, hc⟩ := exists_additiveCech_resolution_transfer U I J cI cJ n
+  let s' := HomologicalComplex.cyclesMap f n s
+  let tα' := HomologicalComplex.cyclesMap t n tα
+  let tβ' := HomologicalComplex.cyclesMap t n tβ
+  have hiα : (additiveCechTotal U J).iCycles n tα' =
+      additiveCechAlpha U J n ((additiveCechGlobal J).iCycles n s') := by
+    change ((HomologicalComplex.cyclesMap t n ≫ (additiveCechTotal U J).iCycles n) tα) = _
+    rw [HomologicalComplex.cyclesMap_i, ConcreteCategory.comp_apply, hα]
+    rw [← ConcreteCategory.comp_apply, hf, ConcreteCategory.comp_apply]
+    congr 1
+    change _ = (HomologicalComplex.cyclesMap f n ≫ (additiveCechGlobal J).iCycles n) s
+    rw [HomologicalComplex.cyclesMap_i, ConcreteCategory.comp_apply]
+  have hiβ : (additiveCechTotal U J).iCycles n tβ' = additiveCechBeta U J n
+      ((cechOver X.toSpecΓ U (SheafOfModules.unit X.ringCatSheaf)).iCycles n z) := by
+    change ((HomologicalComplex.cyclesMap t n ≫ (additiveCechTotal U J).iCycles n) tβ) = _
+    rw [HomologicalComplex.cyclesMap_i, ConcreteCategory.comp_apply, hβ, htβ]
+  have ht' : (additiveCechTotal U J).homologyπ n tα' =
+      (additiveCechTotal U J).homologyπ n tβ' := by
+    change (HomologicalComplex.cyclesMap t n ≫ (additiveCechTotal U J).homologyπ n) tα =
+      (HomologicalComplex.cyclesMap t n ≫ (additiveCechTotal U J).homologyπ n) tβ
+    rw [← HomologicalComplex.homologyπ_naturality, ConcreteCategory.comp_apply,
+      ConcreteCategory.comp_apply, ht]
+  have hs' : (additiveCechGlobal J).homologyπ n s' =
+      HomologicalComplex.homologyMap f n ((additiveCechGlobal I).homologyπ n s) := by
+    change (HomologicalComplex.cyclesMap f n ≫ (additiveCechGlobal J).homologyπ n) s = _
+    rw [← HomologicalComplex.homologyπ_naturality, ConcreteCategory.comp_apply]
+  have he : cJ.globalEquiv n ((additiveCechGlobal J).homologyπ n s') =
+      cI.globalEquiv n ((additiveCechGlobal I).homologyπ n s) := by
+    rw [hs', hc]
+  change q.symm (p ((cJ.globalEquiv n).symm
+    (cI.globalEquiv n ((additiveCechGlobal I).homologyπ n s)))) = _
+  rw [← he, AddEquiv.symm_apply_apply, hp s' tα' hiα, ht', ← hq z tβ' hiβ,
+    AddEquiv.symm_apply_apply]
+
+end AlgebraicGeometry.Scheme.Modules

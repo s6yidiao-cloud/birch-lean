@@ -34,7 +34,7 @@ theorem wooleyMonomialPadicConcentration_of_polynomialCorollary32
     rw [wooleyPadicCount_degree_zero]
     simp [fordVinogradovKappa]
   · have hk : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hkzero
-    letI : NeZero p := ⟨hp.ne_zero⟩
+    let : NeZero p := ⟨hp.ne_zero⟩
     obtain ⟨C, hC, B0, hmain⟩ :=
       hsource k p hp hk hkp 1 delta (by norm_num) hdelta
     refine ⟨C, hC, B0, ?_⟩

@@ -67,7 +67,7 @@ private theorem norm_abel_affine_sum {Y : Type*} [NormedAddCommGroup Y] [NormedS
     _ = _ := by simp only [sum_const, card_range, nsmul_eq_mul]; ring
 
 private lemma weylSmoothOrder_le (j : ℕ) : (j : ℕ∞ω) ≤ ∞ := WithTop.coe_le_coe.mpr le_top
-private lemma weylSmoothOrder_lt (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.coe_lt_top j)
+private lemma weylSmoothOrder_lt (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.natCast_lt_top j)
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
@@ -264,7 +264,7 @@ theorem norm_weighted_affine_phase_box_le {n : ℕ} {P : ℝ} (hP : 0 < P)
       funext i
       simp only [scaledPoint, Int.cast_add, Int.cast_natCast, Finset.sum_apply, Pi.smul_apply, v,
         Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
-      rw [Finset.sum_ite_eq Finset.univ i, if_pos (Finset.mem_univ i)]
+      rw [Finset.sum_ite_eq Finset.univ i, ite_eq_left (Finset.mem_univ i)]
     simp only [← hm, zero_add, f, Int.cast_add, Int.cast_natCast, phase_add, a]
     ring
   rw [he, norm_mul, norm_phase, one_mul]

@@ -209,8 +209,8 @@ theorem wooley_degree_one_raw_average_eq_collision
                       (((phi 0).eval m : ℤ) : ZMod q))) = 0 := by
                   funext j
                   simp [hd]
-              rw [if_pos hfun] at hsum
-              rw [if_pos hd]
+              rw [ite_eq_left hfun] at hsum
+              rw [ite_eq_left hd]
               exact hsum
             · have hfun :
                   (fun _ : Fin 1 =>
@@ -220,8 +220,8 @@ theorem wooley_degree_one_raw_average_eq_collision
                   have := congrFun hzero (0 : Fin 1)
                   simp only [Pi.zero_apply, sub_eq_zero] at this
                   exact hd this
-              rw [if_neg hfun] at hsum
-              rw [if_neg hd]
+              rw [ite_eq_right hfun] at hsum
+              rw [ite_eq_right hd]
               exact hsum
           rw [hsum']
           split_ifs <;> simp
@@ -302,12 +302,12 @@ theorem wooleyDegreeOneResidueCollision_residueSequence
   apply Finset.sum_congr rfl
   intro n hn
   simp only [Finset.mem_filter] at hn
-  rw [wooleySourceResidueSequence_apply, if_pos hn.2]
+  rw [wooleySourceResidueSequence_apply, ite_eq_left hn.2]
   apply Finset.sum_congr rfl
   intro m hm
   simp only [Finset.mem_filter] at hm
-  rw [wooleySourceResidueSequence_apply, if_pos hm.2]
-  rw [if_pos (hn.2.trans hm.2.symm)]
+  rw [wooleySourceResidueSequence_apply, ite_eq_left hm.2]
+  rw [ite_eq_left (hn.2.trans hm.2.symm)]
 
 theorem wooley_sum_residueCollision_residueSequence
     (q : ℕ) [NeZero q] (gamma : WooleySourceSequence) :
@@ -446,7 +446,7 @@ theorem wooley_degree_one_sourceMean_eq_conditionedMean
 theorem wooleyPolynomialCorollary32At_degree_one
     (p : ℕ) (hpPrime : p.Prime) :
     @WooleyPolynomialCorollary32At 1 p ⟨hpPrime.ne_zero⟩ := by
-  letI : NeZero p := ⟨hpPrime.ne_zero⟩
+  let : NeZero p := ⟨hpPrime.ne_zero⟩
   intro tau epsilon htau hepsilon
   obtain ⟨B0 : ℕ, hB0⟩ := exists_nat_ge (1 / tau)
   refine ⟨1, by norm_num, B0, ?_⟩
@@ -515,7 +515,7 @@ theorem wooleyPolynomialCorollary32_native :
   induction k using Nat.strong_induction_on with
   | h k ih =>
       intro p hpPrime hk hkp
-      letI : NeZero p := ⟨hpPrime.ne_zero⟩
+      let : NeZero p := ⟨hpPrime.ne_zero⟩
       by_cases hkOne : k = 1
       · subst k
         exact wooleyPolynomialCorollary32At_degree_one p hpPrime

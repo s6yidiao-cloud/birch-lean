@@ -89,7 +89,7 @@ theorem metricProductSupply (d : ℕ) : MetricProductSupply d := by
     · rw [← hprod]
       dsimp only [product]
       push_cast
-      exact prod_le_prod (by intros; positivity) (fun i _ ↦ hmi i)
+      exact prod_le_prod₀ (by intros; positivity) (fun i _ ↦ hmi i)
     · intro i
       exact ⟨(hi i).1, (le_div_iff₀ (hHpos i)).mp (hmi i)⟩
   refine ⟨E, fun M hM ↦ hE M hM, ?_⟩
@@ -98,12 +98,12 @@ theorem metricProductSupply (d : ℕ) : MetricProductSupply d := by
     have hhalf : (∏ _i : Fin k, (1 / 2 : ℝ)) = (1 / 2 : ℝ)^k := by simp
     rw [← hhalf, ← prod_mul_distrib]
     simp only [T, Fintype.card_piFinset, Nat.cast_prod, Nat.card_Icc, Nat.add_sub_cancel]
-    apply prod_le_prod (by intros; positivity)
+    apply prod_le_prod₀ (by intros; positivity)
     intro i _
     linarith [Nat.sub_one_lt_floor (U i), hU₂ i]
   have hscale : metricProductScale d r P h ≤ P ^ k := by
     rw [← hprod]
-    simpa using (prod_le_prod (by intro i _; exact (hUpos i).le)
+    simpa using (prod_le_prod₀ (by intro i _; exact (hUpos i).le)
       (fun i _ ↦ hUP i) : (∏ i, U i) ≤ ∏ _i : Fin k, P)
   have hθk : (k : ℝ) * θ ≤ ε := by
     dsimp [θ]

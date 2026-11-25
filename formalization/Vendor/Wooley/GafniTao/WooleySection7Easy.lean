@@ -54,7 +54,7 @@ theorem wooley_sum_left_refinement
     ZMod.castHom (pow_dvd_pow p haa') (ZMod (p ^ a))
   have href (z : ZMod (p ^ a')) (xi : ZMod (p ^ a)) :
       z ∈ wooleyResidueRefinementFiber p a a' haa' xi ↔ red z = xi := by
-    simp [wooleyResidueRefinementFiber, red]
+    simp only [wooleyResidueRefinementFiber, Finset.mem_filter_univ, red]
   have hsep (z : ZMod (p ^ a')) (eta : ZMod (p ^ b)) :
       wooleyResiduesSeparated nu (red z) eta ↔
         wooleyResiduesSeparated nu z eta := by
@@ -78,14 +78,14 @@ theorem wooley_sum_left_refinement
       dsimp [fine]
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
       by_cases hxi : wooleyResiduesSeparated nu xi eta
-      · rw [if_pos hxi]
+      · rw [ite_eq_left hxi]
         constructor
         · rintro ⟨hzsep, hzred⟩
           exact (href z xi).2 hzred
         · intro hz
           have hzred := (href z xi).1 hz
           exact ⟨(hsep z eta |>.1 (by simpa only [hzred] using hxi)), hzred⟩
-      · rw [if_neg hxi]
+      · rw [ite_eq_right hxi]
         simp only [Finset.notMem_empty, iff_false]
         rintro ⟨hzsep, hzred⟩
         apply hxi
@@ -99,8 +99,8 @@ theorem wooley_sum_left_refinement
             apply Finset.sum_congr rfl
             intro xi hxiMem
             by_cases hxi : wooleyResiduesSeparated nu xi eta
-            · simp only [hxi, if_true]
-            · simp only [hxi, if_false, Finset.sum_empty]
+            · simp only [hxi, ite_true]
+            · simp only [hxi, ite_false, Finset.sum_empty]
       _ = ∑ z ∈ fine, F z eta := hgroup
       _ = _ := by simp [fine, Finset.sum_filter]
   simp_rw [Finset.sum_filter]

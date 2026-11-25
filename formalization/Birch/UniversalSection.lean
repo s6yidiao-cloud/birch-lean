@@ -65,7 +65,7 @@ theorem map_linearSection {R : Type*} [CommRing R]
 
 private abbrev CoefficientsHomogeneous {σ τ R : Type*} [CommRing R]
     (P : MvPolynomial σ (MvPolynomial τ R)) (d : ℕ) : Prop :=
-  ∀ s, (coeff s P).IsHomogeneous d
+  ∀ s, (AddMonoidAlgebra.coeff P s).IsHomogeneous d
 
 private theorem coeffsHomogeneous_C {σ τ R : Type*} [CommRing R] {a : MvPolynomial τ R}
     {d : ℕ} (ha : a.IsHomogeneous d) : CoefficientsHomogeneous (C (σ := σ) a) d := by
@@ -73,7 +73,7 @@ private theorem coeffsHomogeneous_C {σ τ R : Type*} [CommRing R] {a : MvPolyno
   intro s
   by_cases hs : s = 0
   · subst s
-    simpa only [coeff_C, if_true] using ha
+    simpa only [coeff_C, ite_true] using ha
   · rw [coeff_C_of_ne_zero hs]
     exact isHomogeneous_zero _ _ _
 
@@ -114,7 +114,7 @@ private theorem coeffsHomogeneous_prod {ι σ τ R : Type*} [CommRing R] (s : Fi
 homogeneous degree of its source, or vanish. -/
 theorem coeff_universalLinearSection_isHomogeneous (R : Type*) [CommRing R]
     (F : IntForm n) (hF : F.IsHomogeneous r) (s : Fin l →₀ ℕ) :
-    (coeff s (universalLinearSection R F)).IsHomogeneous r := by
+    (AddMonoidAlgebra.coeff (universalLinearSection R F) s).IsHomogeneous r := by
   classical
   let A := MvPolynomial (Fin n × Fin l) R
   let g : Fin n → MvPolynomial (Fin l) A := fun i => ∑ j : Fin l, C (X (i,j)) * X j
@@ -127,10 +127,10 @@ theorem coeff_universalLinearSection_isHomogeneous (R : Type*) [CommRing R]
     split_ifs <;> simp [isHomogeneous_X, isHomogeneous_zero]
   have hterm (m : Fin n →₀ ℕ) (hm : m ∈ F.support) :
       CoefficientsHomogeneous
-        (C (C ((coeff m F : ℤ) : R)) * ∏ i ∈ m.support, g i ^ m i) r := by
+        (C (C ((AddMonoidAlgebra.coeff F m : ℤ) : R)) * ∏ i ∈ m.support, g i ^ m i) r := by
     have H := coeffsHomogeneous_prod m.support (fun i => g i ^ m i) (fun i => 1 * m i)
       (fun i _ => coeffsHomogeneous_pow (hg i) (m i))
-    have hC : CoefficientsHomogeneous (C (σ := Fin l) (C ((coeff m F : ℤ) : R) : A)) 0 :=
+    have hC : CoefficientsHomogeneous (C (σ := Fin l) (C ((AddMonoidAlgebra.coeff F m : ℤ) : R) : A)) 0 :=
       coeffsHomogeneous_C (isHomogeneous_C _ _)
     have hdeg : (∑ i ∈ m.support, 1 * m i) = r := by
       have Hdeg : (Finsupp.weight (fun _ : Fin n => (1 : ℕ))) m = r :=
@@ -146,7 +146,7 @@ theorem coeff_universalLinearSection_isHomogeneous (R : Type*) [CommRing R]
 degree bounded by the homogeneous degree of the source. -/
 theorem coeff_pderiv_universalLinearSection_totalDegree_le (R : Type*) [CommRing R]
     (F : IntForm n) (hF : F.IsHomogeneous r) (j : Fin l) (s : Fin l →₀ ℕ) :
-    (coeff s (pderiv j (universalLinearSection R F))).totalDegree ≤ r := by
+    (AddMonoidAlgebra.coeff (pderiv j (universalLinearSection R F)) s).totalDegree ≤ r := by
   rw [coeff_pderiv, ← Nat.cast_succ, ← map_natCast C]
   have h := coeff_universalLinearSection_isHomogeneous (l := l) R F hF (s + Finsupp.single j 1)
   apply (totalDegree_mul _ _).trans

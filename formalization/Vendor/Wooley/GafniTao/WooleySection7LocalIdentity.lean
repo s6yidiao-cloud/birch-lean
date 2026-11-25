@@ -92,7 +92,7 @@ theorem wooley_equation_7_18_local_native
     dsimp only [right]
     rw [wooleySourceMassSq_affinePullback]
     simpa using hetaMass
-  letI : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
+  let : NeZero (p ^ wooleySection7BPrimeNat k r a b gammaVal) :=
     ⟨pow_ne_zero _ hpPrime.ne_zero⟩
   obtain ⟨Psi, hPsi, hidentity⟩ :=
     wooley_equation_7_17_shifted_normalized_nonzero_native
@@ -131,7 +131,7 @@ theorem wooley_equation_7_19_pointwise_native
     hlower tau (epsilon ^ 2) htau (sq_pos_of_pos hepsilon)
   refine ⟨C, hC, B0, ?_⟩
   intro BPrime Psi alpha hBPrime hPsi
-  letI : NeZero (p ^ BPrime) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
+  let : NeZero (p ^ BPrime) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
   exact hbound BPrime Psi
     (wooleySection7Coefficient phi gamma p a
       (Nat.pos_of_ne_zero (NeZero.ne p)) xi alpha)

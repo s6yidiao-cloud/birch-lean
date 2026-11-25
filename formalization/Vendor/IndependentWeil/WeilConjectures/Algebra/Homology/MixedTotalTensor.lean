@@ -1,0 +1,73 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
+public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Symmetric
+public import Mathlib.Algebra.Homology.Bifunctor
+
+/-!
+# Total tensor with two coefficient rings
+
+## Main definitions
+
+- `ModuleCat.mixedTensor`: tensor over `R`, with the `A`-action through the first factor.
+- `ModuleCat.mixedTotalTensor`: its total cochain complex bifunctor.
+
+## Main statements
+
+- `ModuleCat.mixedTensor_preservesZeroMorphisms`: zero preservation in the first variable.
+- `ModuleCat.mixedTensor_obj_preservesZeroMorphisms`: zero preservation in the second variable.
+
+## References
+
+* Stacks Project, Section 06Y5 and Tag 06Y6
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory MonoidalCategory
+
+namespace ModuleCat
+
+/-- The bifunctor `(M, E) ↦ M ⊗_A (A ⊗_R E)`,
+canonically `M ⊗_R E`, with its `A`-module structure through `M`. -/
+noncomputable abbrev mixedTensor {R A : Type u} [CommRing R] [CommRing A] (f : R →+* A) :
+    ModuleCat.{u} A ⥤ ModuleCat.{u} R ⥤ ModuleCat.{u} A :=
+  curriedTensor (ModuleCat.{u} A) ⋙
+    (Functor.whiskeringLeft _ _ _).obj (extendScalars f)
+
+/-- The mixed module tensor preserves zero
+morphisms in its first variable. -/
+@[instance] theorem mixedTensor_preservesZeroMorphisms {R A : Type u} [CommRing R] [CommRing A]
+    (f : R →+* A) : (mixedTensor f).PreservesZeroMorphisms := by
+  infer_instance
+
+/-- The mixed module tensor preserves zero
+morphisms in its second variable. -/
+@[instance] theorem mixedTensor_obj_preservesZeroMorphisms {R A : Type u} [CommRing R] [CommRing A]
+    (f : R →+* A) (X : ModuleCat.{u} A) : ((mixedTensor f).obj X).PreservesZeroMorphisms := by
+  refine ⟨?_⟩
+  intro Y Z
+  have h : (extendScalars f).map (0 : Y ⟶ Z) = 0 := by
+    apply ExtendScalars.hom_ext
+    intro y
+    simp [ExtendScalars.map_tmul]
+  dsimp [mixedTensor]
+  rw [h]
+  simp
+
+/-- The total tensor bifunctor on complexes, with
+terms `⨁_{p+q=n} Mᵖ ⊗_R Eᑫ` and differential `d_M ⊗ 1 + (-1)^p 1 ⊗ d_E`. -/
+noncomputable def mixedTotalTensor {R A : Type u} [CommRing R] [CommRing A] (f : R →+* A) :
+    CochainComplex (ModuleCat.{u} A) ℤ ⥤
+      CochainComplex (ModuleCat.{u} R) ℤ ⥤ CochainComplex (ModuleCat.{u} A) ℤ :=
+  (mixedTensor f).map₂CochainComplex
+
+end ModuleCat

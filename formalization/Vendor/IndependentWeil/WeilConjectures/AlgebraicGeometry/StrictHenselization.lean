@@ -1,0 +1,169 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.AlgebraicGeometry.Sites.EtalePoint
+public import Mathlib.AlgebraicGeometry.GammaSpecAdjunction
+public import Mathlib.Algebra.Category.Ring.Colimits
+public import WeilConjectures.AlgebraicGeometry.AffinePointedNeighbourhoodCofinal
+import Mathlib.CategoryTheory.Filtered.Final
+
+/-!
+# Strict henselization from affine pointed neighbourhoods
+
+The strict henselization of a scheme at a geometric point, defined as the spectrum of the
+colimit of the coordinate rings of its affine pointed étale neighbourhoods; it is the inverse
+limit of these neighbourhoods.
+
+## Implementation details
+
+The colimit is taken over a small representative category of affine pointed neighbourhoods.
+`SmallModel` supplies a fully faithful, essentially surjective representative functor, so no
+affine neighbourhood is omitted.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits Opposite
+
+namespace AlgebraicGeometry.Scheme
+
+/-- Affine pointed neighbourhoods written as spectra of rings.
+The category of elements gives the lift of the geometric point and pointed morphisms. -/
+abbrev strictHenselizationNeighbourhoods
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :=
+  (AffineEtale.Spec S ⋙ (pointSmallEtale s).fiber).Elements
+
+/-- The representative functor to the full affine pointed-neighbourhood category. -/
+noncomputable def strictHenselizationAffineInclusion
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :
+    strictHenselizationNeighbourhoods s ⥤ ObjectProperty.FullSubcategory
+      (fun n : (pointSmallEtale s).fiber.Elements => IsAffine n.1.left) :=
+  ObjectProperty.lift _
+    (Functor.Elements.precomp (AffineEtale.Spec S) (pointSmallEtale s).fiber)
+    (fun _ => inferInstanceAs (IsAffine (Spec _)))
+
+/-- The ring-written affine pointed neighbourhoods represent every affine pointed
+neighbourhood, fully faithfully. -/
+theorem strictHenselizationAffineInclusion_isEquivalence
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :
+    (strictHenselizationAffineInclusion s).IsEquivalence := by
+  classical
+  let F := AffineEtale.Spec S
+  let G := (pointSmallEtale s).fiber
+  have : (Functor.Elements.precomp F G).Faithful := ⟨by
+    intro X Y f g h
+    apply Functor.Elements.hom_ext
+    exact F.map_injective (congrArg Functor.Elements.Hom.hom h)⟩
+  have : (Functor.Elements.precomp F G).Full := ⟨fun {X Y} f ↦
+    ⟨⟨F.preimage f.hom, by
+      change G.map (F.map (F.preimage f.hom)) X.val = Y.val
+      rw [F.map_preimage]
+      exact f.map_val⟩, by
+      apply Functor.Elements.hom_ext
+      exact F.map_preimage f.hom⟩⟩
+  have : (strictHenselizationAffineInclusion s).Faithful := by
+    unfold strictHenselizationAffineInclusion
+    infer_instance
+  have : (strictHenselizationAffineInclusion s).Full := by
+    unfold strictHenselizationAffineInclusion
+    infer_instance
+  have : (strictHenselizationAffineInclusion s).EssSurj := by
+    refine ⟨fun X ↦ ?_⟩
+    let V := X.obj.obj
+    have : IsAffine V.left := X.property
+    let e := V.left.isoSpec
+    let A : AffineEtale S := AffineEtale.mk (e.inv ≫ V.hom)
+    let y : G.obj (F.obj A) := Over.homMk (X.obj.val.left ≫ e.hom) (by
+      change (X.obj.val.left ≫ e.hom) ≫ (e.inv ≫ V.hom) = s
+      simpa [V] using Over.w X.obj.val)
+    refine ⟨(F ⋙ G).elementsMk A y, ⟨?_⟩⟩
+    apply ObjectProperty.isoMk
+    let i : F.obj A ≅ V := MorphismProperty.Over.isoMk e.symm rfl
+    refine Functor.Elements.isoMk i ?_
+    apply Over.OverMorphism.ext
+    change (X.obj.val.left ≫ e.hom) ≫ e.inv = X.obj.val.left
+    simp
+  exact { }
+
+/-- The coordinate-ring diagram on all affine pointed neighbourhoods, contravariantly
+sending a pointed map to its map on global sections. -/
+noncomputable def strictHenselizationCoordinateRings
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) : (strictHenselizationNeighbourhoods s)ᵒᵖ ⥤ CommRingCat.{u} :=
+  (Functor.Elements.π _ ⋙ AffineEtale.Spec S ⋙ Etale.forget S ⋙ Over.forget S).op ⋙ Γ
+
+/-- The ring diagram on the chosen small representative category. -/
+noncomputable def strictHenselizationAffineDiagram
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :
+    (SmallModel.{u} (strictHenselizationNeighbourhoods s))ᵒᵖ ⥤ CommRingCat.{u} :=
+  (equivSmallModel.{u} (strictHenselizationNeighbourhoods s)).inverse.op ⋙
+    strictHenselizationCoordinateRings s
+
+/-- Choose a small representative category of affine pointed neighbourhoods and take
+its opposite-indexed coordinate-ring colimit. -/
+noncomputable def strictHenselizationRing
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) : CommRingCat.{u} :=
+  colimit (strictHenselizationAffineDiagram s)
+
+/-- The strict henselization scheme is the spectrum of the coordinate-ring colimit. -/
+noncomputable def strictHenselizationScheme
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) : Scheme.{u} :=
+  Spec (strictHenselizationRing s)
+
+/-- The canonical cone has vertex the strict henselization scheme; its legs are
+`Spec.map` of the coordinate-ring colimit coprojections. -/
+noncomputable def strictHenselizationCone
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :
+    Cone ((strictHenselizationAffineDiagram s).op ⋙ Scheme.Spec) :=
+  Scheme.Spec.mapCone (colimit.cocone (strictHenselizationAffineDiagram s)).op
+
+/-- Cofilteredness and the inverse-limit interpretation of the canonical cone. -/
+theorem strictHenselization_properties
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) :
+    Functor.Initial ((equivSmallModel.{u} (strictHenselizationNeighbourhoods s)).inverse ⋙
+      strictHenselizationAffineInclusion s ⋙ ObjectProperty.ι
+        (fun n : (pointSmallEtale s).fiber.Elements => IsAffine n.1.left)) ∧
+      IsCofiltered (SmallModel.{u} (strictHenselizationNeighbourhoods s)) ∧
+      Nonempty (IsLimit (strictHenselizationCone s)) := by
+  classical
+  have := strictHenselizationAffineInclusion_isEquivalence s
+  have := (affinePointedNeighbourhoods_initial_and_final_op s).1
+  let F := (equivSmallModel.{u} (strictHenselizationNeighbourhoods s)).inverse ⋙
+    strictHenselizationAffineInclusion s ⋙ ObjectProperty.ι
+      (fun n : (pointSmallEtale s).fiber.Elements => IsAffine n.1.left)
+  have : F.Initial := by dsimp [F]; infer_instance
+  refine ⟨this, ?_, ?_⟩
+  · apply IsCofiltered.of_exists_of_isCofiltered_of_fullyFaithful F
+    intro X
+    obtain ⟨Y⟩ := (inferInstance : Nonempty (CostructuredArrow F X))
+    exact ⟨Y.left, ⟨Y.hom⟩⟩
+  · exact ⟨isLimitOfPreserves Scheme.Spec
+      (colimit.isColimit (strictHenselizationAffineDiagram s)).op⟩
+
+/-- Independence of the representative category, via the canonical colimit map.
+Here `e` describes a replacement of the chosen representative category and `w`
+identifies its coordinate-ring diagram with the transported chosen diagram. -/
+noncomputable def strictHenselizationRepresentativeIso
+    {S : Scheme.{u}} {Ω : Type u} [Field Ω] [IsAlgClosed Ω]
+    (s : Spec (.of Ω) ⟶ S) {J : Type u} [SmallCategory J]
+    (e : J ≌ (SmallModel.{u} (strictHenselizationNeighbourhoods s))ᵒᵖ)
+    (D : J ⥤ CommRingCat.{u}) (w : e.functor ⋙ strictHenselizationAffineDiagram s ≅ D) :
+    colimit D ≅ strictHenselizationRing s :=
+  HasColimit.isoOfEquivalence e w
+
+end AlgebraicGeometry.Scheme

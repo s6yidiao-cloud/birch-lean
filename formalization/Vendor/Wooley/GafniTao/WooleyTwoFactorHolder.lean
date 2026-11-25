@@ -22,8 +22,8 @@ theorem wooley_two_factor_holder_ennreal
       (∑ i ∈ t, f i) ^ u * (∑ i ∈ t, g i) ^ (1 - u) := by
   classical
   let subF : Fintype {i : ι // i ∈ t} := Finset.fintypeCoeSort t
-  letI : Fintype {i : ι // i ∈ t} := subF
-  letI : MeasurableSpace {i : ι // i ∈ t} := ⊤
+  let : Fintype {i : ι // i ∈ t} := subF
+  let : MeasurableSpace {i : ι // i ∈ t} := ⊤
   let fs : Fin 2 → {i : ι // i ∈ t} → ℝ≥0∞ :=
     fun j x => Fin.cases (f x.1) (fun _ => g x.1) j
   let exps : Fin 2 → ℝ := ![u, 1 - u]

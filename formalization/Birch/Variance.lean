@@ -2,7 +2,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Data.Complex.BigOperators
+import Mathlib.Basic.Complex.BigOperators
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Linarith
@@ -294,7 +294,8 @@ private lemma integral_centered_mul_near {u : ℝ} (hu : 0 < u) (hu' : u < 1 / 2
     intro x
     simp only [Pi.mul_apply, Function.comp_apply]
     rw [abs_mul]
-    exact mul_le_one₀ (abs_centered_le_one hu hu' _) (abs_nonneg _) (abs_near_le_one hu hu' _)
+    exact (mul_le_of_le_one_left (abs_nonneg _) (abs_centered_le_one hu hu' _)).trans
+      (abs_near_le_one hu hu' _)
   have hR := (intervalIntegrable_centered hu hu' (f := fun x => (a : ℝ) * x) (by fun_prop) 0 1).mul_const (2 * u)
   change (∫ x in (0 : ℝ)..1, centered u ((a : ℝ) * x) * (near u ((b : ℝ) * x) - 2*u)) = _
   simp_rw [mul_sub]
@@ -329,7 +330,8 @@ private lemma integral_coprime_covariance {u : ℝ} (hu : 0 < u) (hu' : u < 1 / 
     intro x
     simp only [Pi.mul_apply, Function.comp_apply]
     rw [abs_mul]
-    exact mul_le_one₀ (abs_near_le_one hu hu' _) (abs_nonneg _) (abs_centered_le_one hu hu' _)
+    exact (mul_le_of_le_one_left (abs_nonneg _) (abs_near_le_one hu hu' _)).trans
+      (abs_centered_le_one hu hu' _)
   have havg : (b : ℝ) * (∫ x in (0 : ℝ)..1, φ x) =
       ∫ x in (0 : ℝ)..1, ∑ k ∈ range b, ψ k x := by
     rw [intervalIntegral.integral_finsetSum (fun k _ => hψi k)]
@@ -380,7 +382,8 @@ private lemma interval_covariance {u : ℝ} (hu : 0 < u) (hu' : u < 1 / 2)
     intro x
     simp only [Pi.mul_apply, Function.comp_apply]
     rw [abs_mul]
-    exact mul_le_one₀ (abs_centered_le_one hu hu' _) (abs_nonneg _) (abs_centered_le_one hu hu' _)
+    exact (mul_le_of_le_one_left (abs_nonneg _) (abs_centered_le_one hu hu' _)).trans
+      (abs_centered_le_one hu hu' _)
   have hga' : (g : ℝ) * a = i := by exact_mod_cast hga
   have hgb' : (g : ℝ) * b = j := by exact_mod_cast hgb
   have hInt : (∫ x in (0 : ℝ)..1, centered u ((i : ℝ) * x) * centered u ((j : ℝ) * x)) =
@@ -440,7 +443,7 @@ private lemma sum_gcd_le (j : ℕ) (hj : 0 < j) :
       apply Finset.sum_le_sum
       intro d hd
       by_cases hdvd : d ∣ j
-      · simp only [hdvd, if_true, mul_one, ← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
+      · simp only [hdvd, ite_true, mul_one, ← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
         rw [card_positive_multiples _ _ (Finset.mem_Icc.mp hd).1]
         exact_mod_cast (Nat.div_mul_le_self j d)
       · simp [hdvd]
@@ -493,12 +496,12 @@ private lemma sum_gcd_div_max_le (L : ℕ) :
   let T : ℕ → ℕ → ℝ := fun i j => if i ≤ j then (i.gcd j : ℝ) / j else 0
   have hpoint (i j : ℕ) : (i.gcd j : ℝ) / (max i j : ℕ) ≤ T i j + T j i := by
     rcases le_total i j with hij | hji
-    · have hEq : T i j = (i.gcd j : ℝ) / j := if_pos hij
+    · have hEq : T i j = (i.gcd j : ℝ) / j := ite_eq_left hij
       rw [max_eq_right hij, ← hEq]
       apply le_add_of_nonneg_right
       dsimp [T]
       split_ifs <;> positivity
-    · have hEq : T j i = (j.gcd i : ℝ) / i := if_pos hji
+    · have hEq : T j i = (j.gcd i : ℝ) / i := ite_eq_left hji
       rw [max_eq_left hji, Nat.gcd_comm i j, ← hEq]
       apply le_add_of_nonneg_left
       dsimp [T]
@@ -559,8 +562,8 @@ private lemma ae_centeredInterval_eq_centered {u : ℝ} (hu : 0 < u) (hu' : u < 
       exact ⟨z, abs_le.mpr ⟨by linarith, by linarith⟩⟩
   simp only [centeredInterval, intervalIndicator, centered]
   by_cases h : ∃ z : ℤ, |(k : ℝ) * x - (z : ℝ)| ≤ u
-  · rw [if_pos h, (near_eq_one_iff hu').mpr (heq.mp h)]
-  · rw [if_neg h, (near_eq_zero_or_one hu hu' _).resolve_right fun h' =>
+  · rw [ite_eq_left h, (near_eq_one_iff hu').mpr (heq.mp h)]
+  · rw [ite_eq_right h, (near_eq_zero_or_one hu hu' _).resolve_right fun h' =>
        h (heq.mpr ((near_eq_one_iff hu').mp h'))]
 
 
@@ -629,7 +632,8 @@ theorem dilated_interval_variance (u C : ℝ) (L : ℕ) (hu : 0 < u) (hu' : u < 
     intro x
     simp only [Pi.mul_apply, Function.comp_apply]
     rw [abs_mul]
-    exact mul_le_one₀ (abs_centered_le_one hu hu' _) (abs_nonneg _) (abs_centered_le_one hu hu' _)
+    exact (mul_le_of_le_one_left (abs_nonneg _) (abs_centered_le_one hu hu' _)).trans
+      (abs_centered_le_one hu hu' _)
   have houter (j : ℕ) : IntervalIntegrable (fun x => ∑ i ∈ s, w i j * (f i x * f j x)) volume 0 1 := by
     have hEq : (∑ i ∈ s, fun x => w i j * (f i x * f j x)) =
         (fun x => ∑ i ∈ s, w i j * (f i x * f j x)) := by

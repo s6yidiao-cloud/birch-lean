@@ -61,7 +61,7 @@ private theorem evalForm_affine_sub_at_zero {R : Type*} [CommRing R]
     change evalForm (homogeneousComponent 1 G) (fun _ => 0) = 0
     simpa only [zero_mul, pow_one] using hh
   have hE (v : Fin n → R) :
-      evalForm G v = ((coeff 0 G : ℤ) : R) + evalForm (homogeneousComponent 1 G) v := by
+      evalForm G v = ((G.coeff 0 : ℤ) : R) + evalForm (homogeneousComponent 1 G) v := by
     have H := congrArg (fun U : IntForm n => evalForm U v) (homogeneousComponents_affine G hG)
     rw [homogeneousComponent_zero] at H
     unfold evalForm at H ⊢
@@ -235,7 +235,7 @@ private theorem evalForm_homogeneous_one {R : Type*} [CommRing R] (G : IntForm n
         exact hm (by simpa only [Set.mem_range, eq_comm] using hmem)
       rw [hzero, Finset.sum_eq_zero]
       intro j _
-      exact if_neg fun hj => hm ⟨j, hj.symm⟩
+      exact ite_eq_right fun hj => hm ⟨j, hj.symm⟩
   conv_lhs => rw [hdecomp]
   simp only [evalForm, eval₂_sum, eval₂_mul, eval₂_C, eval₂_X, Int.coe_castRingHom]
 
@@ -402,7 +402,7 @@ quadratic forms by the elementary character argument. -/
 theorem deligneConductorOne_quadratic (F : IntForm n) (hF : F.IsHomogeneous 2) :
     DeligneConductorOne 2 F := by
   intro p hp hp₀ _ hs a ha
-  letI : Fact p.Prime := hp
+  let : Fact p.Prime := hp
   have hFdeg : F.totalDegree ≤ 2 := hF.totalDegree_le
   have hg (x : Fin n → ZMod p)
       (hx : ∀ i, residueEval (pderiv i (homogeneousComponent 2 F)) p x = 0) : x = 0 := by

@@ -1,0 +1,45 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Cohomology.AbelianCechSectionsMap
+public import WeilConjectures.AlgebraicGeometry.Cohomology.AbelianCechTotalMap
+
+/-! # Naturality of the restriction augmentation
+
+## References
+
+* Stacks Project, Tags 01EQ, 01FD
+-/
+
+@[expose] public section
+set_option backward.isDefEq.respectTransparency false
+universe u
+open CategoryTheory CategoryTheory.Limits TopologicalSpace Opposite
+namespace AlgebraicGeometry.Scheme.Modules
+attribute [local instance] cohomologyHasSheafify cohomologyHasExt
+
+/-- The restriction augmentation commutes with every resolution cochain map. -/
+theorem abelianCechAlpha_square
+    {X : Scheme.{u}} {ι : Type u} (U : ι → X.Opens)
+    {F G : Sheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u}}
+    {I : InjectiveResolution F} {J : InjectiveResolution G}
+    (φ : I.cocomplex ⟶ J.cocomplex) :
+    abelianCechAlpha U I ≫ abelianCechTotalMap U φ =
+      abelianCechSectionsMap φ ≫ abelianCechAlpha U J := by
+  apply HomologicalComplex.hom_ext
+  intro n
+  dsimp [abelianCechAlpha, abelianCechTotalMap]
+  rw [Category.assoc, HomologicalComplex₂.ιTotal_map, ← Category.assoc]
+  conv_rhs => rw [← Category.assoc]
+  apply congrArg (fun k ↦ k ≫ (abelianCechDouble U J).ιTotal (.up ℕ) 0 n n (by simp))
+  ext s
+  funext y
+  exact NatTrans.naturality_apply (φ.f n).hom
+    (homOfLE (le_top (a := ⨅ l, U (y l)))).op s
+
+end AlgebraicGeometry.Scheme.Modules

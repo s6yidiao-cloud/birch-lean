@@ -57,8 +57,8 @@ theorem wooleyPolynomial_sum_refined_residue_grid
   · intro z hzne
     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
         (ZMod (p ^ a)) z = xi
-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
-    · rw [if_neg hzxi]
+    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
+    · rw [ite_eq_right hzxi]
 
 theorem wooleyPolynomial_refined_normalized_residue_decomposition
     {Q p a b qB k : ℕ} [NeZero p] [NeZero qB]

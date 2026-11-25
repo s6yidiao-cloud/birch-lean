@@ -85,7 +85,7 @@ private theorem normalized_coverIntegralBound {d n e σ : ℕ} {F : IntForm n} {
     (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ) (hg : g.natDegree = e)
     {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w) (hwbox : CubeSupported w)
     {B : ℝ} (hB : 1 ≤ B)
-    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    (hCritical : FormCriticalMomentBounds d) :
     ∀ ε > 0, ∃ C > 0, ∀ᶠ P : ℝ in atTop,
       ‖∫ α, exponentialSum F w P α * coverYSum g (B * P ^ ((d : ℝ) / e)) α ∂circleMeasure‖ ≤
         C * P ^ ((n : ℝ) - 1 + ε) := by
@@ -100,7 +100,7 @@ private theorem normalized_coverIntegralBound {d n e σ : ℕ} {F : IntForm n} {
     ⟨K.toNNReal, Real.toNNReal_pos.2 hK, hKbound.mono fun _ hP x => by
       rw [ENNReal.ofNNReal_toNNReal]
       exact ENNReal.ofReal_le_ofReal (hP x)⟩
-  have hcritical := v2CriticalMoment_of_weilII hν hd hF hσ hw hwbox hWeilII
+  have hcritical := hCritical hν hd hF hσ hw hwbox
   have hholder := coverSerreIntegralBound_of_criticalMoment hd he hν hthreshold
     circleMeasure f t hf ht htriv hcritical (coverYSum_fourthMoment (by omega) he g hg hB)
   intro ε hε
@@ -130,11 +130,11 @@ private theorem normalized_coverIntegralBound {d n e σ : ℕ} {F : IntForm n} {
   exact hnorm.trans (by simpa only [← add_assoc, sub_eq_add_neg] using hP)
 
 /-- Serre's bound for integral pairs, with an unrestricted cover variable. -/
-theorem coverIntegralCount_serre_of_weilII {d e n σ : ℕ} {F : IntForm n} {g : ℤ[X]}
+theorem coverIntegralCount_serre_of_formCriticalMoments {d e n σ : ℕ} {F : IntForm n} {g : ℤ[X]}
     (hd : 2 ≤ d) (he : 2 ≤ e) (hF : F.IsHomogeneous d) (hg : g.natDegree = e)
     (hσ : RationalGradientDimension F σ)
     (hthreshold : (1 / (d : ℝ) + 1 / (2 * (e : ℝ))) * dimensionThreshold d ≤ (n - σ : ℕ))
-    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    (hCritical : FormCriticalMomentBounds d) :
     ∀ ε > 0, ∃ C > 0, ∀ᶠ P : ℝ in atTop,
       (coverIntegralCount F g P : ℝ) ≤ C * P ^ ((n : ℝ) - 1 + ε) := by
   have hthreshold' := hthreshold
@@ -149,7 +149,7 @@ theorem coverIntegralCount_serre_of_weilII {d e n σ : ℕ} {F : IntForm n} {g :
   obtain ⟨B, hB, hcutoff⟩ := exists_cover_y_bound hF g (by omega) hg
   intro ε hε
   obtain ⟨C, hC, hcount⟩ := normalized_coverIntegralBound hd he hν hthreshold'
-    hF hσ hg hw hwbox hB hWeilII ε hε
+    hF hσ hg hw hwbox hB hCritical ε hε
   let a := (n : ℝ) - 1 + ε
   refine ⟨C * (2 : ℝ)^a, by positivity, ?_⟩
   have hscale := Tendsto.const_mul_atTop (show (0 : ℝ) < 2 by norm_num)
@@ -169,6 +169,25 @@ theorem coverIntegralCount_serre_of_weilII {d e n σ : ℕ} {F : IntForm n} {g :
   rw [integral_exponentialSum_mul_coverYSum, Complex.norm_real, Real.norm_eq_abs,
     Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 2) (by linarith), ← mul_assoc] at hlarge
   exact hbox.trans ((le_abs_self _).trans hlarge)
+
+theorem coverIntegralCount_serre_of_terminalPrimeBounds {d e n σ : ℕ} {F : IntForm n} {g : ℤ[X]}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hF : F.IsHomogeneous d) (hg : g.natDegree = e)
+    (hσ : RationalGradientDimension F σ)
+    (hthreshold : (1 / (d : ℝ) + 1 / (2 * (e : ℝ))) * dimensionThreshold d ≤ (n - σ : ℕ))
+    (hPrime : TerminalPrimeBounds d) :
+    ∀ ε > 0, ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      (coverIntegralCount F g P : ℝ) ≤ C * P ^ ((n : ℝ) - 1 + ε) :=
+  coverIntegralCount_serre_of_formCriticalMoments hd he hF hg hσ hthreshold
+    (FormCriticalMomentBounds.of_terminalPrimeBounds hPrime)
+
+theorem coverIntegralCount_serre_of_weilII {d e n σ : ℕ} {F : IntForm n} {g : ℤ[X]}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hF : F.IsHomogeneous d) (hg : g.natDegree = e)
+    (hσ : RationalGradientDimension F σ)
+    (hthreshold : (1 / (d : ℝ) + 1 / (2 * (e : ℝ))) * dimensionThreshold d ≤ (n - σ : ℕ))
+    (hWeilII : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    ∀ ε > 0, ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      (coverIntegralCount F g P : ℝ) ≤ C * P ^ ((n : ℝ) - 1 + ε) :=
+  coverIntegralCount_serre_of_terminalPrimeBounds hd he hF hg hσ hthreshold (TerminalPrimeBounds.of_deligne hWeilII)
 
 end
 

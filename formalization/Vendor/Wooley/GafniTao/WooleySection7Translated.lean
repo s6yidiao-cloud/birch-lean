@@ -59,7 +59,7 @@ theorem wooleySection7TranslatedDilatedPolynomial_coeff_succ
         (p : ℤ) ^ (a * (i + 1)) := by
   unfold wooleySection7TranslatedDilatedPolynomial
   rw [coeff_sub, comp_C_mul_X_coeff, coeff_C]
-  rw [if_neg (by omega : i + 1 ≠ 0), sub_zero]
+  rw [ite_eq_right (by omega : i + 1 ≠ 0), sub_zero]
   rw [pow_mul]
 
 /-- Constants cancel from equal-length tuple displacements, so evaluating

@@ -22,14 +22,14 @@ private def coverConductorMassAt {n : ℕ} (F : IntForm n) (g : ℤ[X]) (q : ℕ
 
 private theorem coverConductorMassAt_eq {n q : ℕ} [NeZero q] (F : IntForm n) (g : ℤ[X]) :
     coverConductorMassAt F g q = coverConductorMass F g q := by
-  rw [coverConductorMassAt, dif_neg (NeZero.ne q)]
+  rw [coverConductorMassAt, dite_eq_right (NeZero.ne q)]
 
 private theorem coverConductorMassAt_nonneg {n : ℕ} (F : IntForm n) (g : ℤ[X]) (q : ℕ) :
     0 ≤ coverConductorMassAt F g q := by
   unfold coverConductorMassAt
   split_ifs with hq
   · exact le_rfl
-  · letI : NeZero q := ⟨hq⟩
+  · let : NeZero q := ⟨hq⟩
     exact coverConductorMass_nonneg F g q
 
 /-- The absolute values over a rational shell sum to the conductor masses
@@ -43,8 +43,8 @@ private theorem coverCompleteSumNormAt_shell_eq {n Q : ℕ} (hQ : 1 ≤ Q)
   intro q hq
   have hq₂ := Nat.succ_le_of_lt (hQ.trans_lt (Finset.mem_Ioc.mp hq).1)
   have hq₀ : q ≠ 0 := by omega
-  letI : NeZero q := ⟨hq₀⟩
-  simp only [coverConductorMassAt_eq, coverConductorMass, coverCompleteSumNormAt, dif_neg hq₀]
+  let : NeZero q := ⟨hq₀⟩
+  simp only [coverConductorMassAt_eq, coverConductorMass, coverCompleteSumNormAt, dite_eq_right hq₀]
   exact (sum_zmod_units_eq_reducedNumerators q hq₂
     (fun a => ‖completeSum F q a * coverCompleteSum g q a‖)).symm
 

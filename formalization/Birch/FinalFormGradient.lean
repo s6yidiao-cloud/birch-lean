@@ -150,12 +150,12 @@ def FinalFormAsymptotic : Prop :=
           (B ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
           C * B ^ ((n : ℝ) - d - η)
 
-/-- Deligne's prime-field estimate gives the weighted form asymptotic with
+/-- The critical full-circle moment gives the weighted form asymptotic with
 the manuscript's full support condition. -/
-theorem finalFormAsymptotic
-    (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalFormAsymptotic := by
+theorem finalFormAsymptotic_of_formCriticalMoments
+    (hCritical : ∀ d, FormCriticalMomentBounds d) : FinalFormAsymptotic := by
   intro d n hd
-  obtain ⟨η, hη, hfixed⟩ := fixedPartialFormAsymptotic_of_deligne hDeligne d n hd
+  obtain ⟨η, hη, hfixed⟩ := fixedPartialFormAsymptotic_of_formCriticalMoments hCritical d n hd
   refine ⟨η, hη, ?_⟩
   intro F σ w hFne hF hσ hν hw hgrad
   have hn : 0 < n := by
@@ -164,6 +164,10 @@ theorem finalFormAsymptotic
     omega
   exact formAsymptotic_of_gradientPartition hn hw hgrad
     (fun u hu htrans => hfixed F σ u hFne hF hσ hν hu htrans)
+
+theorem finalFormAsymptotic_of_terminalPrimeBounds
+    (hPrime : ∀ d, TerminalPrimeBounds d) : FinalFormAsymptotic :=
+  finalFormAsymptotic_of_formCriticalMoments fun d => FormCriticalMomentBounds.of_terminalPrimeBounds (hPrime d)
 
 end
 

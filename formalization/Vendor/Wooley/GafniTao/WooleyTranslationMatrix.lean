@@ -33,7 +33,7 @@ theorem wooleyPolynomialTranslationMatrix_blockTriangular
     (wooleyPolynomialTranslationMatrix k q eta).BlockTriangular id := by
   intro i j hji
   unfold wooleyPolynomialTranslationMatrix
-  rw [if_neg]
+  rw [ite_eq_right]
   exact Nat.not_le_of_gt hji
 
 @[simp] theorem wooleyPolynomialTranslationMatrix_diag
@@ -44,7 +44,7 @@ theorem wooleyPolynomialTranslationMatrix_blockTriangular
 theorem wooleyPolynomialTranslationMatrix_det
     (k q : ℕ) (eta : ℤ) :
     (wooleyPolynomialTranslationMatrix k q eta).det = 1 := by
-  rw [Matrix.det_of_upperTriangular
+  rw [Matrix.det_of_isUpperTriangular
     (wooleyPolynomialTranslationMatrix_blockTriangular k q eta)]
   simp
 
@@ -79,9 +79,9 @@ theorem wooleyAffinePolynomialSystem_lowMatrixMod_prime
   rw [hpPow, zero_mul, add_zero]
   unfold wooleyPolynomialTranslationMatrix
   by_cases hij : (i : ℕ) ≤ (j : ℕ)
-  · rw [if_pos hij]
+  · rw [ite_eq_left hij]
     ring
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     have hlt : (j : ℕ) + 1 < (i : ℕ) + 1 := by omega
     rw [Nat.choose_eq_zero_of_lt hlt]
     simp

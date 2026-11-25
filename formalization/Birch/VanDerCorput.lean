@@ -1,6 +1,6 @@
 import Birch.CircleMethod
 import Mathlib.Analysis.Complex.Norm
-import Mathlib.Data.Complex.BigOperators
+import Mathlib.Basic.Complex.BigOperators
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring

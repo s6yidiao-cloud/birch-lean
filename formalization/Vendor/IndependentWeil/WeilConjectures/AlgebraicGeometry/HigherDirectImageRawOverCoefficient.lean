@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.HigherDirectImageRawOverComplex
+
+/-! # The fixed coefficient morphism for raw pullback over W
+
+## References
+
+* [Stacks Project, Tag 03Q8](https://stacks.math.columbia.edu/tag/03Q8)
+* [Stacks Project, Tag 09Z1](https://stacks.math.columbia.edu/tag/09Z1)
+-/
+
+@[expose] public section
+
+universe u
+open CategoryTheory
+open scoped CategoryTheory.Functor AlgebraicGeometry.Etale
+namespace AlgebraicGeometry.Etale
+
+set_option backward.isDefEq.respectTransparency true
+
+/-- The single-complex comparison followed by the fixed identification of restricted
+coefficients. (Stacks, Tags 03Q8 and 09Z1) -/
+noncomputable def higherDirectImageRawOverCoefficient
+    (Λ : Type (u + 1)) [CommRing Λ] {W : Scheme.{u}}
+    (G : Sheaf W.smallEtaleTopology (ModuleCat.{u + 1} Λ))
+    {A B : Over W} (f : A ⟶ B) :
+    D+((f.left)^*[ModuleCat.{u + 1} Λ]).obj
+        (higherDirectImageRawOverComplex Λ G B) ⟶ higherDirectImageRawOverComplex Λ G A :=
+  (((f.left)^*[ModuleCat.{u + 1} Λ]).mapDerivedCategoryPlusSingleFunctor 0).hom.app _ ≫
+    (DerivedCategory.Plus.singleFunctor _ 0).map
+      ((upperStarComp (ModuleCat.{u + 1} Λ) f.left B.hom A.hom
+        (Over.w f).symm).inv.app G)
+
+/-- The shared coefficient has the original formula, including its original endpoints.
+The heterogeneous equality permits transport of the endpoints by the complex equation. -/
+theorem higherDirectImageRawOverCoefficient_heq
+    (Λ : Type (u + 1)) [CommRing Λ] {W : Scheme.{u}}
+    (G : Sheaf W.smallEtaleTopology (ModuleCat.{u + 1} Λ))
+    {A B : Over W} (f : A ⟶ B) :
+    HEq (higherDirectImageRawOverCoefficient Λ G f) (
+  (((f.left)^*[ModuleCat.{u + 1} Λ]).mapDerivedCategoryPlusSingleFunctor 0).hom.app _ ≫
+    (DerivedCategory.Plus.singleFunctor _ 0).map
+      ((upperStarComp (ModuleCat.{u + 1} Λ) f.left B.hom A.hom
+        (Over.w f).symm).inv.app G)) := by rfl
+
+end AlgebraicGeometry.Etale

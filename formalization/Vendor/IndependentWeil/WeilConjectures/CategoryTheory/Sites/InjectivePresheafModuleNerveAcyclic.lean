@@ -1,0 +1,62 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.CategoryTheory.Sites.PresheafCechComplex
+public import Mathlib.Algebra.Category.ModuleCat.Presheaf
+public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
+import WeilConjectures.CategoryTheory.Sites.PresheafFreeNerveComparison
+import Mathlib.Algebra.Homology.ShortComplex.Ab
+
+/-!
+# Čech nerve acyclicity for injective module presheaves
+
+Source: Stacks Project, Cohomology on Sites, Tags 03FC, 03F5, 03AT.
+-/
+
+@[expose] public section
+
+universe u v
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace CategoryTheory
+
+/-- The Čech nerve of any map of small-valued presheaves is acyclic in positive
+cochain degrees against an injective module presheaf. No covering condition is needed.
+Source: Stacks Project, Cohomology on Sites, Tags 03FC, 03F5, 03AS and 03AT;
+Hypercoverings, Tag 01GC. -/
+theorem injective_presheaf_module_nerve_acyclic
+    {C : Type u} [Category.{v} C] (R : Cᵒᵖ ⥤ RingCat.{v})
+    (M : PresheafOfModules.{v} R) [Injective M]
+    (f : Arrow (Cᵒᵖ ⥤ Type v)) (q : ℕ) (hq : 0 < q) :
+    IsZero ((presheafCechComplex f M.presheaf).homology q) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hq)
+  let K := presheafFreeNerveComplex R f
+  obtain ⟨e, he⟩ := presheafFreeNerveComplex_comparison R M f
+  have hK : (ShortComplex.mk (K.d (n + 2) (n + 1)) (K.d (n + 1) n)
+      (K.d_comp_d _ _ _)).Exact := by
+    exact (HomologicalComplex.exactAt_iff' K (n + 2) (n + 1) n
+      (by simp) (by simp)).1 (presheafFreeNerveComplex_exactAt R f n)
+  have hExact : (presheafCechComplex f M.presheaf).ExactAt (n + 1) := by
+    rw [HomologicalComplex.exactAt_iff' _ n (n + 1) (n + 2) (by simp) (by simp),
+      ShortComplex.ab_exact_iff]
+    intro c hc
+    change ∃ b, (presheafCechComplex f M.presheaf).d n (n + 1) b = c
+    let a : K.X (n + 1) ⟶ M := (e (n + 1)).symm c
+    have ha : K.d (n + 2) (n + 1) ≫ a = 0 := by
+      apply (e (n + 2)).injective
+      rw [map_zero]
+      change e ((n + 1) + 1) (K.d ((n + 1) + 1) (n + 1) ≫ a) = 0
+      rw [he, AddEquiv.apply_symm_apply]
+      exact hc
+    refine ⟨e n (hK.descToInjective a ha), ?_⟩
+    rw [← he, hK.comp_descToInjective a ha]
+    exact (e (n + 1)).apply_symm_apply c
+  exact hExact.isZero_homology
+
+end CategoryTheory

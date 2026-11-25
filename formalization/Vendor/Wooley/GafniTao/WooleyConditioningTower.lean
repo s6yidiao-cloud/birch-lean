@@ -41,7 +41,7 @@ theorem wooleySourceMassSq_mul_conditionedMean
   unfold wooleySourcePolynomialConditionedMean
     wooleySourcePolynomialResidueMean
   by_cases hmass : wooleySourceMassSq gamma = 0
-  · rw [if_pos hmass, hmass, zero_mul]
+  · rw [ite_eq_left hmass, hmass, zero_mul]
     have hsum : ∑ xi : ZMod qH,
         wooleySourceResidueMassSq gamma qH xi = 0 := by
       rw [wooleySource_sum_residueMassSq, hmass]
@@ -53,7 +53,7 @@ theorem wooleySourceMassSq_mul_conditionedMean
           hsum xi (Finset.mem_univ xi)
     simp_rw [hzero]
     simp
-  · rw [if_neg hmass, ← mul_assoc, mul_inv_cancel₀ hmass, one_mul]
+  · rw [ite_eq_right hmass, ← mul_assoc, mul_inv_cancel₀ hmass, one_mul]
 
 /-- Equation (4.2) after Fourier averaging: a residue-class mean is the
 ordinary mean of the affine pullback sequence and affine polynomial system. -/

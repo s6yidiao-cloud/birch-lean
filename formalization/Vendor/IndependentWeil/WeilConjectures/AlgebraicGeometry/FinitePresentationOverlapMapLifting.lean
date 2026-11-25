@@ -1,0 +1,105 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.LocalOverlapTransitions
+public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
+public import Mathlib.RingTheory.Noetherian.Basic
+import WeilConjectures.AlgebraicGeometry.FinitePresentationOverlapPairMapLifting
+import WeilConjectures.AlgebraicGeometry.OverlapPairTransitionsAssembly
+import Mathlib.Data.Finset.Order
+
+/-! # Lifting overlap maps for fixed local models
+
+## References
+
+* Stacks Project, Tags 01ZR and 05N7
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits Opposite
+
+namespace AlgebraicGeometry
+
+/-- Lift natural overlap maps without asserting their identity or cocycle equations.
+(Stacks, Tag 01ZR, Tag 05N7) -/
+theorem exists_finitePresentation_overlap_map_lifting
+    {I : Type u} [Preorder I] [IsDirected I (· ≤ ·)]
+    (R : I ⥤ CommRingCat.{u}) [∀ k : I, IsNoetherianRing (R.obj k)]
+    (c : Cone (R.op ⋙ Scheme.Spec)) (hc : IsLimit c) [IsAffine c.pt]
+    (i : I) {Xi : Scheme.{u}} (f : Xi ⟶ Spec (R.obj i))
+    [LocallyOfFinitePresentation f] [QuasiCompact f] [QuasiSeparated f]
+    (j : I) (hij : i ≤ j)
+    (U : (pullback f (Spec.map (R.map (homOfLE hij)))).OpenCover.{u})
+    [Finite U.I₀] [∀ a, IsAffine (U.X a)]
+    (N : (a : U.I₀) → (U.X a).Modules)
+    (hN : ∀ a, (N a).IsFinitePresentation) (hNq : ∀ a, (N a).IsQuasicoherent)
+    (M : (pullback f (c.π.app (op i))).Modules)
+    (e : ∀ a, (Scheme.Modules.pullback (U.pullbackHom
+      (baseChangeMap f
+        (T := Over.mk (Spec.map (R.map (homOfLE hij))))
+        (T' := Over.mk (c.π.app (op i)))
+        (Over.homMk (c.π.app (op j)) (c.w (homOfLE hij).op))) a)).obj (N a) ≅
+      (Scheme.Modules.pullback ((U.pullback₁ (baseChangeMap f
+        (T := Over.mk (Spec.map (R.map (homOfLE hij))))
+        (T' := Over.mk (c.π.app (op i)))
+        (Over.homMk (c.π.app (op j)) (c.w (homOfLE hij).op)))).f a)).obj M) :
+    ∃ (k : I) (hjk : j ≤ k),
+      let q := overlapStageMap R f hij hjk
+      let V : (pullback f (Spec.map (R.map (homOfLE (hij.trans hjk))))).OpenCover.{u} :=
+        U.pullback₁ q
+      let p := overlapLimitMap R c f (hij.trans hjk)
+      ∃ T : modulesPseudofunctor.OverlapTransitions V.f,
+        (∀ a, Nonempty ((T.obj a : (V.X a).Modules) ≅
+          (Scheme.Modules.pullback (U.pullbackHom q a)).obj (N a))) ∧
+        Nonempty ((T.pull (p := p) (α := fun a ↦ a)
+          (fun a ↦ V.pullbackHom_map p a)).Comparison
+          ((modulesPseudofunctor.toDescentData (V.pullback₁ p).f).obj M)) := by
+  classical
+  let : Fintype U.I₀ := Fintype.ofFinite U.I₀
+  have one (ab : U.I₀ × U.I₀) :=
+    exists_finitePresentation_overlap_pair_map_lifting R c hc i f j hij U N hN hNq M e
+      ab.1 ab.2
+  let stage : U.I₀ × U.I₀ → I := fun ab ↦ (one ab).choose
+  have hlift (ab : U.I₀ × U.I₀) := (one ab).choose_spec.choose_spec
+  let : Nonempty I := ⟨j⟩
+  obtain ⟨k, hk⟩ := (insert j (Finset.univ.image stage)).exists_le
+  have hjk : j ≤ k := hk j (Finset.mem_insert_self _ _)
+  let q := overlapStageMap R f hij hjk
+  let V : (pullback f (Spec.map (R.map (homOfLE (hij.trans hjk))))).OpenCover.{u} :=
+    U.pullback₁ q
+  let p := overlapLimitMap R c f (hij.trans hjk)
+  let A : (a : V.I₀) → (V.X a).Modules :=
+    fun a ↦ (Scheme.Modules.pullback (U.pullbackHom q a)).obj (N a)
+  let W : (pullback f (c.π.app (op i))).OpenCover.{u} := V.pullback₁ p
+  let D := (modulesPseudofunctor.toDescentData W.f).obj M
+  let ε : ∀ a, (Scheme.Modules.pullback (V.pullbackHom p a)).obj (A a) ≅ D.obj a :=
+    overlapIteratedComparison U q p (overlapLimitMap R c f hij)
+      (overlapLimitMap_stage_comp R c f hij hjk) N M e
+  have pair (a b : U.I₀) := hlift (a, b) k hjk
+    (hk (stage (a, b)) (Finset.mem_insert_of_mem
+      (Finset.mem_image.mpr ⟨(a, b), Finset.mem_univ _, rfl⟩)))
+  let φ := fun (a b : U.I₀) ↦ (pair a b).choose
+  have hφ := fun (a b : U.I₀) ↦ (pair a b).choose_spec
+  have ha := exists_overlap_pair_transitions_comparison V A p D ε φ
+  have hb := ha (by
+    intro a b
+    exact hφ a b)
+  rcases hb with ⟨T, hT, hcomparison⟩
+  refine ⟨k, hjk, ?_⟩
+  change ∃ T : modulesPseudofunctor.OverlapTransitions V.f,
+    (∀ a, Nonempty (T.obj a ≅ A a)) ∧
+      Nonempty ((T.pull (p := p) (α := fun a ↦ a)
+        (fun a ↦ V.pullbackHom_map p a)).Comparison D)
+  refine ⟨T, ?_, hcomparison⟩
+  intro a
+  exact ⟨eqToIso (hT a)⟩
+
+end AlgebraicGeometry

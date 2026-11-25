@@ -171,7 +171,7 @@ theorem exists_selectedPolynomialChain_from_dimension {n d k : ℕ} {P Q K : ℝ
           (-((((s (i+1) (a.step P (m i) (pick i a)).form).val - (s i a.form).val : ℕ) : ℝ))) *
             (a.step P (m i) (pick i a)).magnitude P := by
     unfold pick
-    rw [dif_pos ⟨hi, hWa, hDa⟩]
+    rw [dite_eq_left ⟨hi, hWa, hDa⟩]
     exact Classical.choose_spec (heach i hi a hWa hDa)
   let t : ℕ → PolynomialDifferencingState n :=
     Nat.rec ⟨F,w,α⟩ fun i a => a.step P (m i) (pick i a)

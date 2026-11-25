@@ -316,7 +316,7 @@ theorem norm_wooleySourceNormalizedPolynomialSum_pow_even
       (wooleySourceMassSq gamma)⁻¹ ^ R *
         ‖wooleySourcePolynomialSum phi gamma alpha‖ ^ (2 * R) := by
   unfold wooleySourceNormalizedPolynomialSum
-  rw [if_neg hmass, norm_mul, norm_inv]
+  rw [ite_eq_right hmass, norm_mul, norm_inv]
   have hnonneg : 0 ≤ wooleySourceMassSq gamma :=
     wooleySourceMassSq_nonneg gamma
   rw [Complex.norm_real]

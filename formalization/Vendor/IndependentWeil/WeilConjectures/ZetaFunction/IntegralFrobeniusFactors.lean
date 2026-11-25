@@ -1,0 +1,118 @@
+/-
+Copyright (c) 2026 Claude. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Claude
+-/
+module
+
+public import WeilConjectures.ZetaFunction.IntegralFactorsRecovery
+public import WeilConjectures.ZetaFunction.SmoothProper
+
+/-!
+# Integral Frobenius factors
+
+Let `X₀` be a smooth, proper scheme of pure dimension `d` over
+`k₀ = 𝔽_q`. For every `0 ≤ i ≤ 2d` there is a unique polynomial `Pᵢ ∈ ℤ[T]` with `Pᵢ(0) = 1`
+whose coefficientwise image in `ℚ̄_ℓ[T]` is the determinant factor
+`P_{i,ℓ} = det(1 - T F | Hⁱ(X₀ ⊗ k̄, ℚ̄_ℓ))` for *every* prime `ℓ ≠ p`, and then
+`Z(X₀, T) = ∏ᵢ Pᵢ(T)^{(-1)^{i+1}}`, a factorization independent of `ℓ`.
+
+Existence is
+`AlgebraicGeometry.Scheme.exists_isIntegralFrobeniusFactor_of_isNormalizedIntegralFraction`
+(the factors are the weight strata of the reduced fraction `Z = A / B`, by purity alone);
+uniqueness holds because `ℤ → ℚ̄_ℓ` is injective. The functional equation and the endpoint
+values `P₀ = 1 - T`, `P_{2d} = 1 - qᵈT` need Poincaré duality and geometric connectedness
+(`AlgebraicGeometry.Scheme.isWeilFactorization_of_isIntegralFrobeniusFactor`).
+
+## Main statements
+
+- `AlgebraicGeometry.Scheme.IsIntegralFrobeniusFactor.unique`: an integral realization of
+  `P_{i,ℓ}` is unique.
+- `AlgebraicGeometry.Scheme.existsUnique_isIntegralFrobeniusFactor`: existence and uniqueness of
+  the integral Frobenius factors.
+- `AlgebraicGeometry.Scheme.isWeilFactorization_of_isIntegralFrobeniusFactor`: the integral
+  Frobenius factors are a Weil factorization of `Z(X₀, T)`, satisfying the functional equation and
+  the Riemann hypothesis.
+- `AlgebraicGeometry.Scheme.integral_frobenius_factors`: existence and uniqueness of the integral
+  Frobenius factors together with the product formula `Z(X₀, T) = ∏ᵢ Pᵢ(T)^{(-1)^{i+1}}`.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory Limits Polynomial
+
+namespace AlgebraicGeometry
+
+variable {k₀ : Type u} [Field k₀] [Finite k₀]
+
+namespace Scheme
+
+variable (k₀) (X : Scheme.{u}) [X.Over (Spec (CommRingCat.of k₀))]
+
+/-- An integral realization of the determinant factors `P_{i,ℓ}` is unique: its image in
+`ℚ̄_ℓ[T]` is prescribed for one prime `ℓ ≠ p`, and `ℤ → ℚ̄_ℓ` is injective. -/
+theorem IsIntegralFrobeniusFactor.unique [QuasiCompact (X ↘ Spec (CommRingCat.of k₀))]
+    [QuasiSeparated (X ↘ Spec (CommRingCat.of k₀))]
+    [LocallyOfFiniteType (X ↘ Spec (CommRingCat.of k₀))] {i : ℤ} {P P' : Polynomial ℤ}
+    (h : IsIntegralFrobeniusFactor k₀ X i P) (h' : IsIntegralFrobeniusFactor k₀ X i P') :
+    P = P' := by
+  obtain ⟨l, hl, hne⟩ := exists_prime_ne_ringChar k₀
+  have : Fact l.Prime := ⟨hl⟩
+  have : Fact (ringChar k₀ ≠ l) := ⟨hne⟩
+  exact Polynomial.map_injective _ (RingHom.injective_int (Int.castRingHom (PadicAlgCl l)))
+    ((h l).trans (h' l).symm)
+
+variable (d : ℕ) [IsProper (X ↘ Spec (CommRingCat.of k₀))]
+  [SmoothOfRelativeDimension d (X ↘ Spec (CommRingCat.of k₀))]
+
+/-- The integral Frobenius factors of `X₀` exist: for every `0 ≤ i ≤ 2d` there is `Pᵢ ∈ ℤ[T]`
+with `Pᵢ(0) = 1` and `Pᵢ^{(ℓ)} = P_{i,ℓ}` for every prime `ℓ ≠ p`; they are unique
+(`AlgebraicGeometry.Scheme.IsIntegralFrobeniusFactor.unique`). -/
+theorem existsUnique_isIntegralFrobeniusFactor {i : ℕ} (hi : i ≤ 2 * d) :
+    ∃! P : Polynomial ℤ, P.coeff 0 = 1 ∧ IsIntegralFrobeniusFactor k₀ X i P := by
+  obtain ⟨p, hAB, -⟩ :=
+    (X ↘ Spec (CommRingCat.of k₀)).existsUnique_isNormalizedIntegralFraction_zetaSeries
+  obtain ⟨P, hP, -, -⟩ :=
+    exists_isIntegralFrobeniusFactor_of_isNormalizedIntegralFraction k₀ X d hAB
+  exact ⟨P ⟨i, by omega⟩, hP ⟨i, by omega⟩,
+    fun P' hP' ↦ hP'.2.unique k₀ X (hP ⟨i, by omega⟩).2⟩
+
+/-- For `X₀` moreover geometrically connected, the integral Frobenius factors `P₀, …, P_{2d}`
+of `X₀` are a Weil factorization of `Z(X₀, T)` satisfying the functional equation and the
+Riemann hypothesis: they agree with the factors of
+`AlgebraicGeometry.Scheme.exists_isWeilFactorization_of_smoothProper`. -/
+theorem isWeilFactorization_of_isIntegralFrobeniusFactor
+    [GeometricallyConnected (X ↘ Spec (CommRingCat.of k₀))]
+    {P : Fin (2 * d + 1) → Polynomial ℤ}
+    (hP : ∀ i : Fin (2 * d + 1), IsIntegralFrobeniusFactor k₀ X (i : ℕ) (P i)) :
+    IsWeilFactorization (Nat.card k₀) d (X ↘ Spec (CommRingCat.of k₀)).zetaSeries P ∧
+      WeilFunctionalEquation (Nat.card k₀) d P ∧ WeilRiemannHypothesis (Nat.card k₀) d P := by
+  obtain ⟨P', hfact, hfe, hrh, hP'⟩ := exists_isWeilFactorization_of_smoothProper k₀ X d
+  obtain rfl : P = P' := funext fun i ↦ (hP i).unique k₀ X (hP' i)
+  exact ⟨hfact, hfe, hrh⟩
+
+/-- The integral Frobenius factors: for
+`X₀` smooth and proper of pure dimension `d` over `k₀ = 𝔽_q`,
+
+* for every `0 ≤ i ≤ 2d` there is a unique `Pᵢ ∈ ℤ[T]` with `Pᵢ(0) = 1` and
+  `Pᵢ^{(ℓ)} = det(1 - T F | Hⁱ(X₀ ⊗ k̄, ℚ̄_ℓ))` for every prime `ℓ ≠ p`;
+* for this family, `Z(X₀, T) = ∏ᵢ Pᵢ(T)^{(-1)^{i+1}}`, a factorization which does not depend on
+  `ℓ`. -/
+theorem integral_frobenius_factors :
+    (∀ i : ℕ, i ≤ 2 * d →
+      ∃! P : Polynomial ℤ, P.coeff 0 = 1 ∧ IsIntegralFrobeniusFactor k₀ X i P) ∧
+    ∀ P : Fin (2 * d + 1) → Polynomial ℤ,
+      (∀ i : Fin (2 * d + 1), IsIntegralFrobeniusFactor k₀ X (i : ℕ) (P i)) →
+      (X ↘ Spec (CommRingCat.of k₀)).zetaSeries *
+          ∏ i ∈ Finset.univ.filter (fun i : Fin (2 * d + 1) ↦ Even i.1),
+            ((P i).map (Int.castRingHom ℚ) : PowerSeries ℚ) =
+        ∏ i ∈ Finset.univ.filter (fun i : Fin (2 * d + 1) ↦ Odd i.1),
+          ((P i).map (Int.castRingHom ℚ) : PowerSeries ℚ) :=
+  ⟨fun _ hi ↦ existsUnique_isIntegralFrobeniusFactor k₀ X d hi,
+    fun _ hP ↦ zetaSeries_mul_prod_even_eq_prod_odd_of_isIntegralFrobeniusFactor k₀ X d hP⟩
+
+end Scheme
+
+end AlgebraicGeometry

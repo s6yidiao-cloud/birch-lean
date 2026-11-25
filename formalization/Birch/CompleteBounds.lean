@@ -219,8 +219,8 @@ theorem completeSum_decay_of_eventual_conductorOne_power {n d : ℕ} {F : IntFor
         ∀ a : (ZMod (p^m))ˣ, ‖completeSum F (p^m) a.val‖ ≤ K * (p^m : ℝ)^(-κ) := by
     intro p
     by_cases hprime : p.Prime
-    · letI : Fact p.Prime := ⟨hprime⟩
-      letI : NeZero p := ⟨hprime.ne_zero⟩
+    · let : Fact p.Prime := ⟨hprime⟩
+      let : NeZero p := ⟨hprime.ne_zero⟩
       let bound (K : ℝ) := ∀ (m : ℕ) (a : ℤ), (a : ZMod p) ≠ 0 →
         ‖completeSum F (p ^ m) (a : ZMod (p ^ m))‖ ≤ K * (p : ℝ)^(-((m : ℝ) * κ))
       have toUnit (K : ℝ) (hK : bound K) (m : ℕ) (hm : 0 < m) (a : (ZMod (p^m))ˣ) :
@@ -268,9 +268,9 @@ theorem completeSum_decay_of_eventual_conductorOne_power {n d : ℕ} {F : IntFor
         simp [L, completeSum_one]
     | prime_pow_mul q p m hp hnot hm ih =>
         intro _ a
-        letI : NeZero p := ⟨hp.ne_zero⟩
+        let : NeZero p := ⟨hp.ne_zero⟩
         have hq₀ : q ≠ 0 := fun h ↦ hnot (h ▸ dvd_zero _)
-        letI : NeZero q := ⟨hq₀⟩
+        let : NeZero q := ⟨hq₀⟩
         have hcop : (p^m).Coprime q := (hp.coprime_iff_not_dvd.mpr hnot).pow_left m
         obtain ⟨b, c, hbc⟩ := completeSum_units_product F hcop a
         rw [hbc, norm_mul]
@@ -284,7 +284,7 @@ theorem completeSum_decay_of_eventual_conductorOne_power {n d : ℕ} {F : IntFor
           Real.mul_rpow (by positivity) (by positivity)]
         ring
   let C := ∏ p ∈ Finset.range (B + 1), K p
-  have hC : 1 ≤ C := Finset.one_le_prod (fun p _ ↦ hK p)
+  have hC : 1 ≤ C := Finset.one_le_prod₀ (fun p _ ↦ hK p)
   refine ⟨C, hC, fun q _ a ↦ (hmul q a).trans ?_⟩
   apply mul_le_mul_of_nonneg_right _ (by positivity)
   have hfilter : L q = ∏ p ∈ q.primeFactors.filter (· < B + 1), K p := by
@@ -294,7 +294,7 @@ theorem completeSum_decay_of_eventual_conductorOne_power {n d : ℕ} {F : IntFor
     by_contra! hv
     exact hp (hKlarge p (by omega))
   rw [hfilter]
-  apply Finset.prod_le_prod_of_subset_of_one_le
+  apply Finset.prod_le_prod_of_subset_of_one_le₀
   · intro p hp
     exact Finset.mem_range.mpr (Finset.mem_filter.mp hp).2
   · intro p _

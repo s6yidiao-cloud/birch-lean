@@ -31,8 +31,8 @@ theorem wooley_three_factor_holder_ennreal
   classical
   let subF : Fintype {i : ι // i ∈ t} :=
     Finset.fintypeCoeSort t
-  letI : Fintype {i : ι // i ∈ t} := subF
-  letI : MeasurableSpace {i : ι // i ∈ t} := ⊤
+  let : Fintype {i : ι // i ∈ t} := subF
+  let : MeasurableSpace {i : ι // i ∈ t} := ⊤
   let fs : Fin 3 → {i : ι // i ∈ t} → ℝ≥0∞ := fun j x =>
     Fin.cases (f₀ x.1)
       (fun j' => Fin.cases (f₁ x.1) (fun _ => f₂ x.1) j') j

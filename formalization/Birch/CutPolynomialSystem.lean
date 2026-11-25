@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.ConeHyperplane
 import Birch.MacaulayMatrix
 import Mathlib.Algebra.MvPolynomial.Coeff
@@ -86,14 +87,14 @@ theorem map_cutPolynomialSystem_macaulayMinor (φ : K →+* L)
 /-- A maximal minor has degree at most the coefficient bound times its size. -/
 theorem systemMacaulayMinor_totalDegree_le {σ R : Type*} [CommRing R]
     (f : Fin m → MvPolynomial (Fin n) (MvPolynomial σ R)) (e D B : ℕ)
-    (hcoeff : ∀ j b, (coeff b (f j)).totalDegree ≤ B)
+    (hcoeff : ∀ j b, (AddMonoidAlgebra.coeff (f j) b).totalDegree ≤ B)
     (sel : DegreeMonomial n D → Fin m × DegreeMonomial n (D-e)) :
     ((systemMacaulayMatrix f e D).submatrix id sel).det.totalDegree ≤
       B * Fintype.card (DegreeMonomial n D) := by
   classical
   let M := (systemMacaulayMatrix f e D).submatrix id sel
   have hM (i j : DegreeMonomial n D) : (M i j).totalDegree ≤ B := by
-    change (coeff i.val (monomial (sel j).2.val 1 * f (sel j).1)).totalDegree ≤ B
+    change (AddMonoidAlgebra.coeff (monomial (sel j).2.val 1 * f (sel j).1) i.val).totalDegree ≤ B
     rw [coeff_monomial_mul', one_mul]
     split_ifs
     · exact hcoeff _ _
@@ -115,7 +116,7 @@ degrees at most proportionally to the exponent. -/
 theorem coeff_normalLinearForm_pow_totalDegree_le {σ R : Type*} [CommRing R]
     (a : Fin n → MvPolynomial σ R) {B : ℕ} (ha : ∀ i, (a i).totalDegree ≤ B)
     (b : Fin n →₀ ℕ) (e : ℕ) :
-    (coeff b ((normalLinearForm a)^e)).totalDegree ≤ e * B := by
+    (AddMonoidAlgebra.coeff (normalLinearForm a ^ e) b).totalDegree ≤ e * B := by
   classical
   have hl : normalLinearForm a = ∑ i, a i • X i := by
     simp only [normalLinearForm, smul_eq_C_mul]
@@ -141,9 +142,9 @@ a bound for all coefficients after adjoining the cuts. -/
 theorem coeff_cutPolynomialSystem_totalDegree_le {σ R : Type*} [CommRing R]
     (f : Fin m → MvPolynomial (Fin n) (MvPolynomial σ R)) (c : MvPolynomial σ R)
     (a : Fin k → Fin n → MvPolynomial σ R) (e : ℕ) {B A : ℕ}
-    (hf : ∀ i b, (coeff b (f i)).totalDegree ≤ B)
+    (hf : ∀ i b, (AddMonoidAlgebra.coeff (f i) b).totalDegree ≤ B)
     (ha : ∀ j i, (a j i).totalDegree ≤ A) (j : Fin (m+k)) (b : Fin n →₀ ℕ) :
-    (coeff b (cutPolynomialSystem f c a e j)).totalDegree ≤ max B (c.totalDegree + e*A) := by
+    (AddMonoidAlgebra.coeff (cutPolynomialSystem f c a e j) b).totalDegree ≤ max B (c.totalDegree + e*A) := by
   refine Fin.addCases (fun i => ?_) (fun i => ?_) j
   · rw [cutPolynomialSystem, Fin.append_left]
     exact (hf i b).trans (le_max_left _ _)

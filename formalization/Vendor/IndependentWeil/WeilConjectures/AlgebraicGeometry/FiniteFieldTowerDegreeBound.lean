@@ -1,0 +1,69 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Morphisms.FiberDegree
+import WeilConjectures.AlgebraicGeometry.FiniteOverField
+import WeilConjectures.RingTheory.SemilocalFiberGenerators
+
+/-!
+# Degree estimate for a tower finite over a field
+
+## References
+
+Stacks Project, Morphisms, proof of Tag 03J6.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.Scheme.Hom
+
+/-- The degree of a finite tower over a field is bounded using the fibre degrees
+of its first map. (Stacks, Tag 03J6.) -/
+theorem finrankΓ_comp_le_mul_of_finite {X Y : Scheme.{u}} {K : Type u} [Field K]
+    (f : X ⟶ Y) (g : Y ⟶ Spec (.of K)) [IsFinite f] [IsFinite g] (n : ℕ)
+    (hf : ∀ y, (f.fiberToSpecResidueField y).finrankΓ ≤ n) :
+    (f ≫ g).finrankΓ ≤ n * g.finrankΓ := by
+  classical
+  have : IsAffine Y := isAffine_of_isAffineHom g
+  have : IsAffine X := isAffine_of_isAffineHom (f ≫ g)
+  let := g.ΓAlgebra
+  let := f.appTop.hom.toAlgebra
+  let := (f ≫ g).ΓAlgebra
+  have : IsScalarTower K Γ(Y, ⊤) Γ(X, ⊤) := by
+    apply IsScalarTower.of_algebraMap_eq
+    intro k
+    rfl
+  have : Module.Finite K Γ(Y, ⊤) := by
+    have := finite_sections_top_of_isFinite g
+    rwa [Scheme.Hom.appLE_top_top] at this
+  have : Module.Finite Γ(Y, ⊤) Γ(X, ⊤) := f.finite_appTop
+  have : IsArtinianRing Γ(Y, ⊤) := .of_finite K Γ(Y, ⊤)
+  have hb : ∀ p : MaximalSpectrum Γ(Y, ⊤), p.asIdeal.fiberDegree Γ(X, ⊤) ≤ n := by
+    intro p
+    let s := Spec.map (CommRingCat.ofHom (algebraMap Γ(Y, ⊤) Γ(X, ⊤)))
+    have sq : IsPullback X.isoSpec.inv s f Y.isoSpec.inv :=
+      IsPullback.of_horiz_isIso ⟨by
+        change X.isoSpec.inv ≫ f = Spec.map f.appTop ≫ Y.isoSpec.inv
+        rw [Iso.inv_comp_eq, ← Category.assoc, Scheme.isoSpec_hom_naturality,
+          Category.assoc, Iso.hom_inv_id, Category.comp_id]⟩
+    change p.toPrimeSpectrum.asIdeal.fiberDegree Γ(X, ⊤) ≤ n
+    rw [← Scheme.Hom.fiberDegree_SpecMap Γ(Y, ⊤) Γ(X, ⊤) p.toPrimeSpectrum]
+    exact (f.fiberDegree_of_isPullback sq p.toPrimeSpectrum).trans_le
+      (hf (Y.isoSpec.inv p.toPrimeSpectrum))
+  obtain ⟨q, hq⟩ := RingTheory.exists_surjective_fin_of_fiberDegree_le
+    Γ(Y, ⊤) Γ(X, ⊤) n hb
+  have hdim := LinearMap.finrank_le_finrank_of_surjective (f := q.restrictScalars K) hq
+  simpa only [Scheme.Hom.finrankΓ, Module.finrank_pi_fintype, Fintype.card_fin,
+    Finset.sum_const, Finset.card_univ, smul_eq_mul] using hdim
+
+
+end AlgebraicGeometry.Scheme.Hom

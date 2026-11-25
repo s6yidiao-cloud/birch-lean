@@ -31,5 +31,5 @@ files and their copied declarations. `wooley-port.patch` records the
 changes to existing source files.
 
 Birch uses the exact count through its signed-interval adapter. The port
-uses Lean `v4.32.0` and Mathlib `81a5d257c8e410db227a6665ed08f64fea08e997`,
+uses Lean `v4.35.0` and Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`,
 as pinned by Birch.

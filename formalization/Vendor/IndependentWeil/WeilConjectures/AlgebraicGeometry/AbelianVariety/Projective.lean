@@ -1,0 +1,132 @@
+/-
+Copyright (c) 2026 Claude. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Claude
+-/
+module
+
+public import WeilConjectures.AlgebraicGeometry.AbelianVariety.Basic
+public import WeilConjectures.AlgebraicGeometry.GroupScheme.QuasiProjective
+public import WeilConjectures.AlgebraicGeometry.Modules.Ample
+public import WeilConjectures.AlgebraicGeometry.ProjectiveSpace
+public import WeilConjectures.Mathlib.AlgebraicGeometry.Morphisms.Proper
+
+/-!
+# Abelian varieties are projective
+
+An abelian variety admits a closed immersion into a projective space over the base field, hence
+carries an ample invertible module, and the symmetrisation `L ⊗ [-1]^* L` of an ample invertible
+module is again ample and is symmetric.
+
+An abelian variety is a group scheme of finite type over `K`, hence quasi-projective: it admits
+an immersion into a projective space over `K`
+(`AlgebraicGeometry.GrpObj.exists_isImmersion_projectiveSpace`). Being proper, the immersion is
+closed (`AlgebraicGeometry.IsClosedImmersion.of_comp_of_isSeparated`).
+
+## Main definitions
+
+- `AlgebraicGeometry.Scheme.Modules.symmetrisation`: the symmetrisation `L ⊗ [-1]^* L`.
+
+## Main statements
+
+- `AlgebraicGeometry.IsAbelianVariety.exists_isClosedImmersion_projectiveSpace`: abelian
+  varieties are projective.
+- `AlgebraicGeometry.IsAbelianVariety.exists_isAmple`: abelian varieties carry an ample
+  invertible module.
+- `AlgebraicGeometry.IsAbelianVariety.isAmple_symmetrisation`,
+  `AlgebraicGeometry.IsAbelianVariety.nonempty_iso_overPullback_inv_symmetrisation`:
+  `L ⊗ [-1]^* L` is ample and symmetric.
+
+## Implementation details
+
+- In `IsAbelianVariety.exists_isClosedImmersion_projectiveSpace` the index type of the
+  projective space is called `α`, since `ι` is the token of the inversion notation `ι[A]`.
+
+## References
+
+* Stacks Project, Tags 0BFA, 0BF7 and 0B45
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
+
+namespace AlgebraicGeometry
+
+open Scheme.Modules
+
+variable {K : Type u} [Field K]
+
+/-- The *symmetrisation* `L ⊗ [-1]^* L` of an invertible module `L` on a group scheme: the
+smallest symmetric module built from `L`. -/
+noncomputable def Scheme.Modules.symmetrisation {A : Over (Spec (.of K))} [GrpObj A]
+    (L : A.left.Modules) : A.left.Modules :=
+  tensorObj L (overPullback ι[A] L)
+
+/-- Abelian varieties are projective: every abelian variety `A` over a field `K` admits a closed
+immersion into a projective space over `Spec K` compatible with the structure morphisms. -/
+theorem IsAbelianVariety.exists_isClosedImmersion_projectiveSpace (A : Over (Spec (.of K)))
+    [GrpObj A] [IsAbelianVariety A] :
+    ∃ (α : Type u) (_ : Finite α) (j : A.left ⟶ ℙ(α; Spec (.of K))),
+      IsClosedImmersion j ∧ j ≫ ℙ(α; Spec (.of K)) ↘ Spec (.of K) = A.hom := by
+  obtain ⟨α, _, j, hj, hjA⟩ := GrpObj.exists_isImmersion_projectiveSpace A
+  refine ⟨α, inferInstance, j, ?_, hjA⟩
+  have : IsProper (j ≫ ℙ(α; Spec (.of K)) ↘ Spec (.of K)) := hjA ▸ inferInstance
+  exact IsClosedImmersion.of_comp_of_isSeparated j (ℙ(α; Spec (.of K)) ↘ Spec (.of K))
+
+/-- An abelian variety carries an ample invertible `𝒪_A`-module. -/
+theorem IsAbelianVariety.exists_isAmple (A : Over (Spec (.of K))) [GrpObj A]
+    [IsAbelianVariety A] :
+    ∃ M : A.left.Modules, IsAmple A.hom M := by
+  obtain ⟨α, _, j, hj, hjA⟩ := exists_isClosedImmersion_projectiveSpace A
+  have hM : IsVeryAmple A.hom (ProjectiveSpace.twistRestrict j 1) :=
+    ⟨α, j, inferInstance, hj, hjA, ⟨Iso.refl _⟩⟩
+  refine ⟨_, hM.isInvertible, 1, one_pos, ?_⟩
+  obtain ⟨β, i, hβ, hi, hiA, ⟨e⟩⟩ := hM
+  refine ⟨β, i, hβ, hi, hiA, ⟨e ≪≫ ?_⟩⟩
+  rw [tensorPow_succ, tensorPow_zero]
+  exact (ρ_ _).symm
+
+/-- Let `A` be an abelian variety over `K` and let `L` be an ample invertible `𝒪_A`-module. Then
+the symmetrisation `L ⊗ [-1]^* L` is ample. -/
+theorem IsAbelianVariety.isAmple_symmetrisation (A : Over (Spec (.of K))) [GrpObj A]
+    [IsAbelianVariety A] (L : A.left.Modules) (hample : IsAmple A.hom L) :
+    IsAmple A.hom L.symmetrisation := by
+  have : IsClosedImmersion ι[A].left := by
+    have : IsIso ι[A].left := (Over.forget _).map_isIso ι[A]
+    infer_instance
+  have h := hample.pullback ι[A].left
+  rw [Over.w ι[A]] at h
+  exact hample.tensorObj h
+
+/-- The symmetrisation `N = L ⊗ [-1]^* L` of an invertible module on an abelian variety is
+*symmetric*, that is `[-1]^* N ≅ N`. -/
+theorem IsAbelianVariety.nonempty_iso_overPullback_inv_symmetrisation
+    (A : Over (Spec (.of K))) [GrpObj A] [IsAbelianVariety A] (L : A.left.Modules)
+    [L.IsInvertible] :
+    Nonempty (overPullback ι[A] L.symmetrisation ≅ L.symmetrisation) := by
+  obtain ⟨e⟩ := nonempty_pullback_tensorObj_iso ι[A].left L (overPullback ι[A] L)
+  have h : ι[A].left ≫ ι[A].left = 𝟙 A.left := by
+    rw [← Over.comp_left, GrpObj.inv_comp_inv, Over.id_left]
+  exact ⟨e ≪≫ (Iso.refl _ ⊗ᵢ ((pullbackComp ι[A].left ι[A].left).app L ≪≫
+    (pullbackCongr h).app L ≪≫ (pullbackId A.left).app L)) ≪≫ β_ _ _⟩
+
+/-- An abelian variety has a symmetric ample invertible
+module: the symmetrisation `N = L ⊗ [-1]^* L` of an ample invertible module `L`
+(`IsAbelianVariety.exists_isAmple`) is invertible, ample
+(`IsAbelianVariety.isAmple_symmetrisation`) and symmetric, `[-1]^* N ≅ N`
+(`IsAbelianVariety.nonempty_iso_overPullback_inv_symmetrisation`). -/
+theorem IsAbelianVariety.exists_isInvertible_isAmple_nonempty_iso_overPullback_inv
+    (A : Over (Spec (.of K))) [GrpObj A] [IsAbelianVariety A] :
+    ∃ N : A.left.Modules, N.IsInvertible ∧ IsAmple A.hom N ∧
+      Nonempty (overPullback ι[A] N ≅ N) := by
+  obtain ⟨L, hL⟩ := IsAbelianVariety.exists_isAmple A
+  have hLinv := hL.isInvertible
+  have : L.symmetrisation.IsInvertible :=
+    inferInstanceAs (Scheme.Modules.tensorObj L (overPullback ι[A] L)).IsInvertible
+  exact ⟨L.symmetrisation, this, IsAbelianVariety.isAmple_symmetrisation A L hL,
+    IsAbelianVariety.nonempty_iso_overPullback_inv_symmetrisation A L⟩
+
+end AlgebraicGeometry

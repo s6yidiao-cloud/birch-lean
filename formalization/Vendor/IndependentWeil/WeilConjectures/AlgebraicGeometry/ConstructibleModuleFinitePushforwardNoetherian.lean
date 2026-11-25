@@ -1,0 +1,80 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.IsConstructibleEtaleModuleSheaf
+public import WeilConjectures.ConstructibleSheaf.FinitePushforward
+import WeilConjectures.AlgebraicGeometry.ConstructibleModuleIntegralStalkEmbedding
+import WeilConjectures.AlgebraicGeometry.ConstructibleModuleIntegralMapFactorization
+import WeilConjectures.AlgebraicGeometry.ConstructibleModuleFiniteSelection
+
+/-!
+# Noetherian finite-pushforward embeddings with constructible strata
+
+## References
+
+* Stacks Project, Tag 09Z6 (3)
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace AlgebraicGeometry.Etale
+
+/-- On a Noetherian scheme, a constructible module sheaf with constructible strata embeds
+into a finite biproduct of finite pushforwards of constant sheaves with finite values.
+(Stacks, Tag 09Z6 (3)) -/
+theorem exists_mono_biproduct_lowerStar_of_isNoetherian_etaleModule
+    (Λ : Type (u + 1)) [CommRing Λ] [Finite Λ]
+    {X : Scheme.{u}} [IsNoetherian X]
+    (F : Sheaf X.smallEtaleTopology (ModuleCat.{u + 1} Λ))
+    (hF : Scheme.IsConstructibleEtaleModuleSheaf F) :
+    ∃ (n : ℕ) (Y : Fin n → Scheme.{u}) (f : ∀ i : Fin n, Y i ⟶ X),
+      (∀ i : Fin n, IsFinite (f i)) ∧
+      ∃ (M : Fin n → ModuleCat.{u + 1} Λ), (∀ i : Fin n, Finite (M i)) ∧
+        ∃ (φ : F ⟶ ⨁ fun i : Fin n ↦
+          (lowerStar (ModuleCat.{u + 1} Λ) (f i)).obj
+            ((constantSheaf (Y i).smallEtaleTopology (ModuleCat.{u + 1} Λ)).obj (M i))),
+          Mono φ := by
+  classical
+  have hx (x : X) :
+      ∃ (Y : Scheme.{u}) (f : Y ⟶ X), IsFinite f ∧
+        ∃ (M : ModuleCat.{u + 1} Λ), Finite M ∧
+          ∃ (ψ : F ⟶ (lowerStar (ModuleCat.{u + 1} Λ) f).obj
+            ((constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} Λ)).obj M)),
+            ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (s : Spec (.of Ω) ⟶ X),
+              ((Scheme.SpecToEquivOfField Ω X) s).1 = x →
+                Function.Injective
+                  (((Scheme.pointSmallEtale s).sheafFiber (A := ModuleCat.{u + 1} Λ)).map ψ) := by
+    obtain ⟨Y, ν, hν, M, hM, φ, hφ⟩ := exists_integral_lowerStar_stalk_injective Λ F hF x
+    have : IsIntegralHom ν := hν
+    have : Finite M := hM
+    obtain ⟨Z, f, hf, ψ, κ, hψ⟩ := exists_finite_lowerStar_factorization Λ F hF ν M φ
+    refine ⟨Z, f, hf, M, hM, ψ, ?_⟩
+    intro Ω _ _ s hs
+    let P := (Scheme.pointSmallEtale s).sheafFiber (A := ModuleCat.{u + 1} Λ)
+    intro a b hab
+    apply hφ Ω s hs
+    rw [← hψ, P.map_comp]
+    exact congrArg (fun v ↦ (P.map κ) v) hab
+  choose Y f hf M hM ψ hψ using hx
+  let G (x : X) := (lowerStar (ModuleCat.{u + 1} Λ) (f x)).obj
+    ((constantSheaf (Y x).smallEtaleTopology (ModuleCat.{u + 1} Λ)).obj (M x))
+  have htests : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (s : Spec (.of Ω) ⟶ X),
+      ∃ x : X, Function.Injective
+        (((Scheme.pointSmallEtale s).sheafFiber (A := ModuleCat.{u + 1} Λ)).map (ψ x)) := by
+    intro Ω _ _ s
+    exact ⟨((Scheme.SpecToEquivOfField Ω X) s).1, hψ _ Ω s rfl⟩
+  obtain ⟨n, l, hl⟩ :=
+    Scheme.exists_mono_biproduct_of_constructible_module_stalk_injective Λ X F hF X G ψ htests
+  exact ⟨n, fun i ↦ Y (l i), fun i ↦ f (l i), fun i ↦ hf (l i),
+    fun i ↦ M (l i), fun i ↦ hM (l i), biproduct.lift (fun i ↦ ψ (l i)), hl⟩
+
+end AlgebraicGeometry.Etale

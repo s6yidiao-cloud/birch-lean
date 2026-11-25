@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.BoundedMacaulayCuts
 import Birch.DirectionFiberDimension
 
@@ -34,7 +35,7 @@ private theorem parameterGradientSystem_eval {L : Type} [Field L] [Algebra K L]
 set_option maxHeartbeats 650000 in
 private theorem parameterGradientSystem_coeff_homogeneous
     (G : MvPolynomial (Fin n) K) (i : Fin n) (b : Fin n →₀ ℕ) :
-    (coeff b (parameterGradientSystem G i)).IsHomogeneous 1 := by
+    (AddMonoidAlgebra.coeff (parameterGradientSystem G i) b).IsHomogeneous 1 := by
   simp only [parameterGradientSystem, coeff_sum, coeff_C_mul, coeff_map]
   apply IsHomogeneous.sum
   intro j _
@@ -62,7 +63,8 @@ theorem directionTest_isHomogeneous (G : MvPolynomial (Fin n) K) {k e D B : ℕ}
   let R := MvPolynomial (Fin n) K
   let l (j : Fin k) (i : Fin n) : K := (a.2.1 j i).val
   let g := cutPolynomialSystem (parameterGradientSystem G) (X a.1) (fun j i => C (l j i)) e
-  have hg (j : Fin (n+k)) (b : Fin n →₀ ℕ) : (coeff b (g j)).IsHomogeneous 1 := by
+  have hg (j : Fin (n+k)) (b : Fin n →₀ ℕ) :
+      (AddMonoidAlgebra.coeff (g j) b).IsHomogeneous 1 := by
     refine Fin.addCases (fun i => ?_) (fun i => ?_) j
     · simpa only [g, cutPolynomialSystem, Fin.append_left] using
         parameterGradientSystem_coeff_homogeneous G i b
@@ -75,7 +77,8 @@ theorem directionTest_isHomogeneous (G : MvPolynomial (Fin n) K) {k e D B : ℕ}
       exact isHomogeneous_C_mul_X _ _
   let A := (systemMacaulayMatrix g e D).submatrix id a.2.2
   have hA (i j : DegreeMonomial n D) : (A i j).IsHomogeneous 1 := by
-    change (coeff i.val (monomial (a.2.2 j).2.val 1 * g (a.2.2 j).1)).IsHomogeneous 1
+    change (AddMonoidAlgebra.coeff
+      (monomial (a.2.2 j).2.val 1 * g (a.2.2 j).1) i.val).IsHomogeneous 1
     rw [coeff_monomial_mul', one_mul]
     split_ifs
     · exact hg _ _
@@ -163,7 +166,7 @@ theorem directionTests_zero_iff {L : Type} [Field L] [Algebra K L] [IsAlgClosed 
         simp [f, hu, directionalDerivativeOver]
       rw [hI, ringKrullDim_eq_of_ringEquiv (RingEquiv.quotientBot _)] at hd
       have hn : ringKrullDim (MvPolynomial (Fin n) L) = (n : WithBot ℕ∞) := by
-        simp [MvPolynomial.ringKrullDim_of_isNoetherianRing]
+        simp
       rw [hn] at hd
       exact (not_le_of_gt hk) (by exact_mod_cast hd)
     obtain ⟨i,hi⟩ : ∃ i, u i ≠ 0 := by

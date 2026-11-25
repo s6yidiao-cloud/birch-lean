@@ -1,0 +1,63 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+
+public import WeilConjectures.AlgebraicGeometry.Finite.Quotient.FiniteQuotientCoefficientLayerData
+public import WeilConjectures.AlgebraicGeometry.Finite.Coefficient.FiniteCoefficientLocalHomologyModels
+public import WeilConjectures.AlgebraicGeometry.Finite.Quotient.FiniteQuotientLayerTensorComplex
+import WeilConjectures.AlgebraicGeometry.Finite.Quotient.FiniteQuotientLayerTensorDerivedHomologyComparison
+import WeilConjectures.AlgebraicGeometry.Finite.Quotient.FiniteQuotientLayerTensorModelHomologyIdentification
+
+/-! # The homology comparison for the explicit ideal-layer tensor complex
+
+## References
+
+* Stacks Project, Tags 094I, 094H, 06YU
+-/
+
+@[expose] public noncomputable section
+set_option autoImplicit false
+set_option synthInstance.maxSize 2048
+universe t
+open CategoryTheory CategoryTheory.Limits Opposite
+namespace AlgebraicGeometry.Scheme
+attribute [local instance] finitePerfectModelsAbLocallyBijective
+
+/-- Compute the homology of the layer tensor complex from the specified residue projective
+complex, assuming only an upper bound and projectivity of its terms. -/
+theorem finiteQuotient_layer_tensor_homology_comparison
+    (X : Scheme.{t})
+    {A : Type t} [CommRing A] (d : AdicCoefficientDatum A)
+    [∀ n : ℕ, (koszulConstantFunctor X (A ⧸ d.ideal ^ (n + 1))).PreservesZeroMorphisms]
+    (φ : ∀ n : ℕ, adicConstantRing X (A ⧸ d.ideal ^ (n + 1)) ⟶
+      completedAdicFiniteCommRing X d n)
+    (hφ : ∀ n : ℕ, IsIso (φ n))
+    (hcompat : FinitePerfectModelsCompatible X d φ)
+    (M : DerivedCategory (CompletedAdicModules X d))
+    (b : ℤ) (n : ℕ) (Z : X.Etale)
+    (P : CochainComplex (ModuleCat.{t} (A ⧸ d.ideal ^ (0 + 1))) ℤ)
+    (hPb : P.IsStrictlyLE b)
+    (hP : ∀ i : ℤ, Module.Projective (A ⧸ d.ideal ^ (0 + 1)) (P.X i))
+    (e : Nonempty
+      (ringedSiteDerivedRestrictionOfUniverses (completedAdicFiniteRing X d 0)
+          ((toProEt X).obj Z) ((completedAdicQuotientReduction X d 0).obj M) ≅
+        ringedSiteDerivedRestrictionOfUniverses (completedAdicFiniteRing X d 0)
+          ((toProEt X).obj Z) ((completedAdicDerivedChange X (φ 0)).obj
+            (DerivedCategory.Q.obj (finiteModelConstantComplex X _ P))))) :
+    ∀ q : ℤ, Nonempty
+      ((SheafOfModules.overFunctor _ ((toProEt X).obj Z)).obj
+          ((DerivedCategory.homologyFunctor _ q).obj
+            (finiteQuotientLayerObject X d M n)) ≅
+        (SheafOfModules.overFunctor _ ((toProEt X).obj Z)).obj
+          ((finiteCoefficientConstantFunctor X (A ⧸ d.ideal ^ (n + 1 + 1))
+            (φ (n + 1))).obj ((finiteQuotientLayerTensorComplex d.ideal n P).homology q))) := by
+  intro q
+  obtain ⟨e₁⟩ :=
+    finiteQuotient_layer_tensor_derived_homology_comparison X d φ hφ hcompat M b n Z P hPb hP e q
+  obtain ⟨e₂⟩ := finiteQuotient_layer_tensor_model_homology_identification X d φ hφ n Z P q
+  exact ⟨e₁ ≪≫ e₂⟩
+
+end AlgebraicGeometry.Scheme

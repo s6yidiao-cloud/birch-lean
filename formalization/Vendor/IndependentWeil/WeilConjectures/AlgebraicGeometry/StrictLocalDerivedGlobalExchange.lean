@@ -1,0 +1,129 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.SixFunctors.BaseChange.Derived
+public import Mathlib.RingTheory.Henselian
+public import WeilConjectures.Mathlib.AlgebraicGeometry.Sites.EtalePoint
+public import WeilConjectures.SixFunctors.Etale.Derived.GlobalSections
+public import WeilConjectures.CategoryTheory.DerivedCategory.RightDerivedFunctor.PlusComp
+public import WeilConjectures.CategoryTheory.DerivedCategory.RightDerivedFunctor.PlusAdjunction
+import WeilConjectures.AlgebraicGeometry.StrictLocalGlobalGermIso
+import WeilConjectures.AlgebraicGeometry.DerivedGlobalGermExchange
+
+/-! # Strict-local exchange compared with derived global sections
+
+## References
+
+* [Stacks, Tag 03QO]
+* [Stacks, Tag 095T]
+-/
+
+@[expose] public section
+
+universe u
+open CategoryTheory Limits
+open scoped CategoryTheory.Functor
+namespace AlgebraicGeometry
+open Scheme Etale
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Strict-local stalk exchange is the derived-unit map on total-space hypercohomology,
+for all bounded below complexes and all integer degrees. -/
+theorem Etale.exists_addEquiv_strictLocal_derivedGlobal_exchange
+    {A B : Type u} [CommRing A] [HenselianLocalRing A]
+    [IsSepClosed (IsLocalRing.ResidueField A)]
+    [CommRing B] [HenselianLocalRing B] [IsSepClosed (IsLocalRing.ResidueField B)]
+    (φ : A →+* B) [IsLocalHom φ]
+    {X X' : Scheme.{u}} (f : X ⟶ Spec (.of A)) (f' : X' ⟶ Spec (.of B))
+    (g' : X' ⟶ X) (sq : IsPullback g' f' f (Spec.map (CommRingCat.ofHom φ)))
+    (K : DerivedCategory.Plus (Sheaf X.smallEtaleTopology AddCommGrpCat.{u + 1}))
+    (q : ℤ) :
+    let g := Spec.map (CommRingCat.ofHom φ)
+    let S := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+      ((R+((f)_*[AddCommGrpCat.{u + 1}]) ⋙
+        D+((g)^*[AddCommGrpCat.{u + 1}])).obj K)
+    let T := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+      ((D+((g')^*[AddCommGrpCat.{u + 1}]) ⋙
+        R+((f')_*[AddCommGrpCat.{u + 1}])).obj K)
+    let e := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).map
+      ((Etale.derivedBaseChangeMapPlus AddCommGrpCat.{u + 1} sq.toCommSq).app K)
+    let t := pointSmallEtale (Spec.map (CommRingCat.ofHom (IsLocalRing.residue B)))
+    let P := (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{u + 1}).rightDerivedFunctorPlus
+    let P' := (Sheaf.Γ X'.smallEtaleTopology AddCommGrpCat.{u + 1}).rightDerivedFunctorPlus
+    let U := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj (P.obj K)
+    let V := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+      (P'.obj (((g')^*[AddCommGrpCat.{u + 1}]).mapDerivedCategoryPlus.obj K))
+    let p := (DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).map
+      (P.map ((upperStarLowerStarAdjunction AddCommGrpCat.{u + 1} g').derivedPlus.unit.app K) ≫
+        (@Functor.rightDerivedFunctorPlusCompIso' _ _ _ _ _ _ _ _ _ _ _ _ _ _
+          (lowerStar AddCommGrpCat.{u + 1} g')
+          (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{u + 1}) _ _ _ _
+          (Functor.preservesInjectiveObjects_of_adjunction_of_preservesMonomorphisms
+            (upperStarLowerStarAdjunction AddCommGrpCat.{u + 1} g'))
+          (lowerStarCompGlobalSectionsIso AddCommGrpCat.{u + 1} g')).hom.app
+            (((g')^*[AddCommGrpCat.{u + 1}]).mapDerivedCategoryPlus.obj K))
+    ∃ (c₁ : ((t.sheafFiber (A := AddCommGrpCat.{u + 1})).obj S) ≃+ U)
+      (c₂ : ((t.sheafFiber (A := AddCommGrpCat.{u + 1})).obj T) ≃+ V),
+      ∀ x, c₂ (((t.sheafFiber (A := AddCommGrpCat.{u + 1})).map e).hom x) = p.hom (c₁ x) := by
+  classical
+  let g := Spec.map (CommRingCat.ofHom φ)
+  let t₀ := Spec.map (CommRingCat.ofHom (IsLocalRing.residue B))
+  let t := pointSmallEtale t₀
+  let F := t.sheafFiber (A := AddCommGrpCat.{u + 1})
+  let : F.Additive := t.sheafFiber_additive
+  let : AB5OfSize.{u, u} AddCommGrpCat.{u + 1} :=
+    AB5OfSize_shrink.{u, u, u + 1, u + 1} _
+  let H := DerivedCategory.Plus.homologyFunctor AddCommGrpCat.{u + 1} q
+  let K' := ((g')^*[AddCommGrpCat.{u + 1}]).mapDerivedCategoryPlus.obj K
+  let L := ((f)_*[AddCommGrpCat.{u + 1}]).rightDerivedFunctorPlus.obj K
+  let L' := ((f')_*[AddCommGrpCat.{u + 1}]).rightDerivedFunctorPlus.obj K'
+  let e := (derivedBaseChangeMapPlus AddCommGrpCat.{u + 1} sq.toCommSq).app K
+  let a := (derivedPulledGlobalGerm f g t₀).app K
+  let b := (derivedGlobalGerm f' t₀).app K'
+  obtain ⟨h₁, h₂⟩ := strictLocal_globalGerm_isIso φ
+  let := h₁
+  let := h₂
+  let := isIso_derivedPulledGlobalGerm f g t₀
+  let := isIso_derivedGlobalGerm f' t₀
+  let j₁ := H.map a ≫
+    (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.app
+      (((g)^*[AddCommGrpCat.{u + 1}]).mapDerivedCategoryPlus.obj L)
+  let j₂ := H.map b ≫ (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.app L'
+  have : IsIso j₁ := by dsimp [j₁, a, H]; infer_instance
+  have : IsIso j₂ := by dsimp [j₂, b, H]; infer_instance
+  refine ⟨CategoryTheory.Iso.addCommGroupIsoToAddEquiv (asIso j₁).symm,
+    CategoryTheory.Iso.addCommGroupIsoToAddEquiv (asIso j₂).symm, ?_⟩
+  intro x
+  have he := congrArg H.map (derivedGlobalGerm_exchange f f' g g' sq t₀ K)
+  simp only [Functor.map_comp] at he
+  have hn := (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.naturality e
+  change H.map (F.mapDerivedCategoryPlus.map e) ≫
+      (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.app L' =
+    (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.app
+      (((g)^*[AddCommGrpCat.{u + 1}]).mapDerivedCategoryPlus.obj L) ≫
+      F.map ((DerivedCategory.Plus.homologyFunctor _ q).map e) at hn
+  have hj : j₁ ≫ F.map
+      ((DerivedCategory.Plus.homologyFunctor _ q).map e) =
+      (H.map ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{u + 1}).rightDerivedFunctorPlus.map
+          ((upperStarLowerStarAdjunction AddCommGrpCat.{u + 1} g').derivedPlus.unit.app K) ≫
+        (@Functor.rightDerivedFunctorPlusCompIso' _ _ _ _ _ _ _ _ _ _ _ _ _ _
+          (lowerStar AddCommGrpCat.{u + 1} g')
+          (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{u + 1}) _ _ _ _
+          (Functor.preservesInjectiveObjects_of_adjunction_of_preservesMonomorphisms
+            (upperStarLowerStarAdjunction AddCommGrpCat.{u + 1} g'))
+          (lowerStarCompGlobalSectionsIso AddCommGrpCat.{u + 1} g')).hom.app K')) ≫ j₂ := by
+    dsimp only [j₁, j₂]
+    rw [Category.assoc, ← hn, ← Category.assoc]
+    simpa only [Functor.map_comp, Category.assoc] using congrArg (fun z ↦ z ≫
+      (F.mapDerivedCategoryPlusHomologyFunctorIso q).inv.app L') he
+  have hi := congrArg (fun z ↦ inv j₁ ≫ z ≫ inv j₂) hj
+  simp only [Category.assoc, IsIso.hom_inv_id, Category.comp_id] at hi
+  simp only [← Category.assoc, IsIso.inv_hom_id, Category.id_comp] at hi
+  exact ConcreteCategory.congr_hom hi x
+
+end AlgebraicGeometry

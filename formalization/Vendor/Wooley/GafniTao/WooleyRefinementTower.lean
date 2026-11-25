@@ -131,16 +131,16 @@ theorem wooley_sum_refinement_tower
             (if ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z = kappa
               then F z else 0)
           else 0 := by
-    by_cases hk :
-        ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi <;>
-      simp [hk]
+    by_cases hk : ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
+    · simp only [ite_eq_left hk]
+    · simp only [ite_eq_right hk, Finset.sum_const_zero]
   simp_rw [hdistribute]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro z hz
   by_cases hza :
       ZMod.castHom (pow_dvd_pow p (ham.trans hmb)) (ZMod (p ^ a)) z = xi
-  · rw [if_pos hza]
+  · rw [ite_eq_left hza]
     have hcompose :
         ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a))
             (ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z) = xi := by
@@ -148,27 +148,27 @@ theorem wooley_sum_refinement_tower
       exact hza
     rw [Fintype.sum_eq_single
       (ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z)]
-    · rw [if_pos hcompose, if_pos rfl]
+    · rw [ite_eq_left hcompose, ite_eq_left rfl]
     · intro kappa hkappa
       by_cases hkm :
           ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
-      · rw [if_pos hkm]
-        rw [if_neg (fun h => hkappa h.symm)]
-      · rw [if_neg hkm]
-  · rw [if_neg hza]
+      · rw [ite_eq_left hkm]
+        rw [ite_eq_right (fun h => hkappa h.symm)]
+      · rw [ite_eq_right hkm]
+  · rw [ite_eq_right hza]
     apply Finset.sum_eq_zero
     intro kappa hkappa
     by_cases hkm :
         ZMod.castHom (pow_dvd_pow p ham) (ZMod (p ^ a)) kappa = xi
-    · rw [if_pos hkm]
+    · rw [ite_eq_left hkm]
       by_cases hzk :
           ZMod.castHom (pow_dvd_pow p hmb) (ZMod (p ^ m)) z = kappa
       · exfalso
         apply hza
         rw [wooley_castHom_tower ham hmb z, hzk]
         exact hkm
-      · rw [if_neg hzk]
-    · rw [if_neg hkm]
+      · rw [ite_eq_right hzk]
+    · rw [ite_eq_right hkm]
 
 
 end

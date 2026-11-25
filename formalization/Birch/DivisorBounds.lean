@@ -61,11 +61,11 @@ theorem card_divisors_le_rpow (ε : ℝ) (hε : 0 < ε) :
     have hp₂ : 2 ≤ p := (Nat.prime_of_mem_primeFactors hp).two_le
     have hp₂' : (2 : ℝ) ≤ p := by exact_mod_cast hp₂
     by_cases h : p < B
-    · rw [show mult p = K from if_pos h]
+    · rw [show mult p = K from ite_eq_left h]
       refine (hKexp _).trans (mul_le_mul_of_nonneg_left ?_ (zero_le_one.trans hK))
       exact pow_le_pow_left₀ (Real.rpow_nonneg (by norm_num) _) (Real.rpow_le_rpow
         (by norm_num) hp₂' hε.le) _
-    · rw [show mult p = 1 from if_neg h, one_mul]
+    · rw [show mult p = 1 from ite_eq_right h, one_mul]
       have hpB : (B : ℝ) ≤ p := by exact_mod_cast (le_of_not_gt h)
       have hlarge : (2 : ℝ) ≤ (p : ℝ) ^ ε := by
         have H := Real.rpow_le_rpow (Real.rpow_nonneg (by norm_num) _)
@@ -93,7 +93,7 @@ theorem card_divisors_le_rpow (ε : ℝ) (hε : 0 < ε) :
       push_cast
       rfl
     _ ≤ ∏ p ∈ S, mult p * term p :=
-      prod_le_prod (by intros; positivity) hfactor
+      prod_le_prod₀ (by intros; positivity) hfactor
     _ = (∏ p ∈ S, mult p) * (N : ℝ) ^ ε := by rw [prod_mul_distrib, hNprod]
     _ ≤ _ := mul_le_mul_of_nonneg_right hprod (Real.rpow_nonneg (Nat.cast_nonneg _) _)
 

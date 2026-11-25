@@ -60,6 +60,29 @@ private theorem v2FormMinorIntegral_of_criticalMoment {n d σ : ℕ} {F : IntFor
     hcont.norm.aestronglyMeasurable]
   exact hP
 
+theorem v2FormMinorIntegral_of_formCriticalMoments {n d σ : ℕ} {F : IntForm n}
+    (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    (hν : dimensionThreshold d < n - σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w) (hwbox : CubeSupported w)
+    (hCritical : FormCriticalMomentBounds d) :
+    ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      (∫ α in (majorArcs d P)ᶜ, ‖normalizedSum F w P α‖ ∂circleMeasure) ≤
+        C * P ^ (-(d : ℝ) - v2FormMinorSaving d (n - σ)) :=
+  v2FormMinorIntegral_of_criticalMoment hd hν
+    (v2WeylEstimate (by omega) hd hF hσ hw.smooth hwbox)
+    (hCritical (by omega) hd hF hσ hw hwbox)
+
+theorem v2FormMinorIntegral_of_terminalPrimeBounds {n d σ : ℕ} {F : IntForm n}
+    (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    (hν : dimensionThreshold d < n - σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w) (hwbox : CubeSupported w)
+    (hPrime : TerminalPrimeBounds d) :
+    ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      (∫ α in (majorArcs d P)ᶜ, ‖normalizedSum F w P α‖ ∂circleMeasure) ≤
+        C * P ^ (-(d : ℝ) - v2FormMinorSaving d (n - σ)) :=
+  v2FormMinorIntegral_of_formCriticalMoments hd hF hσ hν hw hwbox
+    (FormCriticalMomentBounds.of_terminalPrimeBounds hPrime)
+
 theorem v2FormMinorIntegral_of_weilII {n d σ : ℕ} {F : IntForm n}
     (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
     (hν : dimensionThreshold d < n - σ)
@@ -68,9 +91,7 @@ theorem v2FormMinorIntegral_of_weilII {n d σ : ℕ} {F : IntForm n}
     ∃ C > 0, ∀ᶠ P : ℝ in atTop,
       (∫ α in (majorArcs d P)ᶜ, ‖normalizedSum F w P α‖ ∂circleMeasure) ≤
         C * P ^ (-(d : ℝ) - v2FormMinorSaving d (n - σ)) :=
-  v2FormMinorIntegral_of_criticalMoment hd hν
-    (v2WeylEstimate (by omega) hd hF hσ hw.smooth hwbox)
-    (v2CriticalMoment_of_weilII (by omega) hd hF hσ hw hwbox hWeilII)
+  v2FormMinorIntegral_of_terminalPrimeBounds hd hF hσ hν hw hwbox (TerminalPrimeBounds.of_deligne hWeilII)
 
 def v2FormSaving (d ν : ℕ) : ℝ :=
   min (v2FormMinorSaving d ν) (min 1 (v2FormMinorSaving d ν / (2 / 3) / 2))
@@ -82,6 +103,41 @@ theorem v2FormSaving_pos {d ν : ℕ} (hd : 2 ≤ d) (hν : dimensionThreshold d
 
 /-- The sharp weighted asymptotic for a transverse weight in the unit cube.
 The conductor tail is obtained from the minor-arc estimate. -/
+theorem v2CubeFormAsymptotic_of_formCriticalMoments {n d σ : ℕ} {F : IntForm n}
+    (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    (hν : dimensionThreshold d < n - σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w)
+    (hwbox : CubeSupported w) (htrans : HasTransverseSupport F w)
+    (hCritical : FormCriticalMomentBounds d) :
+    Summable (fun q : ℕ => formConductorMass F (q+1)) ∧ Integrable (realOscillation F w) ∧
+    ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      ‖(weightedZeros F w P : ℂ) -
+        (P ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
+        C * P ^ ((n : ℝ) - d - v2FormSaving d (n - σ)) := by
+  have hsaving := v2FormMinorSaving_pos hd hν
+  have hminor := v2FormMinorIntegral_of_formCriticalMoments hd hF hσ hν hw hwbox hCritical
+  have hmass := formConductorMass_tail_of_minorArcs_atExponent hd hF hsaving
+    (fun u hs hc hn hb => v2FormMinorIntegral_of_formCriticalMoments hd hF hσ hν ⟨hs, hc, hn⟩ hb hCritical)
+  obtain ⟨hseries, htail⟩ := formSingularSeries_tail_of_conductorMass_tail hmass
+  have hγ : 0 < v2FormMinorSaving d (n - σ) / (2 / 3 : ℝ) := by positivity
+  obtain ⟨hI, hmajor⟩ := formMajorArcIntegral_bound_of_absoluteTail hd hF hw.smooth
+    hw.compact hwbox htrans hγ hseries htail
+  exact ⟨hmass.1, hI, weightedAsymptoticBound_of_arcIntegrals hminor hmajor⟩
+
+theorem v2CubeFormAsymptotic_of_terminalPrimeBounds {n d σ : ℕ} {F : IntForm n}
+    (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
+    (hν : dimensionThreshold d < n - σ)
+    {w : (Fin n → ℝ) → ℝ} (hw : CompactWeight w)
+    (hwbox : CubeSupported w) (htrans : HasTransverseSupport F w)
+    (hPrime : TerminalPrimeBounds d) :
+    Summable (fun q : ℕ => formConductorMass F (q+1)) ∧ Integrable (realOscillation F w) ∧
+    ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      ‖(weightedZeros F w P : ℂ) -
+        (P ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
+        C * P ^ ((n : ℝ) - d - v2FormSaving d (n - σ)) :=
+  v2CubeFormAsymptotic_of_formCriticalMoments hd hF hσ hν hw hwbox htrans
+    (FormCriticalMomentBounds.of_terminalPrimeBounds hPrime)
+
 theorem v2CubeFormAsymptotic_of_weilII {n d σ : ℕ} {F : IntForm n}
     (hd : 2 ≤ d) (hF : F.IsHomogeneous d) (hσ : RationalGradientDimension F σ)
     (hν : dimensionThreshold d < n - σ)
@@ -92,16 +148,8 @@ theorem v2CubeFormAsymptotic_of_weilII {n d σ : ℕ} {F : IntForm n}
     ∃ C > 0, ∀ᶠ P : ℝ in atTop,
       ‖(weightedZeros F w P : ℂ) -
         (P ^ ((n : ℝ) - d) : ℝ) • (singularSeries F * singularIntegral F w)‖ ≤
-        C * P ^ ((n : ℝ) - d - v2FormSaving d (n - σ)) := by
-  have hsaving := v2FormMinorSaving_pos hd hν
-  have hminor := v2FormMinorIntegral_of_weilII hd hF hσ hν hw hwbox hWeilII
-  have hmass := formConductorMass_tail_of_minorArcs_atExponent hd hF hsaving
-    (fun u hs hc hn hb => v2FormMinorIntegral_of_weilII hd hF hσ hν ⟨hs, hc, hn⟩ hb hWeilII)
-  obtain ⟨hseries, htail⟩ := formSingularSeries_tail_of_conductorMass_tail hmass
-  have hγ : 0 < v2FormMinorSaving d (n - σ) / (2 / 3 : ℝ) := by positivity
-  obtain ⟨hI, hmajor⟩ := formMajorArcIntegral_bound_of_absoluteTail hd hF hw.smooth
-    hw.compact hwbox htrans hγ hseries htail
-  exact ⟨hmass.1, hI, weightedAsymptoticBound_of_arcIntegrals hminor hmajor⟩
+        C * P ^ ((n : ℝ) - d - v2FormSaving d (n - σ)) :=
+  v2CubeFormAsymptotic_of_terminalPrimeBounds hd hF hσ hν hw hwbox htrans (TerminalPrimeBounds.of_deligne hWeilII)
 
 end
 

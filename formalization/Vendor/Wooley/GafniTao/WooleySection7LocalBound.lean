@@ -85,8 +85,8 @@ theorem wooley_equations_7_18_to_7_21_local_bound
     (pow_pos hpPrime.pos a) (xi.val : ℤ)
   let right := wooleyAffinePullback gamma (p ^ b)
     (pow_pos hpPrime.pos b) (eta.val : ℤ)
-  letI : NeZero qPrime := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
-  letI : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+  let : NeZero qPrime := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
+  let : NeZero (p ^ H) := ⟨pow_ne_zero _ hpPrime.ne_zero⟩
   obtain ⟨Psi, hPsi, horiginal, hreverse⟩ :=
     wooley_equation_7_21_native
       (s := s) (H := H) hpPrime hc hr hrk hkp hMB

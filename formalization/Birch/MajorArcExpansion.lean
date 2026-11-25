@@ -19,7 +19,7 @@ private def completeSumAt (F : IntForm n) (q : ℕ) (a : ℤ) : ℂ :=
   if h : q = 0 then 0 else @completeSum n F q ⟨h⟩ (a : ZMod q)
 
 private theorem completeSumAt_eq (F : IntForm n) (q : ℕ) [NeZero q] (a : ℤ) :
-    completeSumAt F q a = completeSum F q (a : ZMod q) := dif_neg (NeZero.ne q)
+    completeSumAt F q a = completeSum F q (a : ZMod q) := dite_eq_right (NeZero.ne q)
 
 /-- The pointwise leading-term Poisson estimate on each lifted major interval.
 The error is measured for the normalized lattice sum. -/
@@ -97,7 +97,7 @@ private theorem sum_interiorMajorCenters (F : IntForm n) (P : ℝ) (J : ℕ → 
   intro q hq
   obtain ⟨hq₂, hqQ⟩ := Finset.mem_Icc.mp hq
   have hq₀ : q ≠ 0 := by omega
-  letI : NeZero q := ⟨hq₀⟩
+  let : NeZero q := ⟨hq₀⟩
   rw [← Finset.sum_filter]
   have hfilter :
       (Finset.Icc 1 ⌊P^(1/2 : ℝ)⌋₊).filter (fun a => a < q ∧ a.Coprime q) =
@@ -113,7 +113,7 @@ private theorem sum_interiorMajorCenters (F : IntForm n) (P : ℝ) (J : ℕ → 
         omega
       exact ⟨⟨by omega, ha.le.trans hqQ⟩, ha, hc⟩
   rw [hfilter, ← Finset.sum_mul, ← unitConductorSum_eq_numeratorSum]
-  simp only [singularSeriesTerm, dif_neg hq₀]
+  simp only [singularSeriesTerm, dite_eq_right hq₀]
 
 private theorem majorArcTruncation_eq_centers (F : IntForm n) (w : (Fin n → ℝ) → ℝ)
     (P : ℝ) (hP : 1 ≤ P) :
@@ -147,7 +147,7 @@ private theorem majorArcTruncation_eq_centers (F : IntForm n) (w : (Fin n → �
     unfold majorArcTruncation
     apply Finset.sum_congr rfl
     intro j _
-    simp only [A, J, singularSeriesTerm, dif_neg (Nat.succ_ne_zero j)]
+    simp only [A, J, singularSeriesTerm, dite_eq_right (Nat.succ_ne_zero j)]
   rw [hseries, hshift, hinsert, Finset.sum_insert, hA₁]
   simp
 
@@ -249,7 +249,7 @@ theorem integratedMajorArcExpansion_of_pointwise_of_continuous {d : ℕ} (hd : 2
   have hε (j : ℕ × ℕ) (hj : j ∈ interiorMajorCenters P) :
       ‖A j.1 (j.2 : ℤ) - D • B j.1 (j.2 : ℤ)‖ ≤ δ := by
     obtain ⟨hq, hqP, _, _, hcop⟩ := (mem_interiorMajorCenters hp.le).mp hj
-    letI : NeZero j.1 := ⟨by omega⟩
+    let : NeZero j.1 := ⟨by omega⟩
     exact herror _ _ hqP (by simpa)
   have hperiodic : Function.Periodic S 1 := fun x => by
     unfold S normalizedSum

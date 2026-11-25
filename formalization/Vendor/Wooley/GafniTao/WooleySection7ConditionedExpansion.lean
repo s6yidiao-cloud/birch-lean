@@ -60,7 +60,7 @@ theorem wooleySourcePolynomialConditionedMean_polynomialTwist_expand
       wooleySourceResidueSequence_twist]
   unfold wooleySourcePolynomialConditionedMean
     wooleySourcePolynomialMean
-  rw [hmassTwist, if_neg hleft]
+  rw [hmassTwist, ite_eq_right hleft]
   simp_rw [hresidue, hsum]
   rw [← mul_assoc, mul_inv_cancel₀ hleft, one_mul]
 

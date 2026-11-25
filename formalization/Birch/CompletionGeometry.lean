@@ -24,7 +24,7 @@ theorem exists_eval_ne_zero_small_grid_of_charP {K ι : Type*} [Field K] [Finite
     ∃ z : ι → ℕ, (∀ i, z i ≤ D) ∧ F.eval (fun i ↦ (z i : K)) ≠ 0 := by
   classical
   have hp₀ : p.Prime := Fact.out
-  letI : NeZero p := ⟨hp₀.ne_zero⟩
+  let : NeZero p := ⟨hp₀.ne_zero⟩
   let S := (Finset.range (D+1)).image (fun j : ℕ ↦ (j : K))
   have hS : S.card = D+1 := by
     rw [Finset.card_image_of_injOn, Finset.card_range]

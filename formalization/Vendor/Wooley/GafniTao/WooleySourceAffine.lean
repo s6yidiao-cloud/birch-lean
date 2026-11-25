@@ -35,7 +35,8 @@ theorem mem_range_wooleyAffineEmbedding_iff
       (n : ZMod q) = (xi : ZMod q) := by
   constructor
   · rintro ⟨y, rfl⟩
-    simp [wooleyAffineEmbedding]
+    simp only [wooleyAffineEmbedding_apply, Int.cast_add, Int.cast_mul, Int.cast_natCast,
+      ZMod.natCast_self, zero_mul, zero_add]
   · intro hn
     rw [ZMod.intCast_eq_intCast_iff_dvd_sub] at hn
     obtain ⟨d, hd⟩ := hn

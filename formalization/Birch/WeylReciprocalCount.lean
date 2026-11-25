@@ -84,7 +84,7 @@ private theorem linearPhaseBound_le_bin {B : ℕ} (hB : 0 < B) {L : ℝ} (hL : L
       rw [he, mul_zero, zero_add] at habs
       linarith
     unfold linearPhaseBound harmonicBinMajorant
-    rw [if_neg hδ.ne']
+    rw [ite_eq_right hδ.ne']
     refine (min_le_right _ _).trans ?_
     apply (div_le_div_iff₀ (by positivity : (0 : ℝ) < 2*δ)
       (by positivity : (0 : ℝ) < 1+(b.natAbs : ℝ))).mpr
@@ -193,7 +193,7 @@ theorem sum_linearPhaseBound_le_frequency_count {A : Type*} [AddCommGroup A]
       _ = _ := by simp only [sum_const, nsmul_eq_mul]
   calc
     _ ≤ ∑ x ∈ T, W (bin x) := sum_le_sum fun x _ =>
-      prod_le_prod (fun i _ => linearPhaseBound_nonneg hL₀ _) (fun i _ => linearPhaseBound_le_bin hB hL _)
+      prod_le_prod₀ (fun i _ => linearPhaseBound_nonneg hL₀ _) (fun i _ => linearPhaseBound_le_bin hB hL _)
     _ = ∑ v ∈ J, ((T.filter (fun x => bin x = v)).card : ℝ) * W v := hfiber
     _ ≤ ∑ v ∈ J, (Y.card : ℝ) * W v :=
       sum_le_sum fun v _ => mul_le_mul_of_nonneg_right (by exact_mod_cast hcard v) (hW v)

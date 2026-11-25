@@ -103,7 +103,7 @@ theorem wooley_equation_3_10
                       qB k gamma alpha xi‖ ^ (2 * s) :=
       Finset.sum_le_sum fun alpha _ => hpoint alpha
     unfold wooleyWeightedGridMean wooleyWeightedConditionedGridMean
-    rw [if_neg hmass]
+    rw [ite_eq_right hmass]
     calc
       (((qB ^ k : ℕ) : ℝ))⁻¹ *
           ∑ alpha : Fin k → ZMod qB,

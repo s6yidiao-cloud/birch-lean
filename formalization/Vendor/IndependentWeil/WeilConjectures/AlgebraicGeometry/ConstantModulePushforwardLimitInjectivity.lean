@@ -1,0 +1,97 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.ConstantModulePushforwardFunctoriality
+import WeilConjectures.AlgebraicGeometry.ConstantModulePushforwardGermVanishing
+import WeilConjectures.ConstructibleSheaf.Defs
+import WeilConjectures.SixFunctors.Etale.UpperLowerStar.Defs
+
+/-! # Injectivity of the constant-module continuity comparison
+
+## References
+
+* Stacks Project, Tag 09Z1
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits Opposite
+
+namespace AlgebraicGeometry.Etale
+
+/-- The constant-module continuity comparison is a monomorphism (Stacks, Tags 09Z1, 09Z6). -/
+theorem mono_constantModulePushforwardComparison
+    (Λ : Type (u + 1)) [CommRing Λ] (M : ModuleCat.{u + 1} Λ)
+    {X : Scheme.{u}} {I : Type u} [SmallCategory I] [IsCofiltered I]
+    (D : I ⥤ Scheme.{u}) (p : ∀ i, D.obj i ⟶ X)
+    (hp : ∀ {i j : I} (g : i ⟶ j), D.map g ≫ p j = p i)
+    [∀ {i j : I} (g : i ⟶ j), IsAffineHom (D.map g)]
+    [∀ i : I, QuasiCompact (p i)] [∀ i : I, QuasiSeparated (p i)]
+    {Y : Scheme.{u}} (ν : Y ⟶ X)
+    (π : (Functor.const I).obj Y ⟶ D) (hπ : ∀ i, π.app i ≫ p i = ν)
+    [QuasiCompact ν] [QuasiSeparated ν]
+    (hc : IsLimit (Cone.mk Y π))
+    (K : Iᵒᵖ ⥤ Sheaf X.smallEtaleTopology (ModuleCat.{u + 1} Λ))
+    (eK : ∀ i : Iᵒᵖ, K.obj i ≅
+      (lowerStar (ModuleCat.{u + 1} Λ) (p i.unop)).obj
+        ((constantSheaf (D.obj i.unop).smallEtaleTopology
+          (ModuleCat.{u + 1} Λ)).obj M))
+    (hK : ∀ {i j : Iᵒᵖ} (g : i ⟶ j), K.map g =
+      (eK i).hom ≫ constantModulePushforwardMap Λ M _ _ (D.map g.unop) (hp g.unop) ≫
+        (eK j).inv)
+    (c : Cocone K)
+    (e : c.pt ≅ (lowerStar (ModuleCat.{u + 1} Λ) ν).obj
+      ((constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} Λ)).obj M))
+    (hι : ∀ i : Iᵒᵖ, c.ι.app i ≫ e.hom =
+      (eK i).hom ≫ constantModulePushforwardMap Λ M _ _ (π.app i.unop) (hπ i.unop)) :
+    Mono (colimit.desc K c) := by
+  classical
+  have hmono := (Scheme.isConservativeFamilyOfPoints_ulift_pointSmallEtale X)
+    |>.jointlyReflectMonomorphisms (ModuleCat.{u + 1} Λ)
+  refine @JointlyReflectMonomorphisms.mono _ _ _ _ _ _ hmono _ _
+    (colimit.desc K c) ?_
+  rintro ⟨-, ⟨s⟩⟩
+  let T := (X.uliftPointSmallEtale s).sheafFiber (A := ModuleCat.{u + 1} Λ)
+  apply (ModuleCat.mono_iff_injective _).2
+  apply (injective_iff_map_eq_zero (T.map (colimit.desc K c)).hom).2
+  intro z hz
+  have := preservesFilteredColimitsOfSize_shrink.{u, u + 1, u, u + 1}
+    (forget (ModuleCat.{u + 1} Λ))
+  have hC := isColimitOfPreserves (T ⋙ forget (ModuleCat.{u + 1} Λ))
+    (colimit.isColimit K)
+  obtain ⟨i, x, hx⟩ := Types.jointly_surjective_of_isColimit hC z
+  change (T.map (colimit.ι K i)) x = z at hx
+  subst z
+  have hzero : (T.map (c.ι.app i)) x = 0 := by
+    rw [← ConcreteCategory.comp_apply, ← T.map_comp, colimit.ι_desc] at hz
+    exact hz
+  have hcanonical : T.map
+      (constantModulePushforwardMap Λ M (p i.unop) ν
+        (π.app i.unop) (hπ i.unop)) ((T.map (eK i).hom) x) = 0 := by
+    rw [← ConcreteCategory.comp_apply, ← T.map_comp, ← hι i,
+      T.map_comp, ConcreteCategory.comp_apply, hzero, map_zero]
+  obtain ⟨j, g, hg⟩ := exists_constantModulePushforward_germ_eq_zero
+    Λ M D p hp ν π hπ hc s i.unop ((T.map (eK i).hom) x) hcanonical
+  have htransition : (T.map (K.map g.op)) x = 0 := by
+    rw [hK, T.map_comp, T.map_comp]
+    simp only [ConcreteCategory.comp_apply]
+    change (T.map (eK (op j)).inv)
+      ((T.map (constantModulePushforwardMap Λ M (p i.unop) (p j)
+        (D.map g) (hp g))) ((T.map (eK i).hom) x)) = 0
+    rw [hg, map_zero]
+  calc
+    (T.map (colimit.ι K i)) x =
+        (T.map (colimit.ι K (op j))) ((T.map (K.map g.op)) x) := by
+      rw [← ConcreteCategory.comp_apply, ← T.map_comp, colimit.w]
+    _ = 0 := by rw [htransition, map_zero]
+
+end AlgebraicGeometry.Etale

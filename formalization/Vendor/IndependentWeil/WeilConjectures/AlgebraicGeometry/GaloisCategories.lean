@@ -1,0 +1,35 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.EtaleSheaves
+public import WeilConjectures.AlgebraicGeometry.FundamentalGroup.FiniteEtale
+public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+
+/-!
+# Finite étale covers and finite locally constant sheaves
+
+The category of finite étale covers is `Scheme.FiniteEtale`, supplied by the
+source library.  This file supplies the corresponding category of finite locally
+constant sheaves of finite sets.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.Scheme
+
+/-- The category `FLC(Y)` of finite locally constant sheaves of finite sets on the
+small étale site of `Y`, with morphisms of sheaves. -/
+abbrev FLC (Y : Scheme.{u}) : Type (u + 2) :=
+  ObjectProperty.FullSubcategory
+    (IsFiniteLocallyConstantSheafOfTypes (T := Y))
+
+end AlgebraicGeometry.Scheme

@@ -255,13 +255,13 @@ theorem tendsto_coverPrimePower_density (F : IntForm n) (g : ℤ[X])
     Tendsto (fun k : ℕ => ((((p : ℕ) ^ k : ℕ) : ℂ) ^ n)⁻¹ *
       (coverCongruenceCount F g ((p : ℕ) ^ k) : ℂ)) atTop
       (𝓝 (localSeriesFactor (coverPolynomial F g) p)) := by
-  letI : Fact (p : ℕ).Prime := ⟨p.prop⟩
+  let : Fact (p : ℕ).Prime := ⟨p.prop⟩
   let A := singularSeriesTerm (coverPolynomial F g)
   have hA : Summable (fun q : ℕ => ‖A q‖) := by
     rw [← summable_nat_add_iff 1]
     have h_eq (j : ℕ) : A (j+1) = coverConductorSum F g (j+1) := by
       rw [coverConductorSum_eq_unitConductorSum]
-      exact dif_neg (Nat.succ_ne_zero j)
+      exact dite_eq_right (Nat.succ_ne_zero j)
     simpa only [h_eq] using hs
   have hAn : Summable (fun q : ℕ => ‖A q‖₊) := NNReal.summable_coe.mp hA
   have hprime : Summable (fun k : ℕ => ‖A ((p : ℕ)^k)‖) :=
@@ -269,7 +269,7 @@ theorem tendsto_coverPrimePower_density (F : IntForm n) (g : ℤ[X])
       (Nat.pow_right_injective p.prop.two_le))
   have h_eq (j : ℕ) : A ((p : ℕ) ^ j) = coverConductorSum F g ((p : ℕ) ^ j) := by
     rw [coverConductorSum_eq_unitConductorSum]
-    exact dif_neg (NeZero.ne _)
+    exact dite_eq_right (NeZero.ne _)
   simp_rw [coverPrimePower_density_eq_sum, ← h_eq]
   exact hprime.of_norm.hasSum.tendsto_sum_nat.comp (tendsto_add_atTop_nat 1)
 

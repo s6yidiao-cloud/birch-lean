@@ -1,0 +1,63 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.LocalStalkSectionsComparisonMap
+import WeilConjectures.AlgebraicGeometry.LocalStalkSectionsAffineVanishing
+
+/-! # Descent of equality for local-scheme sections
+
+## References
+
+* [Stacks, Tag 03Q6]
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits Opposite AlgebraicGeometry TopologicalSpace
+
+/-- Descent of equality for local-scheme sections (Stacks, Tag 03Q6, degree zero). -/
+theorem localStalkSections_descent_equality
+    {X : Scheme.{u + 1}} (i : X.Opens ⥤ X.Etale)
+    (hi : i ⋙ Scheme.Etale.forget X = X.restrictFunctor) (x : X)
+    (H : Sheaf X.smallEtaleTopology AddCommGrpCat.{u + 1} ⥤
+      Sheaf (Spec (X.presheaf.stalk x)).smallEtaleTopology AddCommGrpCat.{u + 1})
+    (hH : H ⊣ (X.fromSpecStalk x).Etale.sheafPushforwardContinuous
+      AddCommGrpCat.{u + 1} X.smallEtaleTopology
+      (Spec (X.presheaf.stalk x)).smallEtaleTopology)
+    (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{u + 1})
+    (U V : (OpenNhds x)ᵒᵖ)
+    (s : (LocalStalkSections.neighbourhoodDiagram i x F).obj U)
+    (t : (LocalStalkSections.neighbourhoodDiagram i x F).obj V)
+    (h : (LocalStalkSections.cocone i hi x H hH F).ι.app U s =
+      (LocalStalkSections.cocone i hi x H hH F).ι.app V t) :
+    ∃ (W : (OpenNhds x)ᵒᵖ) (f : U ⟶ W) (g : V ⟶ W),
+      (LocalStalkSections.neighbourhoodDiagram i x F).map f s =
+        (LocalStalkSections.neighbourhoodDiagram i x F).map g t := by
+  obtain ⟨A, hA, hxA, hAU⟩ := exists_isAffineOpen_mem_and_subset
+    (X := X) (U := U.unop.1 ⊓ V.unop.1) ⟨U.unop.2, V.unop.2⟩
+  let A' : (OpenNhds x)ᵒᵖ := op ⟨A, hxA⟩
+  let f : U ⟶ A' := (homOfLE (show A'.unop ≤ U.unop from
+    fun y hy ↦ (hAU hy).1)).op
+  let g : V ⟶ A' := (homOfLE (show A'.unop ≤ V.unop from
+    fun y hy ↦ (hAU hy).2)).op
+  let D := LocalStalkSections.neighbourhoodDiagram i x F
+  let c := LocalStalkSections.cocone i hi x H hH F
+  have hf : c.ι.app A' (D.map f s) = c.ι.app U s :=
+    ConcreteCategory.congr_hom (c.w f) s
+  have hg : c.ι.app A' (D.map g t) = c.ι.app V t :=
+    ConcreteCategory.congr_hom (c.w g) t
+  have hz : c.ι.app A' (D.map f s - D.map g t) = 0 := by
+    rw [map_sub, hf, hg, h, sub_self]
+  obtain ⟨W, k, hk⟩ := localStalkSections_affine_vanishing
+    i hi x H hH F A' hA (D.map f s - D.map g t) hz
+  refine ⟨W, f ≫ k, g ≫ k, ?_⟩
+  have he : D.map k (D.map f s) = D.map k (D.map g t) := by
+    exact sub_eq_zero.mp (by simpa only [map_sub] using hk)
+  simpa only [Functor.map_comp, ConcreteCategory.comp_apply] using he

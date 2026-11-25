@@ -294,7 +294,7 @@ private theorem lowerDifferenceBox_card_le {s k : ℕ} {L : ℝ} (hL : 1 ≤ L) 
   rw [Fintype.card_piFinset, Nat.cast_prod]
   calc
     _ ≤ ∏ i : Fin k, (4 * (s : ℝ) + 1) * L ^ (i.val + 1) :=
-      Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) (fun i _ => hc i)
+      Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) (fun i _ => hc i)
     _ = _ := by rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin, Finset.prod_pow_eq_pow_sum]
 
 /-- The finite projection loses one factor for each attainable lower power sum. -/

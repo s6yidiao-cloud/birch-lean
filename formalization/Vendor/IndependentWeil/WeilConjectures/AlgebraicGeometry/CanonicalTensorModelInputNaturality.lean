@@ -1,0 +1,57 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.CanonicalPullbackTensorComparison
+
+/-! # Naturality of the localization tensor model
+
+## References
+
+* Stacks Project, Tags 08DJ, 0A90 and 0A96
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option synthInstance.maxSize 2048
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.types false
+noncomputable section
+universe u w
+open CategoryTheory CategoryTheory.MonoidalCategory Opposite TopologicalSpace
+namespace AlgebraicGeometry
+
+/-- The canonical tensor model map commutes with a chain map in its first variable
+(Stacks, Tags 06YH and 08DJ). -/
+theorem tensorModelMap_input_natural (X : Scheme.{u})
+    [HasDerivedCategory.{w} (SheafOfModules.{u} (moduleRings X.toRingedSpace))]
+    (P P' L : CochainComplex
+      (SheafOfModules.{u} (moduleRings X.toRingedSpace)) ℤ) (f : P ⟶ P') :
+    let := SheafOfModules.monoidalCategory X.sheaf
+    let := schemeDerivedTensorMonoidal X
+    (DerivedCategory.Q.map f ⊗ₘ 𝟙 (DerivedCategory.Q.obj L)) ≫
+        pullbackTensorModelMap X P' L =
+      pullbackTensorModelMap X P L ≫
+        DerivedCategory.Q.map (HomologicalComplex.mapBifunctorMap f (𝟙 L)
+          (curriedTensor _) (.up ℤ))  := by
+  dsimp only
+  let := pullbackDescentModuleTensor X
+  let := moduleSymmetric X
+  have := modulePreadditive X
+  let := moduleClosed X
+  have := moduleGrothendieck X
+  have := moduleResolutions X
+  have := moduleDerivedMonoidal X
+  let := pullbackDescentQLax X
+  change (DerivedCategory.Q.map f ⊗ₘ 𝟙 _) ≫
+      Functor.LaxMonoidal.μ DerivedCategory.Q P' L =
+    Functor.LaxMonoidal.μ DerivedCategory.Q P L ≫
+      DerivedCategory.Q.map (f ⊗ₘ 𝟙 L)
+  have h := Functor.LaxMonoidal.μ_natural DerivedCategory.Q f (𝟙 L)
+  rw [CategoryTheory.Functor.map_id] at h
+  exact h
+end AlgebraicGeometry

@@ -154,7 +154,7 @@ theorem primePower_zeroCount_lower_of_padicInt_zero [Fact p.Prime] [NeZero p]
   have hc (b : Digits) (j : others) :
       out b j.val = PadicInt.toZModPow m (x j.val) +
         ((p^k*(b j).val : ℕ) : ZMod (p^m)) := by
-    simp only [out, Function.update_of_ne j.prop, y, dif_pos j.prop, map_add, map_mul,
+    simp only [out, Function.update_of_ne j.prop, y, dite_eq_left j.prop, map_add, map_mul,
       map_pow, map_natCast, Nat.cast_pow, Nat.cast_mul]
     rfl
   have hinj : Function.Injective lift := by

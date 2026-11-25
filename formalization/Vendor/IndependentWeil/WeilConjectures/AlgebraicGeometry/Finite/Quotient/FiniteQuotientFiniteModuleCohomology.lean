@@ -1,0 +1,116 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+
+public import WeilConjectures.AlgebraicGeometry.Finite.Perfect.FinitePerfectQuotientModelData
+
+import WeilConjectures.AlgebraicGeometry.Finite.Coefficient.FiniteCoefficientEtaleLocalWeakSerre
+import WeilConjectures.AlgebraicGeometry.Finite.Quotient.FiniteQuotientCohomologyFiltrationTriangle
+import WeilConjectures.CategoryTheory.Ringed.RingedDerivedRestrictionGeneralSupplement
+
+/-! # Finite etale-local cohomology of the successor coefficient quotient
+
+## References
+
+* Stacks Project, Tags 094I, 094H, 09C2
+-/
+
+@[expose] public noncomputable section
+set_option autoImplicit false
+set_option synthInstance.maxSize 2048
+universe t
+open CategoryTheory CategoryTheory.Limits CategoryTheory.Pretriangulated Opposite
+open AlgebraicGeometry.ProEtale
+namespace AlgebraicGeometry.Scheme
+
+attribute [local instance] finitePerfectModelsAbLocallyBijective
+
+-- Retain the published named chart-map binder in the conclusion.
+set_option linter.unusedVariables false in
+/-- The successor quotient has bounded finite etale-local cohomology: each cohomology
+sheaf individually has local models. -/
+theorem finiteQuotient_finiteModule_cohomology_succ
+    (X : Scheme.{t}) [IsLocallyNoetherian X] [CompactSpace X]
+    {A : Type t} [CommRing A] (d : AdicCoefficientDatum A)
+    [∀ n : ℕ, (koszulConstantFunctor X (A ⧸ d.ideal ^ (n + 1))).PreservesZeroMorphisms]
+    (φ : ∀ n : ℕ, adicConstantRing X (A ⧸ d.ideal ^ (n + 1)) ⟶
+      completedAdicFiniteCommRing X d n)
+    (hφ : ∀ n : ℕ, IsIso (φ n)) (hcompat : FinitePerfectModelsCompatible X d φ)
+    (M : DerivedCategory (CompletedAdicModules X d)) (V : X.Etale)
+    (a b : ℤ) (hab : a ≤ b)
+    (hresidue : FinitePerfectModelsOn X d φ M 0 V a b) (n : ℕ)
+    (hprevious : FinitePerfectModelsOn X d φ M n V a b) :
+    let B := A ⧸ d.ideal ^ (n + 1 + 1)
+    let R₀ := completedAdicFiniteRing X d (n + 1)
+    let K := (completedAdicQuotientReduction X d (n + 1)).obj M
+    (∀ q : ℤ, q < a ∨ b < q → IsZero
+        ((SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj V)).obj
+          ((DerivedCategory.homologyFunctor _ q).obj K))) ∧
+      ∀ (q : ℤ) (W : X.Etale) (g : W ⟶ V),
+        ∃ S : Sieve W, S ∈ X.smallEtaleTopology W ∧
+          ∀ (Z : X.Etale) (f : Z ⟶ W), S f →
+            ∃ N : ModuleCat.{t} B, Module.Finite B N ∧ Nonempty
+              ((SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj Z)).obj
+                  ((DerivedCategory.homologyFunctor _ q).obj K) ≅
+                (SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj Z)).obj
+                  ((completedAdicChange X (φ (n + 1))).obj
+                    ((ModuleCat.uliftFunctor.{t + 1, t} B ⋙
+                  ModuleCat.restrictScalars.{t + 1}
+                    (ULift.ringEquiv : ULift.{t + 1} B ≃+* B).toRingHom ⋙
+                  koszulConstantFunctor X B).obj N))) := by
+  let B := A ⧸ d.ideal ^ (n + 1 + 1)
+  let R₀ := completedAdicFiniteRing X d (n + 1)
+  let K := (completedAdicQuotientReduction X d (n + 1)).obj M
+  let P : ObjectProperty (SheafOfModules.{t + 1} R₀) := fun F ↦
+    ∀ (W : X.Etale) (_g : W ⟶ V),
+      ∃ S : Sieve W, S ∈ X.smallEtaleTopology W ∧
+        ∀ (Z : X.Etale) (f : Z ⟶ W), S f →
+          ∃ N : ModuleCat.{t} B, Module.Finite B N ∧ Nonempty
+            ((SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj Z)).obj F ≅
+              (SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj Z)).obj
+                ((completedAdicChange X (φ (n + 1))).obj
+                  ((ModuleCat.uliftFunctor.{t + 1, t} B ⋙
+                    ModuleCat.restrictScalars.{t + 1}
+                      (ULift.ringEquiv : ULift.{t + 1} B ≃+* B).toRingHom ⋙
+                    koszulConstantFunctor X B).obj N)))
+  let F := SheafOfModules.overFunctor.{t + 1} R₀ ((toProEt X).obj V)
+  change (∀ q : ℤ, q < a ∨ b < q →
+      IsZero (F.obj ((DerivedCategory.homologyFunctor _ q).obj K))) ∧
+    ∀ q : ℤ, P ((DerivedCategory.homologyFunctor _ q).obj K)
+  obtain ⟨T, hT, ⟨e⟩, hvan, h₁, h₃⟩ :=
+    finiteQuotient_cohomology_filtration_triangle
+      X d φ hφ hcompat M V a b hab hresidue n hprevious
+  have : F.Additive := (ringedOverFunctor_exactGeneral R₀ ((toProEt X).obj V)).1
+  have : PreservesFiniteLimits F :=
+    (ringedOverFunctor_exactGeneral R₀ ((toProEt X).obj V)).2.1
+  have : PreservesFiniteColimits F :=
+    (ringedOverFunctor_exactGeneral R₀ ((toProEt X).obj V)).2.2
+  constructor
+  · intro q hq
+    obtain ⟨hz₁, hz₃⟩ := hvan q hq
+    have hseq := (DerivedCategory.HomologySequence.exact₂ T hT q).map F
+    have hz₂ := hseq.isZero_of_both_isZero hz₁ hz₃
+    exact hz₂.of_iso (F.mapIso ((DerivedCategory.homologyFunctor _ q).mapIso e)).symm
+  · have : Finite B := d.quotientFinite (n + 1)
+    obtain ⟨hker, hcoker, hext⟩ := finiteCoefficient_etaleLocal_weakSerre X B
+      (completedAdicFiniteCommRing X d (n + 1)) (φ (n + 1)) (hφ (n + 1)) V
+    have : P.IsClosedUnderKernels := hker
+    have : P.IsClosedUnderCokernels := hcoker
+    have : P.IsClosedUnderExtensions := hext
+    have : P.IsClosedUnderIsomorphisms := by
+      constructor
+      intro L N i h W g
+      obtain ⟨S, hS, hs⟩ := h W g
+      refine ⟨S, hS, fun Z f hf ↦ ?_⟩
+      obtain ⟨N₀, hN₀, ⟨j⟩⟩ := hs Z f hf
+      exact ⟨N₀, hN₀, ⟨(SheafOfModules.overFunctor.{t + 1} R₀
+        ((toProEt X).obj Z)).mapIso i.symm ≪≫ j⟩⟩
+    have h₂ := (DerivedCategory.homologyProperty P).ext_of_isTriangulatedClosed₂
+      T hT h₁ h₃
+    intro q
+    exact P.prop_of_iso ((DerivedCategory.homologyFunctor _ q).mapIso e) (h₂ q)
+
+end AlgebraicGeometry.Scheme

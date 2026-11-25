@@ -149,7 +149,7 @@ theorem wooleyPolynomial_equation_3_10
       wooleyPolynomial_equation_3_9 (qH := qH) phi gamma alpha hs hmass
     unfold wooleyPolynomialWeightedGridMean
       wooleyPolynomialConditionedGridMean
-    rw [if_neg hmass]
+    rw [ite_eq_right hmass]
     have hscale : (0 : ℝ) ≤ (((qB ^ k : ℕ) : ℝ))⁻¹ := by positivity
     calc
       (((qB ^ k : ℕ) : ℝ))⁻¹ *

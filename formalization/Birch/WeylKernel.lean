@@ -70,7 +70,7 @@ theorem card_weylKernelBox_succ {n k : ℕ} (G : IntForm n) (U : ℝ) :
 
 private theorem primeGradientDimension_zero_eq_ambient {n p : ℕ} (hp : p.Prime) :
     PrimeGradientDimension p hp (0 : IntForm n) n := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let R := MvPolynomial (Fin n) K
   have hfun :
@@ -91,7 +91,7 @@ private theorem kernel_bound_one {n p s : ℕ} (hp : p.Prime) (hp₂ : 2 ≤ p)
     (hpU : 2*(2*U+2) ≤ p) :
     ((weylKernelBox G 1 U).card : ℝ) ≤ (3 : ℝ)^n * (2*U+2)^s := by
   classical
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let C := fun u : Fin n → ℤ => PrimeGradientDimension p hp (directionalDerivative u G) n
   let S := (differencingDirections n (2*U+2)).filter C

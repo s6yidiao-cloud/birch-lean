@@ -206,7 +206,7 @@ private theorem threshold_bound {x : ℝ≥0∞} (T : ℕ → ℝ≥0∞) (h₀ 
     rw [Finset.sum_range_succ]
     by_cases h : x ≤ T (N + 1)
     · exact h.trans le_self_add
-    · rw [if_pos (lt_of_not_ge h)]
+    · rw [ite_eq_left (lt_of_not_ge h)]
       calc
         x ≤ T N + ∑ j ∈ Finset.range N, if T (j + 1) < x then T j else 0 := ih
         _ ≤ _ := by

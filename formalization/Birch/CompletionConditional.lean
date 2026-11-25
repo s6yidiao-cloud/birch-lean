@@ -36,7 +36,7 @@ def EventualPrimeGradientDimensionLE {n : ℕ} (F : IntForm n) (σ : ℕ) : Prop
 theorem primeGradientDimension_zero_of_goodReduction {n p : ℕ} (hp : p.Prime) (G : IntForm n)
     (hgrad : ∀ (K : Type) [Field K] [CharP K p], ∀ x : Fin n → K,
       (∀ j, evalForm (pderiv j G) x = 0) ↔ x = 0) : PrimeGradientDimension p hp G 0 := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let R := MvPolynomial (Fin n) K
   let J : Ideal R := Ideal.span
@@ -49,7 +49,7 @@ theorem primeGradientDimension_zero_of_goodReduction {n p : ℕ} (hp : p.Prime) 
   have hzero : MvPolynomial.zeroLocus K J = ({0} : Set (Fin n → K)) := by
     ext x
     rw [Set.mem_singleton_iff, ← hgrad K x, show J = Ideal.span _ from rfl, MvPolynomial.zeroLocus_span]
-    simp only [Set.mem_setOf_eq, Set.forall_mem_range, hmap]
+    simp only [Set.mem_ofPred_eq, Set.forall_mem_range, hmap]
   have hrad : J.radical = I := by
     rw [← MvPolynomial.vanishingIdeal_zeroLocus_eq_radical (K := K), hzero]
   have hmax : I.IsMaximal := inferInstance
@@ -57,8 +57,8 @@ theorem primeGradientDimension_zero_of_goodReduction {n p : ℕ} (hp : p.Prime) 
     intro h
     apply hmax.ne_top
     rw [← hrad, h, Ideal.radical_top]
-  letI : Nontrivial (R ⧸ J) := Ideal.Quotient.nontrivial_iff.mpr hproper
-  letI : Nonempty (PrimeSpectrum (R ⧸ J)) := PrimeSpectrum.nonempty_iff_nontrivial.mpr inferInstance
+  let : Nontrivial (R ⧸ J) := Ideal.Quotient.nontrivial_iff.mpr hproper
+  let : Nonempty (PrimeSpectrum (R ⧸ J)) := PrimeSpectrum.nonempty_iff_nontrivial.mpr inferInstance
   let e := Ideal.Quotient.mk J
   have he (x : PrimeSpectrum (R ⧸ J)) : I = x.asIdeal.comap e := by
     have hx : (x.asIdeal.comap e).IsPrime := inferInstance
@@ -69,7 +69,7 @@ theorem primeGradientDimension_zero_of_goodReduction {n p : ℕ} (hp : p.Prime) 
     change e g ∈ x.asIdeal
     rw [show e g = 0 from Ideal.Quotient.eq_zero_iff_mem.mpr hg]
     exact Ideal.zero_mem _
-  letI : Subsingleton (PrimeSpectrum (R ⧸ J)) := ⟨fun x y => by
+  let : Subsingleton (PrimeSpectrum (R ⧸ J)) := ⟨fun x y => by
     apply PrimeSpectrum.ext
     apply Ideal.comap_injective_of_surjective e Ideal.Quotient.mk_surjective
     exact (he x).symm.trans (he y)⟩
@@ -91,6 +91,23 @@ def CompletionInputsAt {n : ℕ} (d r : ℕ) (F : IntForm n) (w : (Fin n → ℝ
           ∀ (t : ℕ → PolynomialDifferencingState n) (u : ℕ → Fin n → ℤ),
             IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
               (t (d-r)).magnitude P ≤ T * Q ^ (-((n - (s (d-r) (t (d-r)).form).val : ℕ) : ℝ))
+
+/-- Direction and terminal estimates with an extra multiplier at the chosen prime. -/
+def CompletionInputsAtWithMultiplier {n : ℕ} (d r : ℕ) (F : IntForm n) (w : (Fin n → ℝ) → ℝ)
+    (multiplier : ℕ → ℝ) : Prop :=
+  ∃ K > 0, ∃ T > 0,
+    ∀ᶠ P : ℝ in atTop, ∀ Q : ℝ, 1 ≤ Q → Q ≤ P ^ (1 / 2 : ℝ) →
+    ∀ p : ℕ, ∀ hp : p.Prime, (P / Q) ^ (2 : ℕ) < (p : ℝ) → (p : ℝ) ≤ 2 * (P / Q) ^ (2 : ℕ) →
+    ∃ s : ℕ → IntForm n → Fin (n+1),
+      (∀ i ≤ d-r, ∀ g : IntForm n,
+        PrimeGradientDimension p hp (homogeneousComponent (d-i) g) (s i g).val) ∧
+      ∀ m : ℕ → ℤ, (∀ i < d-r, 0 < m i ∧ (m i : ℝ) * differencingHeight (d-r) Q i ≤ P) →
+        PolynomialDirectionCounts (k := d-r) d Q m s K ∧
+        ∀ (a : ℤ) (α : ℝ), ¬ (p : ℤ) ∣ a →
+          |(∏ j ∈ Finset.range (d-r), (m j : ℝ)) * α - (a : ℝ)/(p : ℝ)| ≤ completionRadius d r P Q →
+          ∀ (t : ℕ → PolynomialDifferencingState n) (u : ℕ → Fin n → ℤ),
+            IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
+              (t (d-r)).magnitude P ≤ T * Q ^ (-((n - (s (d-r) (t (d-r)).form).val : ℕ) : ℝ)) * multiplier p
 
 /-- The remaining inputs for `prop:completion`. The dimension is attached to the
 specified leading homogeneous component. The terminal bound is uniform over
@@ -119,19 +136,19 @@ lemma factors_of_admissibleProduct {d r M : ℕ} {P Q : ℝ}
 
 /-- At one terminal degree the completed sum and the direction counts give
 the full differencing estimate at the starting codimension. -/
-theorem completionBound_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
+theorem completionBound_of_gradientDim_withMultiplier {d n r σ : ℕ} {F : IntForm n}
     {w : (Fin n → ℝ) → ℝ} (hF : F.totalDegree ≤ d) (hw : CubeSupported w)
     {K T : ℝ} (hK : 0 < K) (hT : 0 < T) :
     ∃ C > 0, ∀ {P Q : ℝ}, 1 ≤ P → 1 ≤ Q → ∀ {M : ℕ},
       admissibleProduct d r P Q M → ∀ (α : ℝ) (s : ℕ → IntForm n → Fin (n+1)),
-      (s 0 F).val ≤ σ →
+      (s 0 F).val ≤ σ → ∀ b : ℝ, 1 ≤ b →
       (∀ m : ℕ → ℤ, (∏ j ∈ Finset.range (d-r), (m j : ℝ)) = (M : ℝ) →
         (∀ i < d-r, 0 < m i ∧ (m i : ℝ) * differencingHeight (d-r) Q i ≤ P) →
         PolynomialDirectionCounts (k := d-r) d Q m s K ∧
           ∀ (t : ℕ → PolynomialDifferencingState n) (u : ℕ → Fin n → ℤ),
             IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
-            (t (d-r)).magnitude P ≤ T * Q ^ (-((n - (s (d-r) (t (d-r)).form).val : ℕ) : ℝ))) →
-      ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ)^(d-r))) := by
+            (t (d-r)).magnitude P ≤ T * Q ^ (-((n - (s (d-r) (t (d-r)).form).val : ℕ) : ℝ)) * b) →
+      ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ)^(d-r))) * b := by
   let k := d-r
   let R : ℕ := 2^k
   let C₀ : ℝ := (10 : ℝ)^n * ((n : ℝ)+1) * K
@@ -146,7 +163,7 @@ theorem completionBound_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
     dsimp only [C]
     rw [← Real.rpow_natCast, ← Real.rpow_mul hD.le, one_div, inv_mul_cancel₀ hR'.ne', Real.rpow_one]
   refine ⟨C, hC, ?_⟩
-  intro P Q hP hQ M hM α s hs₀ hstates
+  intro P Q hP hQ M hM α s hs₀ b hb hstates
   have hPpos : 0 < P := zero_lt_one.trans_le hP
   have hQpos : 0 < Q := zero_lt_one.trans_le hQ
   obtain ⟨m, hmprod, hm⟩ := factors_of_admissibleProduct hM
@@ -165,19 +182,21 @@ theorem completionBound_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
     have h := (Nat.cast_le (α := ℝ)).mpr hν
     push_cast at h
     linarith
-  have hbound : (‖exponentialSum F w P α‖ / P^n)^R ≤ D * Q ^ (-(ν : ℝ)) := by
+  have hb₀ : 0 ≤ b := zero_le_one.trans hb
+  have hbound : (‖exponentialSum F w P α‖ / P^n)^R ≤ D * Q ^ (-(ν : ℝ)) * b := by
     change (‖exponentialSum F w P α‖ / P^n)^R ≤
       C₀^(R-1) * Q ^ (-(j : ℝ)) * (t k).magnitude P at hselected
     refine hselected.trans ?_
     calc
-      _ ≤ C₀^(R-1) * Q ^ (-(j : ℝ)) * (T * Q ^ (-((n-l : ℕ) : ℝ))) :=
+      _ ≤ C₀^(R-1) * Q ^ (-(j : ℝ)) * (T * Q ^ (-((n-l : ℕ) : ℝ)) * b) :=
         mul_le_mul_of_nonneg_left hterm (by positivity)
-      _ = D * Q ^ (-(j : ℝ) + -((n-l : ℕ) : ℝ)) := by
+      _ = D * Q ^ (-(j : ℝ) + -((n-l : ℕ) : ℝ)) * b := by
         rw [Real.rpow_add hQpos]
         dsimp [D]
         ring
-      _ ≤ D * Q ^ (-(ν : ℝ)) :=
-        mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hQ he) hD.le
+      _ ≤ D * Q ^ (-(ν : ℝ)) * b :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hQ he) hD.le) hb₀
   have hqpow : (Q ^ (-((ν : ℝ) / (2 : ℝ)^k)))^R = Q ^ (-(ν : ℝ)) := by
     rw [← Real.rpow_natCast, ← Real.rpow_mul hQpos.le]
     congr 1
@@ -188,9 +207,31 @@ theorem completionBound_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
     rw [normalizedSum, norm_smul, Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hPpos.le _),
       Real.rpow_neg hPpos.le, Real.rpow_natCast, inv_mul_eq_div]
   rw [hnorm]
-  change ‖exponentialSum F w P α‖ / P^n ≤ C * Q ^ (-((ν : ℝ)/(2 : ℝ)^k))
+  change ‖exponentialSum F w P α‖ / P^n ≤ C * Q ^ (-((ν : ℝ)/(2 : ℝ)^k)) * b
   apply le_of_pow_le_pow_left₀ hR.ne' (by positivity)
-  rwa [mul_pow, hCpow, hqpow]
+  rw [mul_pow, mul_pow, hCpow, hqpow]
+  exact hbound.trans (mul_le_mul_of_nonneg_left (le_self_pow₀ hb hR.ne') (by positivity))
+
+/-- Completion at the starting codimension with a uniform terminal constant. -/
+theorem completionBound_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
+    {w : (Fin n → ℝ) → ℝ} (hF : F.totalDegree ≤ d) (hw : CubeSupported w)
+    {K T : ℝ} (hK : 0 < K) (hT : 0 < T) :
+    ∃ C > 0, ∀ {P Q : ℝ}, 1 ≤ P → 1 ≤ Q → ∀ {M : ℕ},
+      admissibleProduct d r P Q M → ∀ (α : ℝ) (s : ℕ → IntForm n → Fin (n+1)),
+      (s 0 F).val ≤ σ →
+      (∀ m : ℕ → ℤ, (∏ j ∈ Finset.range (d-r), (m j : ℝ)) = (M : ℝ) →
+        (∀ i < d-r, 0 < m i ∧ (m i : ℝ) * differencingHeight (d-r) Q i ≤ P) →
+        PolynomialDirectionCounts (k := d-r) d Q m s K ∧
+          ∀ (t : ℕ → PolynomialDifferencingState n) (u : ℕ → Fin n → ℤ),
+            IsPolynomialDifferencingChain (k := d-r) P Q m F w α t u →
+            (t (d-r)).magnitude P ≤ T * Q ^ (-((n - (s (d-r) (t (d-r)).form).val : ℕ) : ℝ))) →
+      ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ)^(d-r))) := by
+  obtain ⟨C, hC, h⟩ := completionBound_of_gradientDim_withMultiplier (r := r) (σ := σ)
+    hF hw hK hT
+  refine ⟨C, hC, ?_⟩
+  intro P Q hP hQ M hM α s hs₀ hstates
+  simpa only [mul_one] using h hP hQ hM α s hs₀ 1 le_rfl
+    (by simpa only [mul_one] using hstates)
 
 /-- The original completion bound at initial gradient dimension zero. -/
 theorem completionBound_of_directionCounts_terminal {d n r : ℕ} {F : IntForm n}
@@ -213,18 +254,19 @@ theorem completionBound_of_directionCounts_terminal {d n r : ℕ} {F : IntForm n
 
 /-- At a fixed terminal degree, the completion inputs give the prime-denominator
 estimate for forms of bounded reduced gradient dimension. -/
-theorem completionEstimateAt_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
+theorem completionEstimateAt_of_gradientDim_withMultiplier {d n r σ : ℕ} {F : IntForm n}
     {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hs : EventualPrimeGradientDimensionLE F σ)
-    (hw : CubeSupported w) (hinput : CompletionInputsAt d r F w) :
+    (hw : CubeSupported w) {multiplier : ℕ → ℝ} (hMultiplier : ∀ p, p.Prime → 1 ≤ multiplier p)
+    (hinput : CompletionInputsAtWithMultiplier d r F w multiplier) :
     ∃ C > 0, ∀ᶠ P : ℝ in atTop,
       ∀ (Q : ℝ), 1 ≤ Q → Q ≤ P ^ (1 / 2 : ℝ) →
       ∀ (p M : ℕ), p.Prime → (P / Q) ^ (2 : ℕ) < (p : ℝ) →
         (p : ℝ) ≤ 2 * (P / Q) ^ (2 : ℕ) → admissibleProduct d r P Q M →
       ∀ (a : ℤ) (α : ℝ), ¬ (p : ℤ) ∣ a →
         |(M : ℝ) * α - (a : ℝ) / (p : ℝ)| ≤ completionRadius d r P Q →
-        ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ) ^ (d - r))) := by
+        ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ) ^ (d - r))) * multiplier p := by
   obtain ⟨K, hK, T, hT, hinput⟩ := hinput
-  obtain ⟨C, hC, hcomplete⟩ := completionBound_of_gradientDim
+  obtain ⟨C, hC, hcomplete⟩ := completionBound_of_gradientDim_withMultiplier
     (r := r) (σ := σ) hF.totalDegree_le hw hK hT
   obtain ⟨B, hgood⟩ := hs
   refine ⟨C, hC, ?_⟩
@@ -249,9 +291,25 @@ theorem completionEstimateAt_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
     unfold PrimeGradientDimension at hdim0 hj
     exact_mod_cast hdim0.symm.trans hj
   have hs₀ : (s 0 F).val ≤ σ := heq ▸ hjσ
-  exact hcomplete hP hQ hM α s hs₀ (fun m hmprod hm => by
+  exact hcomplete hP hQ hM α s hs₀ (multiplier p) (hMultiplier p hp) (fun m hmprod hm => by
     obtain ⟨hcount, hterminal⟩ := hstates m hm
     exact ⟨hcount, hterminal a α ha (by rwa [hmprod])⟩)
+
+/-- Completion with the prime-independent terminal bound. -/
+theorem completionEstimateAt_of_gradientDim {d n r σ : ℕ} {F : IntForm n}
+    {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hs : EventualPrimeGradientDimensionLE F σ)
+    (hw : CubeSupported w) (hinput : CompletionInputsAt d r F w) :
+    ∃ C > 0, ∀ᶠ P : ℝ in atTop,
+      ∀ (Q : ℝ), 1 ≤ Q → Q ≤ P ^ (1 / 2 : ℝ) →
+      ∀ (p M : ℕ), p.Prime → (P / Q) ^ (2 : ℕ) < (p : ℝ) →
+        (p : ℝ) ≤ 2 * (P / Q) ^ (2 : ℕ) → admissibleProduct d r P Q M →
+      ∀ (a : ℤ) (α : ℝ), ¬ (p : ℤ) ∣ a →
+        |(M : ℝ) * α - (a : ℝ) / (p : ℝ)| ≤ completionRadius d r P Q →
+        ‖normalizedSum F w P α‖ ≤ C * Q ^ (-(((n - σ : ℕ) : ℝ) / (2 : ℝ) ^ (d - r))) := by
+  simpa only [mul_one] using
+    completionEstimateAt_of_gradientDim_withMultiplier hF hs hw
+      (multiplier := fun _ => 1) (fun _ _ => le_rfl)
+      (by simpa only [CompletionInputsAt, CompletionInputsAtWithMultiplier, mul_one] using hinput)
 
 /-- The completion inputs retain the starting codimension in all terminal degrees. -/
 theorem completionEstimate_of_gradientDim {d n σ : ℕ} {F : IntForm n}

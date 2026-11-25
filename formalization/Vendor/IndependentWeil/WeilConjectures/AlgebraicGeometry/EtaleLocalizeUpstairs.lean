@@ -1,0 +1,29 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.RingTheory.Etale.LocalizeUpstairs
+public import Mathlib.AlgebraicGeometry.Morphisms.Etale
+public import Mathlib.RingTheory.Localization.Away.Basic
+
+/-!
+# Étale localization upstairs
+
+## References
+
+* Stacks Project, Tag 07M0
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry
+
+end AlgebraicGeometry

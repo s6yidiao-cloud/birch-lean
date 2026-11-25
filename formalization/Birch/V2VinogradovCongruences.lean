@@ -28,7 +28,7 @@ prime is nonzero. -/
 theorem isUnit_of_primePowerReduction_ne_zero {p B : ℕ} [Fact p.Prime] (hB : 0 < B)
     {z : ZMod (p ^ B)} (hz : primePowerReduction p B hB z ≠ 0) : IsUnit z := by
   have hp : p.Prime := Fact.out
-  letI : NeZero (p ^ B) := ⟨pow_ne_zero _ hp.ne_zero⟩
+  let : NeZero (p ^ B) := ⟨pow_ne_zero _ hp.ne_zero⟩
   have hzval : z = (z.val : ZMod (p ^ B)) := (ZMod.natCast_zmod_val z).symm
   rw [hzval, map_natCast] at hz
   rw [hzval]

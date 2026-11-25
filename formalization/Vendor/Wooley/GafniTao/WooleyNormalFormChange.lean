@@ -134,7 +134,7 @@ theorem WooleyPolynomialSystem.Spaced.high_coeff_dvd
   obtain ⟨theta, htheta⟩ := hphi
   rw [htheta j, coeff_add, coeff_X_pow]
   have hne : n ≠ (j : ℕ) + 1 := by omega
-  rw [if_neg hne, zero_add, coeff_C_mul]
+  rw [ite_eq_right hne, zero_add, coeff_C_mul]
   exact dvd_mul_right _ _
 
 /-- The same high-degree divisibility is preserved by the lifted row
@@ -227,7 +227,7 @@ theorem WooleyPolynomialSystem.Spaced.exists_tail_normal_change
   have hfhigh (i : Fin k) (n : ℕ) (hn : k + 1 ≤ n) :
       (p : ℤ) ^ c ∣ (f i).coeff n := by
     simp only [f, coeff_sub, coeff_C]
-    rw [if_neg (by omega : n ≠ 0), sub_zero]
+    rw [ite_eq_right (by omega : n ≠ 0), sub_zero]
     exact wooleyNormalFormCombination_high_coeff_dvd hphi G i n hn
   choose psi htail using fun i : Fin k =>
     wooleyPolynomial_exists_positiveLow_add_scalar_X_tail
@@ -244,7 +244,7 @@ theorem WooleyPolynomialSystem.Spaced.exists_tail_normal_change
     intro d hd
     congr 2
     simp only [f, coeff_sub, coeff_C]
-    rw [if_neg (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
+    rw [ite_eq_right (by omega : (d : ℕ) + 1 ≠ 0), sub_zero]
   have hf := htail i
   rw [hpositive, hlow i] at hf
   dsimp only [f] at hf

@@ -217,7 +217,7 @@ theorem primeDirectionBound_of_slicing {n d : ℕ} (hgeom : PrimeDirectionSlicin
   obtain ⟨D, hD⟩ := hgeom
   refine ⟨((D : ℝ) + 1) * 3^n, by positivity, ?_⟩
   intro p hp e he hed hdp G hG s j hs hj hdim H hH hpH
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   have hle : j - s ≤ n := (Nat.sub_le _ _).trans hj
   rw [← Nat.cast_sub hle, Real.rpow_natCast]
   by_cases hsj : s < j

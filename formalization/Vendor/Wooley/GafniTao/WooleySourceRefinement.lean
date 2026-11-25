@@ -36,8 +36,9 @@ theorem wooleySource_sum_refined_residue_mass
           if ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi then
             (if (n : ZMod (p ^ b)) = z then ‖gamma n‖ ^ 2 else 0)
           else 0 := by
-    by_cases hz : ZMod.castHom (pow_dvd_pow p hab)
-        (ZMod (p ^ a)) z = xi <;> simp [hz]
+    by_cases hz : ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi
+    · simp only [ite_eq_left hz]
+    · simp only [ite_eq_right hz, Finset.sum_const_zero]
   simp_rw [hdistribute]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -52,8 +53,8 @@ theorem wooleySource_sum_refined_residue_mass
   · intro z hzne
     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
         (ZMod (p ^ a)) z = xi
-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
-    · rw [if_neg hzxi]
+    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
+    · rw [ite_eq_right hzxi]
 
 theorem wooleySource_sum_refined_polynomialResidueSum
     {k p a b qB : ℕ} [NeZero p] [NeZero qB]
@@ -76,8 +77,9 @@ theorem wooleySource_sum_refined_polynomialResidueSum
             (if (n : ZMod (p ^ b)) = z then
               gamma n * wooleySourcePolynomialPhase phi alpha n else 0)
           else 0 := by
-    by_cases hz : ZMod.castHom (pow_dvd_pow p hab)
-        (ZMod (p ^ a)) z = xi <;> simp [hz]
+    by_cases hz : ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = xi
+    · simp only [ite_eq_left hz]
+    · simp only [ite_eq_right hz, Finset.sum_const_zero]
   simp_rw [hdistribute]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -92,8 +94,8 @@ theorem wooleySource_sum_refined_polynomialResidueSum
   · intro z hzne
     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
         (ZMod (p ^ a)) z = xi
-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
-    · rw [if_neg hzxi]
+    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
+    · rw [ite_eq_right hzxi]
 
 theorem wooleySourcePolynomialResidueSum_eq_zero_of_massSq_eq_zero
     {k qH qB : ℕ} [NeZero qB]

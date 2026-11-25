@@ -117,8 +117,8 @@ private theorem finite_insert_redundant_average
             apply Finset.sum_congr rfl
             intro omega homega
             by_cases hQ : Q omega
-            · simp only [if_pos hQ]
-            · simp only [if_neg hQ, zero_mul]
+            · simp only [ite_eq_left hQ]
+            · simp only [ite_eq_right hQ, zero_mul]
       _ = ∑ omega : Ω,
           if P omega then (if Q omega then weight omega else 0) else 0 :=
             finite_weighted_filter A
@@ -132,8 +132,8 @@ private theorem finite_insert_redundant_average
           apply Finset.sum_congr rfl
           intro omega homega
           by_cases hP : P omega
-          · rw [if_pos hP, if_pos hP, if_pos (hforced omega hP)]
-          · rw [if_neg hP, if_neg hP]
+          · rw [ite_eq_left hP, ite_eq_left hP, ite_eq_left (hforced omega hP)]
+          · rw [ite_eq_right hP, ite_eq_right hP]
     _ = A * (E * ∑ i : I, ∑ j : J, ∑ omega : Ω,
         weight omega * first i omega * second j omega) := hright.symm
 

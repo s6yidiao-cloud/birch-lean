@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.UniversalSection
 import Birch.UniformGradientCertificate
 import Mathlib.Algebra.MvPolynomial.Funext
@@ -27,8 +28,8 @@ theorem macaulayMinor_totalDegree_le {R : Type*} [CommRing R] {F : IntForm n}
   classical
   let M := (sectionMacaulayMatrix (universalLinearSection R F) r D).submatrix id select
   have hm (i j : DegreeMonomial l D) : (M i j).totalDegree ≤ r := by
-    change (coeff i.val (monomial (select j).2.val 1 *
-      pderiv (select j).1 (universalLinearSection R F))).totalDegree ≤ r
+    change (AddMonoidAlgebra.coeff (monomial (select j).2.val 1 *
+      pderiv (select j).1 (universalLinearSection R F)) i.val).totalDegree ≤ r
     rw [coeff_monomial_mul', one_mul]
     split_ifs
     · exact coeff_pderiv_universalLinearSection_totalDegree_le R F hF _ _
@@ -91,8 +92,11 @@ theorem exists_bounded_smooth_section_of_macaulay_minor [Fact p.Prime]
     rw [map_zero] at he
     change (algebraMap K L) (eval₂ (RingHom.id K) (fun ij => (z ij : K)) M.det) ≠ 0 at he
     rw [hom_eval₂] at he
-    simpa only [K, U', U, eval, RingHom.comp_id, Matrix.map_apply, Int.coe_castRingHom,
-      Int.cast_natCast, map_natCast] using he
+    have hU' (ij : Fin n × Fin l) : U' ij.1 ij.2 = (z ij : L) := by
+      obtain ⟨i, j⟩ := ij
+      change (((z (i, j) : ℕ) : ℤ) : L) = (z (i, j) : L)
+      exact Int.cast_natCast _
+    simpa only [K, hU', RingHom.comp_id, map_natCast] using he
   intro x hx
   apply gradient_zero_of_macaulay_minor (isHomogeneous_linearSectionOver U' hG) hD hD₀ select hval x
   intro j

@@ -1,0 +1,129 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.CategoryTheory.RightDerivedSingleUnitHomologyComparison
+public import Mathlib.Algebra.Homology.Localization
+import WeilConjectures.CategoryTheory.SingleQuotientInverseShift
+import WeilConjectures.CategoryTheory.MappedSingleInverseShift
+import all Mathlib.Algebra.Homology.Localization
+
+/-!
+# Canonical single-complex shift comparisons
+
+These comparisons isolate the source and unit transport calculations used by
+`rightDerivedFunctorPlusUnit_canonical_single_shift`.
+-/
+
+@[expose] public section
+
+universe uB vB uC vC
+open CategoryTheory CategoryTheory.Limits
+namespace CategoryTheory.Functor
+
+variable {B : Type uB} [Category.{vB} B] [Abelian B] [EnoughInjectives B]
+  {C : Type uC} [Category.{vC} C] [Abelian C]
+  [HasDerivedCategory B] [HasDerivedCategory C]
+  (G : B ⥤ C) [G.Additive]
+
+set_option linter.unusedVariables false in
+set_option backward.isDefEq.respectTransparency false in
+set_option backward.isDefEq.respectTransparency.types false in
+/-- Shift transport of the derived unit on a single object.
+
+Source: Stacks Project, Tag 015J, and the
+canonical single-functor, quotient and homology shift comparisons. -/
+theorem rightDerivedPlusSingleUnit_shift_transport (X : B) (n : ℕ) :
+    let S : CochainComplex.Plus B :=
+      ⟨(CochainComplex.singleFunctor B (n : ℤ)).obj X, n, inferInstance⟩
+    let e : (DerivedCategory.Plus.singleFunctor B n).obj X ≅
+        DerivedCategory.Plus.Qh.obj ((HomotopyCategory.Plus.quotient B).obj S) :=
+      DerivedCategory.Plus.ι.preimageIso
+        ((DerivedCategory.singleFunctorIsoCompQ B n).app X ≪≫
+          (DerivedCategory.quotientCompQhIso B).symm.app _)
+    let GS := G.mapCochainComplexPlus.obj S
+    let H₀ := DerivedCategory.Plus.homologyFunctor C 0
+    let RG := G.rightDerivedFunctorPlus
+    let c := Functor.isoWhiskerRight
+      ((DerivedCategory.Plus.singleFunctors B).shiftIso (-(n : ℤ)) n 0 (by simp)).symm
+      (RG ⋙ H₀.shift (n : ℤ)) ≪≫
+      Functor.isoWhiskerLeft (DerivedCategory.Plus.singleFunctor B 0)
+        (Functor.isoWhiskerRight (RG.commShiftIso (-(n : ℤ))) (H₀.shift (n : ℤ))) ≪≫
+      Functor.isoWhiskerLeft (DerivedCategory.Plus.singleFunctor B 0 ⋙ RG)
+        (H₀.shiftIso (-(n : ℤ)) (n : ℤ) 0 (by ring))
+    let d := Functor.isoWhiskerRight
+      ((DerivedCategory.Plus.singleFunctors C).shiftIso (-(n : ℤ)) n 0 (by simp)).symm
+      (H₀.shift (n : ℤ)) ≪≫
+      Functor.isoWhiskerLeft (DerivedCategory.Plus.singleFunctor C 0)
+        (H₀.shiftIso (-(n : ℤ)) (n : ℤ) 0 (by ring))
+    (DerivedCategory.Plus.homologyFunctor C n).map
+      (G.rightDerivedFunctorPlusUnith.app ((HomotopyCategory.Plus.quotient B).obj S)) ≫
+      (DerivedCategory.Plus.homologyFunctor C n).map (G.rightDerivedFunctorPlus.map e.inv) ≫
+      c.hom.app X =
+    (DerivedCategory.Plus.homologyFunctor C n).map
+      (G.mapHomotopyCategoryPlusSingleFunctorQhObjIso n X).hom ≫
+      d.hom.app (G.obj X) ≫ H₀.map (G.rightDerivedPlusSingleUnit X) := by
+  intro S e GS H₀ RG c d
+  clear GS
+  dsimp only [S, e, H₀, RG, c, d]
+  let K₀ := (HomotopyCategory.Plus.singleFunctor B 0).obj X
+  let h := ((HomotopyCategory.Plus.singleFunctors B).shiftIso
+    (-(n : ℤ)) n 0 (by simp)).inv.app X
+  let eₙ : (DerivedCategory.Plus.singleFunctor B n).obj X ≅
+      DerivedCategory.Plus.Qh.obj ((HomotopyCategory.Plus.singleFunctor B n).obj X) :=
+    DerivedCategory.Plus.ι.preimageIso
+      ((DerivedCategory.singleFunctorIsoCompQ B n).app X ≪≫
+        (DerivedCategory.quotientCompQhIso B).symm.app _)
+  let sB := ((DerivedCategory.Plus.singleFunctors B).shiftIso
+    (-(n : ℤ)) n 0 (by simp)).inv.app X
+  let sC := ((DerivedCategory.Plus.singleFunctors C).shiftIso
+    (-(n : ℤ)) n 0 (by simp)).inv.app (G.obj X)
+  let F := G.rightDerivedFunctorPlus
+  let U := G.rightDerivedFunctorPlusUnith
+  have ht := single_quotient_inverse_shift X n
+  have hs := mapped_single_inverse_shift G X n
+  have hu := U.naturality h
+  have hc := NatTrans.shift_app_comm U (-(n : ℤ)) K₀
+  simp only [Functor.commShiftIso_comp_hom_app, Functor.comp_obj, Category.assoc] at hc
+  simp only [Functor.comp_map, Functor.comp_obj] at hu
+  have hd : U.app ((HomotopyCategory.Plus.singleFunctor B n).obj X) ≫
+      F.map eₙ.inv ≫ F.map sB ≫
+        (F.commShiftIso (-(n : ℤ))).hom.app
+          ((DerivedCategory.Plus.singleFunctor B 0).obj X) =
+      (G.mapHomotopyCategoryPlusSingleFunctorQhObjIso n X).hom ≫ sC ≫
+        (G.rightDerivedPlusSingleUnit X)⟦-(n : ℤ)⟧' := by
+    rw [← F.map_comp_assoc, ht]
+    simp only [F.map_comp, Category.assoc]
+    rw [F.commShiftIso_hom_naturality]
+    erw [← reassoc_of% hu]
+    erw [← reassoc_of% hc]
+    erw [reassoc_of% hs]
+    simp only [rightDerivedPlusSingleUnit, Functor.map_comp]
+    simp only [← Functor.map_comp_assoc, Iso.hom_inv_id_assoc]
+    rfl
+  simp only [Iso.trans_hom, NatTrans.comp_app, isoWhiskerRight_hom,
+    isoWhiskerLeft_hom, whiskerRight_app, whiskerLeft_app, Iso.symm_hom,
+    Functor.comp_map, Category.assoc]
+  change (DerivedCategory.Plus.homologyFunctor C n).map (U.app _) ≫
+    (DerivedCategory.Plus.homologyFunctor C n).map (F.map eₙ.inv) ≫
+    (DerivedCategory.Plus.homologyFunctor C n).map (F.map sB) ≫
+    (DerivedCategory.Plus.homologyFunctor C n).map
+      ((F.commShiftIso (-(n : ℤ))).hom.app _) ≫ _ =
+    (DerivedCategory.Plus.homologyFunctor C n).map
+      (G.mapHomotopyCategoryPlusSingleFunctorQhObjIso n X).hom ≫
+    (DerivedCategory.Plus.homologyFunctor C n).map sC ≫ _ ≫ _
+  simp only [← Functor.map_comp_assoc] at hd ⊢
+  rw [hd]
+  simp only [Functor.map_comp, Category.assoc]
+  exact congrArg (fun f ↦
+    (DerivedCategory.Plus.homologyFunctor C n).map
+      (G.mapHomotopyCategoryPlusSingleFunctorQhObjIso n X).hom ≫
+    (DerivedCategory.Plus.homologyFunctor C n).map sC ≫ f)
+    (((DerivedCategory.Plus.homologyFunctor C 0).shiftIso
+      (-(n : ℤ)) (n : ℤ) 0 (by ring)).hom.naturality (G.rightDerivedPlusSingleUnit X))
+
+end CategoryTheory.Functor

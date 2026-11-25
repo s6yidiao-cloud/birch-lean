@@ -1,10 +1,14 @@
-import Mathlib.Algebra.MvPolynomial.PDeriv
-import Mathlib.RingTheory.MvPolynomial.Homogeneous
-import Mathlib.Algebra.MvPolynomial.Eval
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.Algebra.MvPolynomial.PDeriv
+public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 # Complete exponential sums and prime-power densities
@@ -394,7 +398,7 @@ theorem weightedSum_eq_zero_of_nonstationary (F : MvPolynomial (Fin n) ℤ) {t q
         have H := congrFun h i
         change reduceResidue t q a * _ = 0 at H
         exact hi ((IsUnit.mul_right_eq_zero ha).mp H)
-      rw [if_neg hg, mul_zero]
+      rw [ite_eq_right hg, mul_zero]
   have htranslate (z : Fin n → ZMod q) :
       (∑ x : Fin n → ZMod Q, f (x + shift z)) = ∑ x, f x :=
     Equiv.sum_comp (Equiv.addRight (shift z)) f

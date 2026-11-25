@@ -8,7 +8,7 @@
   },
   {
     "module": "GafniTao.WooleyBinomialMatrix",
-    "sha256": "ae76e6322910706bc1ce8bf914881e526359116cce828427e6431442c76638a4",
+    "sha256": "0743b268c5e7012e44427623b97a35ec8d67f6a9b76d90a60ab2a13ebd0c0066",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyBinomialMatrix.lean",
     "original_sha256": "4d390ca3472beb133ac07d60457df97459f2e879c11c6dc8f8697c0f4e1418c0",
     "status": "modified"
@@ -29,10 +29,10 @@
   },
   {
     "module": "GafniTao.WooleyConditioningTower",
-    "sha256": "04f8334e2aaa3301b4ba7d8f0782d7e995a34f2800b57c6b26bdf1edb1acb0b0",
+    "sha256": "cf4839c517e78e26dd57b464031e82639d3479f12f500881fa745e26a361774c",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyConditioningTower.lean",
     "original_sha256": "04f8334e2aaa3301b4ba7d8f0782d7e995a34f2800b57c6b26bdf1edb1acb0b0",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyCountDependencies",
@@ -100,10 +100,10 @@
   },
   {
     "module": "GafniTao.WooleyEquation39",
-    "sha256": "209146f723613649d0883a936427a460320d0219c776145fbdc415bf96c0d6d8",
+    "sha256": "542502c91ba4a7d91955f6aeac35eece8ba985cb808356461bc82d78623e23d7",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyEquation39.lean",
     "original_sha256": "209146f723613649d0883a936427a460320d0219c776145fbdc415bf96c0d6d8",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyEquation717Tuple",
@@ -135,14 +135,14 @@
   },
   {
     "module": "GafniTao.WooleyFiniteMean",
-    "sha256": "15a6a1025283f5b2d9e13470db268ca6ad5494f2a9850f1769d3b63504ea1307",
+    "sha256": "5dacd8339ac57db2eb71a5ee5da0ff061cb4c488561f25fda5d0ffd568be17ad",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyFiniteMean.lean",
     "original_sha256": "f22c654de2c36fe16b5e100b5c8960eb0380b1ac911cfd6a117fc6d72d6a21d2",
     "status": "modified"
   },
   {
     "module": "GafniTao.WooleyInitialConditioning",
-    "sha256": "7bc04efd441c12eade36b7260e7801b7d19ac8c4fc26261f2755eb30e5983b7f",
+    "sha256": "ddc8ae37c4086bdc7f62f955ea9f980a04235307281aeb6602c9cbeab629db36",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyInitialConditioning.lean",
     "original_sha256": "83d173e36cdf0276410a57e0bd73c95ab1c7f53fbcd50b739a931b17064fb8d5",
     "status": "modified"
@@ -156,10 +156,10 @@
   },
   {
     "module": "GafniTao.WooleyLemma63",
-    "sha256": "1995d18b2f52b04a209f2c5f1e63f567cfaec5f9e51372631c7981d77eaf30ef",
+    "sha256": "3b4f054211e05c75e96c14673176a1677e687880720af8fa9878fe89b28146f3",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyLemma63.lean",
     "original_sha256": "1995d18b2f52b04a209f2c5f1e63f567cfaec5f9e51372631c7981d77eaf30ef",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyMatrixInverse",
@@ -184,10 +184,10 @@
   },
   {
     "module": "GafniTao.WooleyNormalFormChange",
-    "sha256": "04c0777ca38012a33877ce720636b956511ae0bdb9b23246a435afc4272b5880",
+    "sha256": "3ebe678f20182c1618ac962b805ba32e41462ce442f7c82a2e6a3621db931782",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyNormalFormChange.lean",
     "original_sha256": "04c0777ca38012a33877ce720636b956511ae0bdb9b23246a435afc4272b5880",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyNormalization",
@@ -198,10 +198,10 @@
   },
   {
     "module": "GafniTao.WooleyOrthogonalityInsertion",
-    "sha256": "1de590534f00c59d735d4ac4899b76cda258e6f16247f4849a2aabda753a0294",
+    "sha256": "bd025ad38452a43a882827a3a31204a2ecd69e9847d56f9e6a5ca27a55f516f5",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyOrthogonalityInsertion.lean",
     "original_sha256": "1de590534f00c59d735d4ac4899b76cda258e6f16247f4849a2aabda753a0294",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyPadicConcentration",
@@ -240,17 +240,17 @@
   },
   {
     "module": "GafniTao.WooleyPolynomialBasic",
-    "sha256": "fa1f170a2d41ee7d90d2e9488a626b438e0a3508dd52ee0cdb6ab977485da848",
+    "sha256": "b5df0214cd6eba49834ba52d041ed25f47b27bd154ea477e55b9c7607a87a48e",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyPolynomialBasic.lean",
     "original_sha256": "fa1f170a2d41ee7d90d2e9488a626b438e0a3508dd52ee0cdb6ab977485da848",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyPolynomialInitial",
-    "sha256": "e376cabaa6c95f447cc030758425528182897e7944c2ad65ab1b484454b5f56e",
+    "sha256": "d340f186d471908764655b26f97d9cb9c6411d9752fe1d20fdb5f2aa55bb2e14",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyPolynomialInitial.lean",
     "original_sha256": "e376cabaa6c95f447cc030758425528182897e7944c2ad65ab1b484454b5f56e",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyPolynomialLemma63",
@@ -261,17 +261,17 @@
   },
   {
     "module": "GafniTao.WooleyPolynomialNormalForm",
-    "sha256": "0a98fb418e6bb83f6b8573bbe6a338933becfc164abe506ba8f7a529e2fccf33",
+    "sha256": "326df2107eeb31cc31f8460a2ead12665e7d2b20d0dd2a60cd9da3f95e7281a1",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyPolynomialNormalForm.lean",
     "original_sha256": "0a98fb418e6bb83f6b8573bbe6a338933becfc164abe506ba8f7a529e2fccf33",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyPolynomialRefinement",
-    "sha256": "e6fc693560d8295a1b2bf2ffac84f3c2c7a3a6d87337dd42ff8d941b350651f2",
+    "sha256": "fdd548936aae5b193f76db51e1d032f27cb38458750003dfc5cbe51bc509821a",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyPolynomialRefinement.lean",
     "original_sha256": "e6fc693560d8295a1b2bf2ffac84f3c2c7a3a6d87337dd42ff8d941b350651f2",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyPolynomialSystem",
@@ -282,17 +282,17 @@
   },
   {
     "module": "GafniTao.WooleyRefinementTower",
-    "sha256": "9b157c938550b47dd0131c25f49ea277dd400e753b5995694ebd38c0a85a2b21",
+    "sha256": "d1b296b901e1d9c5b6015b96dc49576efced97871eac1ce74787661508e91085",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyRefinementTower.lean",
     "original_sha256": "9b157c938550b47dd0131c25f49ea277dd400e753b5995694ebd38c0a85a2b21",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyResidueRefinement",
-    "sha256": "8a7a07f3e4757a125c5305fd616b897535340ac8d026135f524f1bd564f17cc4",
+    "sha256": "ba8eb97373d5b785e7b19806fd7e559fe640911e99535fcb61ae762fb2593227",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyResidueRefinement.lean",
     "original_sha256": "8a7a07f3e4757a125c5305fd616b897535340ac8d026135f524f1bd564f17cc4",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection10ActualStep",
@@ -359,10 +359,10 @@
   },
   {
     "module": "GafniTao.WooleySection10Theorem",
-    "sha256": "70fab5985aebf4a79b988d4fc0d843149ce4fc925208e6b052e2b3d57d97da92",
+    "sha256": "69111d244171af2892da256263609ea12f35b45a4bf5bc8b02b58772d608603a",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection10Theorem.lean",
     "original_sha256": "70fab5985aebf4a79b988d4fc0d843149ce4fc925208e6b052e2b3d57d97da92",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection10TwoLossContradiction",
@@ -408,10 +408,10 @@
   },
   {
     "module": "GafniTao.WooleySection4Holder",
-    "sha256": "66541716cf5065699409439a94f7d1185bacb8a1620c765f930eff12e1a59419",
+    "sha256": "9008bef3ee9b4cf6553c4ccc88f7a9e70e1d3a37092988fb775230053c21e07b",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection4Holder.lean",
     "original_sha256": "66541716cf5065699409439a94f7d1185bacb8a1620c765f930eff12e1a59419",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection4Insertion",
@@ -464,10 +464,10 @@
   },
   {
     "module": "GafniTao.WooleySection7ConditionedExpansion",
-    "sha256": "621d1d3abf48837e51acb5fdced43b7341bf6cebae903d7b6c68f546409fbbb9",
+    "sha256": "204cb7c3deb80dd2e844f984c70f6399d3fb5d54894e50f1214bf691e2764c10",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7ConditionedExpansion.lean",
     "original_sha256": "621d1d3abf48837e51acb5fdced43b7341bf6cebae903d7b6c68f546409fbbb9",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7Congruence",
@@ -478,10 +478,10 @@
   },
   {
     "module": "GafniTao.WooleySection7Easy",
-    "sha256": "ec535d8278066e1640e771ed1615e0e94b65cd2c59d114938d51d001567b9da3",
+    "sha256": "185ccd268d5e32aec8c4ebcf4c899f2b9932e5e61e14cfb836d9a42131c081aa",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7Easy.lean",
     "original_sha256": "ec535d8278066e1640e771ed1615e0e94b65cd2c59d114938d51d001567b9da3",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7Hard",
@@ -513,38 +513,38 @@
   },
   {
     "module": "GafniTao.WooleySection7LocalBound",
-    "sha256": "94d760d68e38e5c4253da96b4e5530442aea154512d7e8f08fd6558cc4307494",
+    "sha256": "26074036d6c5200b764ad5b796865cca3f2463376341a7fa27ed952d665a96b8",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7LocalBound.lean",
     "original_sha256": "94d760d68e38e5c4253da96b4e5530442aea154512d7e8f08fd6558cc4307494",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7LocalIdentity",
-    "sha256": "71cffd00ee0e13a5f0ca805ef47e2bcc12a7f5c428a988bb269ced8240f292b2",
+    "sha256": "d271a5195cd8feb6a39b31b6e536a724dab94029706ad5ef6a1591ec12861186",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7LocalIdentity.lean",
     "original_sha256": "71cffd00ee0e13a5f0ca805ef47e2bcc12a7f5c428a988bb269ced8240f292b2",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7MomentIdentity",
-    "sha256": "4dc97c2de3dde238d06644361467fc4ee58dc2c645d354dbe626531407f119d4",
+    "sha256": "f8b51b4ef261284bce1da43effb7f128c36c2edac7b1f2ef149e91e557a69dea",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7MomentIdentity.lean",
     "original_sha256": "4dc97c2de3dde238d06644361467fc4ee58dc2c645d354dbe626531407f119d4",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7Omega",
-    "sha256": "6104afd26320ddfd065d074e09853899d4d48216247d90984a920c5a242057ba",
+    "sha256": "1660bc11149ae18b8a37e439bf7920449fe91b28e1c62f0ed2119bba177a53fb",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7Omega.lean",
     "original_sha256": "6104afd26320ddfd065d074e09853899d4d48216247d90984a920c5a242057ba",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7Reverse",
-    "sha256": "ff0c6c57c4ac80a141b69333aceea0074a4247af5d9eedd9ac88cb9f2f76c523",
+    "sha256": "d5a8e61b05f714a8be5f0b559b9eb51de0ee787b87bcce035e7d1f852a5ffca5",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7Reverse.lean",
     "original_sha256": "ff0c6c57c4ac80a141b69333aceea0074a4247af5d9eedd9ac88cb9f2f76c523",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7ShiftedMoment",
@@ -576,10 +576,10 @@
   },
   {
     "module": "GafniTao.WooleySection7Translated",
-    "sha256": "530297d905f1adf1dcadc9df69e4f5aa50163b775a644218954ac143023cbfc5",
+    "sha256": "0fa04e2996007cb69448e51a76876f7b56ea66f6af4b6a9ca9260d50948d4505",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection7Translated.lean",
     "original_sha256": "530297d905f1adf1dcadc9df69e4f5aa50163b775a644218954ac143023cbfc5",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection7Valuation",
@@ -590,10 +590,10 @@
   },
   {
     "module": "GafniTao.WooleySection8",
-    "sha256": "fef44ec7ff1a608315b1fcbc4b965dfef7fcb815123a95156cc581b9328074e0",
+    "sha256": "4a044147a37809afa8d63164244d4582f8715583143baa8068f8577a43180275",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection8.lean",
     "original_sha256": "fef44ec7ff1a608315b1fcbc4b965dfef7fcb815123a95156cc581b9328074e0",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection8Arithmetic",
@@ -618,10 +618,10 @@
   },
   {
     "module": "GafniTao.WooleySection9Admissible",
-    "sha256": "ce0b9eec72b374842fde080f1398b991a03c3cef0fe0c1f8a1916176e955e0d5",
+    "sha256": "af04ed0505c223d836ab4a101b60a16e6ee16fc99f2418247b074d0d3bbcb3d1",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySection9Admissible.lean",
     "original_sha256": "ce0b9eec72b374842fde080f1398b991a03c3cef0fe0c1f8a1916176e955e0d5",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySection9Arithmetic",
@@ -674,10 +674,10 @@
   },
   {
     "module": "GafniTao.WooleySourceAffine",
-    "sha256": "7c9ef2b42245e5f199deae963ce8aef6567901070d9e0de7e2c2e2329d84c88c",
+    "sha256": "b5fa19944d9ba6e3ebcb94a817e96d0889fcc0ad30a668306d198b65a90c8aaa",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySourceAffine.lean",
     "original_sha256": "7c9ef2b42245e5f199deae963ce8aef6567901070d9e0de7e2c2e2329d84c88c",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySourceBox",
@@ -695,10 +695,10 @@
   },
   {
     "module": "GafniTao.WooleySourceCriticalBase",
-    "sha256": "d2067fa4fb8766e143ce4196510950a34dada7aa2035f6b6e74ee6d7ed053a0d",
+    "sha256": "051d8b60034d9f789ebe2c9f59847256be6712fde41e66a755623fca7613642a",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySourceCriticalBase.lean",
     "original_sha256": "d2067fa4fb8766e143ce4196510950a34dada7aa2035f6b6e74ee6d7ed053a0d",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySourceMean",
@@ -716,17 +716,17 @@
   },
   {
     "module": "GafniTao.WooleySourceRefinement",
-    "sha256": "fbffae70dc7d9d2d04ac0816a53c2c89eaeea48ac082922834d0dc1345f7917d",
+    "sha256": "970bfcd8ca25a2a67ebecbeb57da116dcf5b465ae832863bdb1601375bf86337",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySourceRefinement.lean",
     "original_sha256": "fbffae70dc7d9d2d04ac0816a53c2c89eaeea48ac082922834d0dc1345f7917d",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySourceRestriction",
-    "sha256": "3016a5b8beda6f40d964cef36a88766e01fec6c0cdc8bf5388ea582bbc0d54b8",
+    "sha256": "a0f37fd9b9c64ddf6b1c481ab2f1e81900dbded77c1d0737ccbda06f580b357e",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySourceRestriction.lean",
     "original_sha256": "3016a5b8beda6f40d964cef36a88766e01fec6c0cdc8bf5388ea582bbc0d54b8",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleySourceSection8",
@@ -744,7 +744,7 @@
   },
   {
     "module": "GafniTao.WooleySourceToPadic",
-    "sha256": "a9d0cb3a2410e823a7feba3c53dc4f318c9b261315b2f16b926db049796de1e7",
+    "sha256": "9e5e7dc79446599985dfb73269bd369e2ac32d2579830e1305ba028896af1e9e",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleySourceToPadic.lean",
     "original_sha256": "b5a53b8399e5d40b5778f98652e5ecb67c637d5214d7173732599d8e47457d0c",
     "status": "modified"
@@ -758,24 +758,24 @@
   },
   {
     "module": "GafniTao.WooleyTaylorCoefficient",
-    "sha256": "dd329c02e7da48177f65461c46fa0e8e7b2e7465e778205d4c8f99e0ddb28f4f",
+    "sha256": "62b7c372b56ee7bd1b06e2ea3e26d2f01fd267d34b7839b23b14f79a90523ae8",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyTaylorCoefficient.lean",
     "original_sha256": "320cc4b470ab4ef76849c19fce20c4e394694a4be109712deda1843a477353a7",
     "status": "modified"
   },
   {
     "module": "GafniTao.WooleyThreeFactorHolder",
-    "sha256": "06954616558ffd28e7c308f6b760676afcfec2cbe5c00a40359d241d249f3c94",
+    "sha256": "117c5f6930a189e0a4074c408562910f8e56be816defedb7f4b4c05236cf51c3",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyThreeFactorHolder.lean",
     "original_sha256": "06954616558ffd28e7c308f6b760676afcfec2cbe5c00a40359d241d249f3c94",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyTranslatedNormalChange",
-    "sha256": "0d395397ccc150181549e1ac875f312fbdd287051de4d4ebb4dc6dab9eeaca8b",
+    "sha256": "1dc65789d435b38a6c5f0c9fe0f2e9a12f208c4b987799cea137649b18b2ed39",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyTranslatedNormalChange.lean",
     "original_sha256": "0d395397ccc150181549e1ac875f312fbdd287051de4d4ebb4dc6dab9eeaca8b",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyTranslationDilation",
@@ -786,10 +786,10 @@
   },
   {
     "module": "GafniTao.WooleyTranslationMatrix",
-    "sha256": "3e3cd264dc13b9920b522d18adfc6a0d7286a1c0ee234e501dc74191209ed90e",
+    "sha256": "914a256d53b84e22bd056b8ef901d71763ffa10df6ceecd42df1c339be0cc3d6",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyTranslationMatrix.lean",
     "original_sha256": "3e3cd264dc13b9920b522d18adfc6a0d7286a1c0ee234e501dc74191209ed90e",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyTupleDisplacement",
@@ -800,10 +800,10 @@
   },
   {
     "module": "GafniTao.WooleyTwoFactorHolder",
-    "sha256": "c613a1480adc99ab5cdad44c5663a4adb5f7e5d9f3740ecfb00ac265a89c4312",
+    "sha256": "f20a274be728656fcb691ccc19d57da55acd4c4a30124ca0442a7c5e791a0119",
     "original": "https://github.com/smccolm/Lean/blob/6a90ee91cdb8a4037189c1076595bd3846c96c16/Riemann%20Zeta/9.%20Zero%20Density%2C%20Large%20Values%20and%20Prime%20Transfer/74%20Gafni-Tao%2C%202026/Extension/GafniTao/WooleyTwoFactorHolder.lean",
     "original_sha256": "c613a1480adc99ab5cdad44c5663a4adb5f7e5d9f3740ecfb00ac265a89c4312",
-    "status": "verbatim"
+    "status": "modified"
   },
   {
     "module": "GafniTao.WooleyWeightedComplexHolder",

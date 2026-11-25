@@ -1,0 +1,58 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.StrictHenselizationRestriction
+import WeilConjectures.AlgebraicGeometry.StrictLocalGermRestrictionIso
+import WeilConjectures.AlgebraicGeometry.StrictHenselizationCohomologyComparisonIso
+
+/-!
+# Unrestricted strict-henselization stalk formula
+
+## References
+
+* [Stacks, Tag 03Q9]
+-/
+
+@[expose] public section
+
+universe w
+
+open CategoryTheory CategoryTheory.Limits
+open AlgebraicGeometry
+
+namespace AlgebraicGeometry.Etale
+
+/-- For every abelian étale sheaf, the canonical strict-local restriction is an isomorphism.
+The canonical map is `r ≫ strictHenselizationCohomologyComparison`, where the germ map `r`
+is specified by its neighbourhood components. -/
+theorem unrestricted_strictHenselization_stalk
+    {X S : Scheme.{w}} (f : X ⟶ S) [QuasiCompact f] [QuasiSeparated f]
+    {Ω : Type w} [Field Ω] [IsAlgClosed Ω]
+    (xbar : Spec (.of Ω) ⟶ S)
+    (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{w + 1}) (q : ℕ) :
+    ∃ r : (Scheme.pointSmallEtale xbar).sheafFiber.obj
+        ((DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+          ((rightDerivedLowerStarPlus AddCommGrpCat.{w + 1} f).obj
+            ((DerivedCategory.Plus.singleFunctor _ 0).obj F))) ⟶
+        (Sheaf.Γ (Scheme.strictLocalization xbar).smallEtaleTopology
+          AddCommGrpCat.{w + 1}).obj
+          ((upperStar AddCommGrpCat.{w + 1} (Scheme.strictLocalizationToBase xbar)).obj
+            ((DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+              ((rightDerivedLowerStarPlus AddCommGrpCat.{w + 1} f).obj
+                ((DerivedCategory.Plus.singleFunctor _ 0).obj F)))),
+      IsStrictHenselizationStalkRestriction xbar
+          ((DerivedCategory.Plus.homologyFunctor _ (q : ℤ)).obj
+            ((rightDerivedLowerStarPlus AddCommGrpCat.{w + 1} f).obj
+              ((DerivedCategory.Plus.singleFunctor _ 0).obj F))) r ∧
+        IsIso (r ≫ strictHenselizationCohomologyComparison xbar f F q) := by
+  obtain ⟨r, hr, _⟩ := existsUnique_strictHenselizationStalkRestriction xbar _
+  have hriso : IsIso r := isIso_strictHenselizationStalkRestriction xbar _ r hr
+  exact ⟨r, hr, IsIso.comp_isIso' hriso
+    (isIso_strictHenselizationCohomologyComparison f xbar F q)⟩
+
+end AlgebraicGeometry.Etale

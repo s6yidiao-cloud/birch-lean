@@ -103,8 +103,8 @@ theorem wooley_sum_refined_residue_mass
   · intro z hzne
     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
         (ZMod (p ^ a)) z = xi
-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
-    · rw [if_neg hzxi]
+    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
+    · rw [ite_eq_right hzxi]
 
 theorem wooley_sum_refined_residue_grid
     {Q p a b qB k : ℕ} [NeZero p] [NeZero qB]
@@ -146,8 +146,8 @@ theorem wooley_sum_refined_residue_grid
   · intro z hzne
     by_cases hzxi : ZMod.castHom (pow_dvd_pow p hab)
         (ZMod (p ^ a)) z = xi
-    · rw [if_pos hzxi, if_neg (Ne.symm hzne)]
-    · rw [if_neg hzxi]
+    · rw [ite_eq_left hzxi, ite_eq_right (Ne.symm hzne)]
+    · rw [ite_eq_right hzxi]
 
 /-- The exact refinement identity used before Wooley (6.11). -/
 theorem wooley_refined_normalized_residue_decomposition

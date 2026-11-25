@@ -32,7 +32,7 @@ theorem ringKrullDim_sup_span_singleton_le_of_avoids_minimal {R : Type*} [CommRi
   have he : StrictMono e := fun _ _ h => h
   let L₀ := L.map e he
   let P := L.head.val.asIdeal
-  letI : P.IsPrime := L.head.val.isPrime
+  let : P.IsPrime := L.head.val.isPrime
   have hPI : I ≤ P := (e L.head).prop
   have hf : f ∈ P := (le_sup_right.trans (hj L.head)) (Ideal.subset_span (Set.mem_singleton f))
   obtain ⟨Q,hQ,hQP⟩ := Ideal.exists_minimalPrimes_le hPI
@@ -99,7 +99,7 @@ private theorem vanishingIdeal_origin_eq_idealOfVars {n : ℕ} (K : Type*) [Fiel
   ext f
   rw [mem_vanishingIdeal_singleton_iff, aeval_zero, Algebra.algebraMap_self, RingHom.id_apply,
     ← pow_one (idealOfVars (Fin n) K), mem_pow_idealOfVars_iff']
-  change coeff 0 f = 0 ↔ _
+  change f.coeff 0 = 0 ↔ _
   constructor
   · intro h m hm
     have hm₀ : m.degree = 0 := by omega
@@ -160,7 +160,7 @@ theorem exists_normalLinearForm_dim_drop {n s : ℕ} {K : Type*} [Field K] [Infi
   classical
   let M : Ideal (MvPolynomial (Fin n) K) := vanishingIdeal K ({0} : Set (Fin n → K))
   let S := {P : Ideal (MvPolynomial (Fin n) K) | P ∈ I.minimalPrimes ∧ P ≠ M}
-  letI : Fintype S :=
+  let : Fintype S :=
     (I.finite_minimalPrimes_of_isNoetherianRing (MvPolynomial (Fin n) K) |>.subset
       (fun _ hp => hp.1)).fintype
   choose V hV hsep using fun P : S =>

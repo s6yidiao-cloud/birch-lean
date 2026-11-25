@@ -29,7 +29,7 @@ theorem minimalPrime_le_coneOrigin {K ι σ : Type*} [Field K] [Fintype ι]
     {Q : Ideal (MvPolynomial ι K)} (hQ : (Ideal.span (Set.range f)).IsMinimalPrime Q) :
     Q ≤ RingHom.ker (eval₂Hom (RingHom.id K) (0 : ι → K)) := by
   let R := MvPolynomial ι K
-  letI : Q.IsPrime := hQ.isPrime
+  let : Q.IsPrime := hQ.isPrime
   let q := Ideal.Quotient.mk Q
   let Cq : K →+* R ⧸ Q := q.comp C
   let ψ : R →+* Polynomial (R ⧸ Q) := eval₂Hom (Polynomial.C.comp Cq)
@@ -105,7 +105,7 @@ theorem ringKrullDim_hessianIncidence_le {K : Type*} [Field K] {n e : ℕ}
   let e₀ : R ⧸ I →+* K := Ideal.Quotient.lift I ev heI
   let m := RingHom.ker e₀
   have hs : Function.Surjective e₀ := fun c => ⟨π (C c), by simp [e₀, π, ev]⟩
-  letI : m.IsMaximal := RingHom.ker_isMaximal_of_surjective e₀ hs
+  let : m.IsMaximal := RingHom.ker_isMaximal_of_surjective e₀ hs
   have hdiag (j : Fin n) : π (X (Sum.inl j) - X (Sum.inr j)) ∈ m := by
     apply RingHom.mem_ker.mpr
     simp [e₀, π, ev]

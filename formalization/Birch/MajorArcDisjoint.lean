@@ -122,7 +122,7 @@ theorem liftedUnitArcs_inter_Ioc {d : ℕ} (hd : 2 ≤ d) {P : ℝ} (hP : 4 ≤ 
   let W := majorArcWidth d P
   have hW : 0 < W ∧ W < 1 / 2 := majorArcWidth_pos_lt_half hd hP
   ext α
-  simp only [Set.mem_inter_iff, Set.mem_iUnion, liftedMajorArc, Set.mem_setOf_eq,
+  simp only [Set.mem_inter_iff, Set.mem_iUnion, liftedMajorArc, Set.mem_ofPred_eq,
     Nat.cast_one, div_one, Set.mem_Ioc, Set.mem_Icc, Set.mem_union]
   change ((∃ a : ℤ, |α - (a : ℝ)| ≤ W) ∧ 0 < α ∧ α ≤ 1) ↔
     (0 < α ∧ α ≤ W) ∨ (1 - W ≤ α ∧ α ≤ 1)
@@ -238,7 +238,7 @@ theorem liftedMajorArc_eq_Icc (d : ℕ) (P : ℝ) (q : ℕ) (a : ℤ) :
     liftedMajorArc d P q a = Icc ((a : ℝ) / q - majorArcWidth d P / q)
       ((a : ℝ) / q + majorArcWidth d P / q) := by
   ext α
-  rw [liftedMajorArc, mem_setOf_eq, mem_Icc, abs_le]
+  rw [liftedMajorArc, Set.mem_ofPred_eq, mem_Icc, abs_le]
   constructor
   · intro h
     exact ⟨by linarith [h.1], by linarith [h.2]⟩

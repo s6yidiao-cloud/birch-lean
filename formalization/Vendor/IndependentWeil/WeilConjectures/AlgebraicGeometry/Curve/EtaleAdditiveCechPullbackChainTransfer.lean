@@ -1,0 +1,68 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechNormalization
+public import WeilConjectures.SixFunctors.Etale.UpperLowerStar.TopologicalInvariance
+import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechPullbackAugmentedTransfer
+import WeilConjectures.AlgebraicGeometry.Curve.EtaleAdditiveCechCanonicalCoefficientTransfer
+
+/-! # Pullback maps of the augmented additive Čech complexes
+
+## References
+
+* Stacks Project, Tag 01FD (Lemma 20.15.1)
+* Stacks Project, Tags 01FB, 03P2
+-/
+
+@[expose] public section
+
+universe u
+open CategoryTheory Opposite
+namespace AlgebraicGeometry.Scheme.Modules
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.types false
+
+/-- Pullback and refinement give augmentation-preserving global and total cochain maps. -/
+theorem exists_additiveCech_pullback_chain_transfer
+    {X Y : Scheme.{u}} (g : Y ⟶ X)
+    {ι : Type u} [Finite ι] (U : ι → X.Opens) (V : ι → Y.Opens)
+    (hinter : ∀ (k : ℕ) (y : Fin (k + 1) → ι),
+      (⨅ l, V (y l)) ≤ g ⁻¹ᵁ (⨅ l, U (y l)))
+    (I : InjectiveResolution X.etaleAdditiveSheaf)
+    (J : InjectiveResolution Y.etaleAdditiveSheaf)
+    (cI : Etale.ResolutionSectionCanonicalComparison X.etaleAdditiveSheaf I)
+    (cJ : Etale.ResolutionSectionCanonicalComparison Y.etaleAdditiveSheaf J)
+    (n : ℕ) :
+    ∃ f : additiveCechGlobal I ⟶ additiveCechGlobal J,
+    ∃ t : additiveCechTotal U I ⟶ additiveCechTotal V J,
+      (additiveCechAlpha U I n ≫ t.f n = f.f n ≫ additiveCechAlpha V J n) ∧
+      (∀ (x : (cechOver X.toSpecΓ U (SheafOfModules.unit X.ringCatSheaf)).X n)
+        (x' : (cechOver Y.toSpecΓ V (SheafOfModules.unit Y.ringCatSheaf)).X n),
+        (∀ y : Fin (n + 1) → ι,
+            cechCoordinate Y.toSpecΓ V (SheafOfModules.unit Y.ringCatSheaf) n y
+                x' =
+              (show Y.Modules from SheafOfModules.unit Y.ringCatSheaf).presheaf.map
+                (homOfLE (hinter n y)).op
+                ((SheafOfModules.unitToPushforwardObjUnit g.toRingCatSheafHom).val.app
+                  (op (⨅ l, U (y l)))
+                  (cechCoordinate X.toSpecΓ U (SheafOfModules.unit X.ringCatSheaf) n y
+                    x))) → t.f n (additiveCechBeta U I n x) = additiveCechBeta V J n x') ∧
+      (∀ x, cJ.globalEquiv n (HomologicalComplex.homologyMap f n x) =
+        Sheaf.H.map
+          (((Etale.upperStarLowerStarAdjunction _ g).homEquiv _ _).symm
+            (Scheme.etaleAdditiveSheafToLowerStar g)) n
+          (Etale.cohomologyMap g X.etaleAdditiveSheaf n (cI.globalEquiv n x))) := by
+  obtain ⟨α, hα, t, htα, htβ⟩ :=
+    exists_additiveCech_pullback_augmented_transfer g U V hinter I J n
+  refine ⟨Etale.globalResolutionSectionTransfer g I.cocomplex J.cocomplex α,
+    t, htα, htβ, ?_⟩
+  intro x
+  exact Etale.resolutionSection_canonical_coefficient_transfer g X.etaleAdditiveSheaf
+    I Y.etaleAdditiveSheaf J (Scheme.etaleAdditiveSheafToLowerStar g) α hα cI cJ n x
+
+end AlgebraicGeometry.Scheme.Modules

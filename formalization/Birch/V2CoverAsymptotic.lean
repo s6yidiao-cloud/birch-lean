@@ -18,7 +18,7 @@ private def coverThreshold (d q n σ : ℕ) : Prop :=
 
 private theorem exists_uniformCoverMinorSaving {n d e q : ℕ} (hd : 2 ≤ d) (he : 2 ≤ e)
     (hq : 1 < q)
-    (hWeil : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r) :
+    (hCritical : FormCriticalMomentBounds d) :
     let Δ := coverMajorArcExponent d e
     ∃ η > 0, η ≤ Δ ∧ ∀ (σ : ℕ), coverThreshold d q n σ →
       ∀ (F : IntForm n) (g : ℤ[X]) (w : (Fin n → ℝ) → ℝ),
@@ -40,7 +40,7 @@ private theorem exists_uniformCoverMinorSaving {n d e q : ℕ} (hd : 2 ≤ d) (h
   have hs : ∀ σ, ∃ η > 0, coverThreshold d q n σ → P σ η := by
     intro σ
     by_cases hν : coverThreshold d q n σ
-    · obtain ⟨δ,hδ,h⟩ := v2CoverMinorIntegral_of_weilII_atExponent hd he hq hν hWeil
+    · obtain ⟨δ,hδ,h⟩ := v2CoverMinorIntegral_of_formCriticalMoments_atExponent hd he hq hν hCritical
       exact ⟨δ,hδ,fun _ => h⟩
     · exact ⟨1,zero_lt_one,fun h => (hν h).elim⟩
   choose η hη hsaving using hs
@@ -102,9 +102,9 @@ private theorem coverMajorIntegral_unnormalize {n d e : ℕ} {F : IntForm n} {g 
 
 /-- The cover asymptotic on the unit cube at the threshold associated with the
 given one-variable moment. -/
-theorem v2CoverCubeAsymptoticAtExponent_of_weilII_of_coverMoment {n d e q : ℕ}
+theorem v2CoverCubeAsymptoticAtExponent_of_formCriticalMoments_of_coverMoment {n d e q : ℕ}
     (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
-    (hWeil : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r)
+    (hCritical : FormCriticalMomentBounds d)
     (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBoundAtExponent e q g) :
     V2CoverCubeAsymptoticAtExponent d e n q := by
   let k := (d : ℝ)/e
@@ -116,7 +116,7 @@ theorem v2CoverCubeAsymptoticAtExponent_of_weilII_of_coverMoment {n d e q : ℕ}
     dsimp only [k]
     exact div_pos (by exact_mod_cast (show 0 < d by omega)) (by exact_mod_cast (show 0 < e by omega))
   have ha : 0 < a := div_pos (lt_min zero_lt_one hk) (by norm_num)
-  obtain ⟨η,hη,hηΔ,hminor⟩ := exists_uniformCoverMinorSaving (n := n) hd he hq hWeil
+  obtain ⟨η,hη,hηΔ,hminor⟩ := exists_uniformCoverMinorSaving (n := n) hd he hq hCritical
   let γ := η / (2*Δ)
   let τ := min η a / a
   let ξ := min (10*Δ-3*Δ) (min (γ*Δ) (τ*Δ))
@@ -172,14 +172,44 @@ theorem v2CoverCubeAsymptoticAtExponent_of_weilII_of_coverMoment {n d e q : ℕ}
     coverWeightedBoxAsymptotic_of_arcIntegrals
       (hminor σ hν F g w hF hσ hw hwbox hmg B hB) ⟨D,hD,hmajor⟩⟩
 
+theorem v2CoverCubeAsymptoticAtExponent_of_terminalPrimeBounds_of_coverMoment {n d e q : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
+    (hPrime : TerminalPrimeBounds d)
+    (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBoundAtExponent e q g) :
+    V2CoverCubeAsymptoticAtExponent d e n q :=
+  v2CoverCubeAsymptoticAtExponent_of_formCriticalMoments_of_coverMoment hd he hq
+    (FormCriticalMomentBounds.of_terminalPrimeBounds hPrime) hmoment
+
+theorem v2CoverCubeAsymptoticAtExponent_of_weilII_of_coverMoment {n d e q : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e) (hq : 1 < q)
+    (hWeil : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r)
+    (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBoundAtExponent e q g) :
+    V2CoverCubeAsymptoticAtExponent d e n q :=
+  v2CoverCubeAsymptoticAtExponent_of_terminalPrimeBounds_of_coverMoment hd he hq (TerminalPrimeBounds.of_deligne hWeil) hmoment
+
 /-- The cover asymptotic on the unit cube at the manuscript threshold. -/
+theorem v2CoverCubeAsymptoticAt_of_formCriticalMoments_of_coverMoment {n d e : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e)
+    (hCritical : FormCriticalMomentBounds d)
+    (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBound e g) :
+    V2CoverCubeAsymptoticAt d e n :=
+  v2CoverCubeAsymptoticAtExponent_of_formCriticalMoments_of_coverMoment hd he (one_lt_coverMomentExponent he)
+    hCritical hmoment
+
+theorem v2CoverCubeAsymptoticAt_of_terminalPrimeBounds_of_coverMoment {n d e : ℕ}
+    (hd : 2 ≤ d) (he : 2 ≤ e)
+    (hPrime : TerminalPrimeBounds d)
+    (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBound e g) :
+    V2CoverCubeAsymptoticAt d e n :=
+  v2CoverCubeAsymptoticAtExponent_of_terminalPrimeBounds_of_coverMoment hd he (one_lt_coverMomentExponent he)
+    hPrime hmoment
+
 theorem v2CoverCubeAsymptoticAt_of_weilII_of_coverMoment {n d e : ℕ}
     (hd : 2 ≤ d) (he : 2 ≤ e)
     (hWeil : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r)
     (hmoment : ∀ g : ℤ[X], g.natDegree = e → CoverMeanValueBound e g) :
     V2CoverCubeAsymptoticAt d e n :=
-  v2CoverCubeAsymptoticAtExponent_of_weilII_of_coverMoment hd he (one_lt_coverMomentExponent he)
-    hWeil hmoment
+  v2CoverCubeAsymptoticAt_of_terminalPrimeBounds_of_coverMoment hd he (TerminalPrimeBounds.of_deligne hWeil) hmoment
 
 end
 

@@ -53,7 +53,7 @@ theorem primeInteriorSectionBound_of_geometric {n r : ℕ} (hr : 2 ≤ r)
     Finset.single_le_sum (f := B) (fun _ _ => Nat.zero_le _) (Finset.mem_univ l)
   refine ⟨B₀,max B₀ r,?_⟩
   intro p hp hp₀ G hG s hs hl hdim
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let l : Fin (n+1) := ⟨n-s.val, Nat.lt_succ_of_le (Nat.sub_le _ _)⟩
   have hpB : B l < p := (hle l).trans_lt ((le_max_left B₀ r).trans_lt hp₀)
   have hpr : r < p := (le_max_right B₀ r).trans_lt hp₀
@@ -66,7 +66,7 @@ theorem primeSectionBound_of_interior {n r : ℕ} (hr : 2 ≤ r)
   obtain ⟨B,p₀,h⟩ := h
   refine ⟨max B r, (by omega), max p₀ r, ?_⟩
   intro p hp hlarge G hG s hdim
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   have hp₀ : p₀ < p := (le_max_left _ _).trans_lt hlarge
   have hpr : r < p := (le_max_right _ _).trans_lt hlarge
   obtain ⟨U, hU, hgrad⟩ : ∃ M : Matrix (Fin n) (Fin (n-s.val)) ℤ,
@@ -82,17 +82,19 @@ theorem primeSectionBound_of_interior {n r : ℕ} (hr : 2 ≤ r)
 
 /-- At a single terminal degree, the direction, section, and twisted sum
 bounds yield the corresponding completion inputs. -/
-theorem completionInputsAt_of_uniform_primeBounds {n d r : ℕ} {F : IntForm n}
+theorem completionInputsAt_of_uniform_primeBounds_withMultiplier {n d r : ℕ} {F : IntForm n}
     {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hw : ContDiff ℝ ∞ w)
     (hwbox : CubeSupported w) (hr : 2 ≤ r) (hrd : r ≤ d) (hdir : PrimeDirectionBound n d)
     (hsection : PrimeSectionBound n r)
-    (hTwisted : ∀ l ≤ n, UniformTwistedPrimeBound r l) : CompletionInputsAt d r F w := by
+    {multiplier : ℕ → ℝ} (hMultiplier : ∀ p, 0 ≤ multiplier p)
+    (hTwisted : ∀ l ≤ n, UniformTwistedResidueBoundWithMultiplier (fun p => p) r l multiplier) :
+    CompletionInputsAtWithMultiplier d r F w multiplier := by
   obtain ⟨K,hK,hcount⟩ := hdir
   obtain ⟨B,hB,p₀,hsection⟩ := hsection
   choose T hT hterminal using fun l : Fin (n+1) =>
-    terminal_chain_bound_of_bounded_sections_of_uniform_twisted (B := B)
-      (Nat.lt_succ_iff.mp l.isLt) hB hF hr hrd hw hwbox
-      (hTwisted l.val (Nat.lt_succ_iff.mp l.isLt))
+    terminal_chain_bound_of_bounded_sections_of_residue_bound_with_multiplier (B := B)
+      (Nat.lt_succ_iff.mp l.isLt) hB hF hr hrd hw hwbox (modulus := fun p => p) (L := 2)
+      (by norm_num) multiplier hMultiplier (hTwisted l.val (Nat.lt_succ_iff.mp l.isLt))
   let T₀ := 1 + ∑ l, T l
   have hT₀ : 0 < T₀ := add_pos_of_pos_of_nonneg zero_lt_one
     (Finset.sum_nonneg fun l _ => (hT l).le)
@@ -107,8 +109,8 @@ theorem completionInputsAt_of_uniform_primeBounds {n d r : ℕ} {F : IntForm n}
   have hPp : P < (p : ℝ) := completion_scale_le_prime hP₁ hQ hQsqrt hpL
   have hdp : d < p := by exact_mod_cast hdP.trans_lt hPp
   have hp₀p : p₀ < p := by exact_mod_cast hp₀P.trans_lt hPp
-  letI : Fact p.Prime := ⟨hp⟩
-  letI : NeZero p := ⟨hp.ne_zero⟩
+  let : Fact p.Prime := ⟨hp⟩
+  let : NeZero p := ⟨hp.ne_zero⟩
   have hsExists (i : ℕ) (hi : i ≤ d-r) (g : IntForm n) : ∃ s : Fin (n+1),
       PrimeGradientDimension p hp (homogeneousComponent (d-i) g) s.val :=
     exists_primeGradientDimension hp (homogeneousComponent_isHomogeneous _ _) (by omega)
@@ -134,7 +136,22 @@ theorem completionInputsAt_of_uniform_primeBounds {n d r : ℕ} {F : IntForm n}
   have ha' : (a : ZMod p) ≠ 0 := fun h => ha ((ZMod.intCast_zmod_eq_zero_iff_dvd a p).mp h)
   have h := hterminal l hP₁ hQ hQsqrt p (hrd.trans_lt hdp) hpL.le hpU m hm α a ha'
     t u ht hfclose hsec
-  exact h.trans (mul_le_mul_of_nonneg_right (hTle l) (Real.rpow_nonneg (zero_le_one.trans hQ) _))
+  exact h.trans (mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_right (hTle l) (Real.rpow_nonneg (zero_le_one.trans hQ) _))
+    (hMultiplier p))
+
+/-- A uniform square-root bound suffices with multiplier one. -/
+theorem completionInputsAt_of_uniform_primeBounds {n d r : ℕ} {F : IntForm n}
+    {w : (Fin n → ℝ) → ℝ} (hF : F.IsHomogeneous d) (hw : ContDiff ℝ ∞ w)
+    (hwbox : CubeSupported w) (hr : 2 ≤ r) (hrd : r ≤ d) (hdir : PrimeDirectionBound n d)
+    (hsection : PrimeSectionBound n r)
+    (hTwisted : ∀ l ≤ n, UniformTwistedPrimeBound r l) : CompletionInputsAt d r F w := by
+  simpa only [CompletionInputsAt, CompletionInputsAtWithMultiplier, mul_one] using
+    completionInputsAt_of_uniform_primeBounds_withMultiplier hF hw hwbox hr hrd hdir hsection
+      (multiplier := fun _ => 1) (fun _ => zero_le_one)
+      (fun l hl => by
+        simpa only [UniformTwistedPrimeBound, UniformTwistedResidueBound,
+          UniformTwistedResidueBoundWithMultiplier, mul_one] using hTwisted l hl)
 
 /-- Uniform direction counts, bounded smooth sections, and uniform square-root
 estimates in the terminal slice dimensions supply the completion input. -/

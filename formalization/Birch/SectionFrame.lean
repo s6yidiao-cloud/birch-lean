@@ -33,13 +33,13 @@ private theorem exists_coordinate_extension {K : Type*} [Field K] {l s : ℕ}
       (Equiv.Set.sumDiffSubset hSV)
   have hVT : V ⊆ T := hv.linearIndepOn_id.extend_subset hST
   have hJ (x : J) : x.val ∈ Set.range b := (hVT x.prop.1).resolve_left x.prop.2
-  letI : Finite V := by
+  let : Finite V := by
     have hT : T.Finite := (Set.finite_range v).union (Set.finite_range b)
     exact (hT.subset hVT).to_subtype
-  letI : Finite J := Finite.of_injective (Set.inclusion (Set.sdiff_subset : J ⊆ V))
+  let : Finite J := Finite.of_injective (Set.inclusion (Set.sdiff_subset : J ⊆ V))
     (Set.inclusion_injective _)
-  letI : Fintype V := Fintype.ofFinite V
-  letI : Fintype J := Fintype.ofFinite J
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype J := Fintype.ofFinite J
   have hcardV : Fintype.card V = l+s := by
     rw [← Module.finrank_eq_card_basis E, Module.finrank_eq_card_basis b, Fintype.card_fin]
   have hcardJ : Fintype.card J = s := by
@@ -85,12 +85,22 @@ theorem exists_integral_section_frame {l s p : ℕ} [Fact p.Prime]
     exact congrFun (Fin.append_right U.col (fun a => Pi.single (j a) 1) a) i
   · rw [← isUnit_iff_ne_zero]
     change IsUnit (Int.castRingHom (ZMod p) A.det)
-    rw [RingHom.map_det, ← Matrix.isUnit_iff_isUnit_det, ← Matrix.linearIndependent_cols_iff_isUnit]
+    rw [RingHom.map_det, ← Matrix.isUnit_iff_isUnit_det, ← Matrix.linearIndependent_col_iff_isUnit]
     convert h using 1
     ext a i
     refine Fin.addCases (fun a => ?_) (fun a => ?_) a
-    · simp [A, Matrix.col, Fin.append_left]
-    · by_cases hi : i = j a <;> simp [A, Matrix.col, Fin.append_right, hi]
+    · change (Int.castRingHom (ZMod p))
+        (Fin.append U.col (fun b => Pi.single (j b) 1) (Fin.castAdd s a) i) =
+          Fin.append (U.map (Int.castRingHom (ZMod p))).col
+            (fun b => Pi.single (j b) 1) (Fin.castAdd s a) i
+      simp only [Fin.append_left]
+      rfl
+    · change (Int.castRingHom (ZMod p))
+        (Fin.append U.col (fun b => Pi.single (j b) 1) (Fin.natAdd l a) i) =
+          Fin.append (U.map (Int.castRingHom (ZMod p))).col
+            (fun b => Pi.single (j b) 1) (Fin.natAdd l a) i
+      simp only [Fin.append_right]
+      by_cases hi : i = j a <;> simp [hi]
 
 /-- All integer frames with coordinates in the fixed box `[-B,B]`. -/
 def boundedSectionFrames (n B : ℕ) : Finset (Matrix (Fin n) (Fin n) ℤ) :=

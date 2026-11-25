@@ -63,8 +63,8 @@ theorem wooley_sum_separatedResiduePairsAt_swap
   have hsep := wooleyResiduesSeparated_symm
     (p := p) (nu := nu) (a := a) (b := b) (xi := xi) (eta := eta)
   by_cases h : wooleyResiduesSeparated nu xi eta
-  · rw [if_pos h, if_pos (hsep.mp h)]
-  · rw [if_neg h, if_neg (fun hs => h (hsep.mpr hs))]
+  · rw [ite_eq_left h, ite_eq_left (hsep.mp h)]
+  · rw [ite_eq_right h, ite_eq_right (fun hs => h (hsep.mpr hs))]
 
 
 /-- Hölder interpolation with the common finite-average normalizer retained.
@@ -512,9 +512,9 @@ theorem wooleyPolynomialMixedGridMean_zero_le_conditioned
       have hsep := wooleyResiduesSeparated_symm
         (p := p) (nu := nu) (a := a) (b := b) (xi := xi) (eta := eta)
       by_cases hs : wooleyResiduesSeparated nu xi eta
-      · rw [if_pos hs, if_pos (hsep.mp hs)]
+      · rw [ite_eq_left hs, ite_eq_left (hsep.mp hs)]
         ring
-      · rw [if_neg hs, if_neg (fun h => hs (hsep.mpr h))]
+      · rw [ite_eq_right hs, ite_eq_right (fun h => hs (hsep.mpr h))]
         ring
     rw [hrewrite]
     have hxi (eta : ZMod (p ^ b)) :

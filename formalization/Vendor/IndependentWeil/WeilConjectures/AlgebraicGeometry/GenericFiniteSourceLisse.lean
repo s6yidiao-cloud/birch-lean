@@ -1,0 +1,68 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.EtaleSheaves
+public import Mathlib.AlgebraicGeometry.Noetherian
+public import Mathlib.AlgebraicGeometry.Morphisms.Finite
+import WeilConjectures.AlgebraicGeometry.FiniteGenericFiberStratumInteriors
+import WeilConjectures.AlgebraicGeometry.LisseStratumInteriors
+import WeilConjectures.AlgebraicGeometry.PullbackFiniteLocallyConstant
+
+/-!
+# Generic lissity on the source of a finite morphism
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.Scheme
+
+/-- A constructible sheaf on a finite scheme over an integral Noetherian affine base
+is lisse over some dense open of the base.
+This concerns the source sheaf, not its direct image. -/
+theorem exists_dense_open_lisse_finite_source
+    (S : Scheme.{u}) [IsIntegral S] [IsNoetherian S] [IsAffine S]
+    {Z : Scheme.{u}} (g : Z ⟶ S) [IsFinite g]
+    (E : Sheaf Z.smallEtaleTopology AddCommGrpCat.{u + 1})
+    (hE : IsConstructibleEtaleSheafOfSets
+      ((sheafCompose Z.smallEtaleTopology (CategoryTheory.forget AddCommGrpCat.{u + 1})).obj E)) :
+    ∃ U : S.Opens, Dense (U : Set S) ∧
+      IsLisseEtaleSheafOfSets
+        ((sheafCompose (g ⁻¹ᵁ U).toScheme.smallEtaleTopology
+          (CategoryTheory.forget AddCommGrpCat.{u + 1})).obj
+            ((Etale.upperStar AddCommGrpCat.{u + 1} (g ⁻¹ᵁ U).ι).obj E)) := by
+  classical
+  obtain ⟨T, hT⟩ := hE
+  let W := T.interiorUnion
+  have hW := lisse_on_stratum_interiors E T hT
+  let U : S.Opens := ⟨(g '' (W : Set Z)ᶜ)ᶜ,
+    (g.isClosedMap _ W.isOpen.isClosed_compl).isOpen_compl⟩
+  have hη : genericPoint S ∈ U := by
+    rintro ⟨x, hx, hxη⟩
+    exact hx (generic_fiber_subset_stratum_interiors S g T x hxη)
+  have hUd : Dense (U : Set S) := by
+    apply dense_iff_closure_eq.mpr
+    apply Set.eq_univ_of_univ_subset
+    rw [← genericPoint_closure S]
+    exact closure_mono (Set.singleton_subset_iff.mpr hη)
+  have hUW : g ⁻¹ᵁ U ≤ W := by
+    intro x hx
+    by_contra hxW
+    exact hx ⟨x, hxW, rfl⟩
+  refine ⟨U, hUd, ?_⟩
+  have h := (pullback_finite_locally_constant
+    (Z.homOfLE hUW) W.ι E hW).2
+  rw [Scheme.homOfLE_ι] at h
+  exact h
+
+end AlgebraicGeometry.Scheme

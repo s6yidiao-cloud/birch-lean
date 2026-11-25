@@ -1,7 +1,11 @@
-import Mathlib.Algebra.MvPolynomial.PDeriv
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import Mathlib.NumberTheory.Padics.PadicNumbers
-import Mathlib.RingTheory.MvPolynomial.Homogeneous
+module
+
+public import Mathlib.Algebra.MvPolynomial.PDeriv
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import Mathlib.NumberTheory.Padics.PadicNumbers
+public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+
+@[expose] public section
 
 /-!
 # Forms, nonsingular zeros, and the dimension threshold

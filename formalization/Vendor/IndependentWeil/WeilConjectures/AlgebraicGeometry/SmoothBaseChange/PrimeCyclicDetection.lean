@@ -1,0 +1,143 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.SixFunctors.Etale.SmoothBaseChange.Defs
+import WeilConjectures.AlgebraicGeometry.SmoothBaseChange.CoefficientHigherDirectImageZero
+import WeilConjectures.AlgebraicGeometry.SmoothBaseChange.GeometricPointModuleConstant
+import WeilConjectures.AlgebraicGeometry.SmoothBaseChange.TorsionConstantPrimeDevissage
+import WeilConjectures.SixFunctors.Etale.SmoothBaseChange.Coefficients
+
+/-!
+# Prime cyclic detection of a geometric-point coefficient
+
+## References
+
+* [Stacks Project](https://stacks.math.columbia.edu), Tags 0F08, 03FD, 0739
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+universe u
+
+open CategoryTheory Limits
+
+namespace AlgebraicGeometry.Etale
+
+private theorem prime_cyclic_vanishing_in_integer_coefficients
+    {X Y : Scheme.{u}} (h : Y ⟶ X) [QuasiCompact h] [QuasiSeparated h]
+    (q : ℤ) (r : ℕ)
+    (hz : IsZero (higherDirectImage (ULift.{u + 1} (ZMod r)) h q
+      (constantModSheaf (ULift.{u + 1} (ZMod r)) Y r))) :
+    IsZero (higherDirectImage (ULift.{u + 1} ℤ) h q
+      ((constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} (ULift.{u + 1} ℤ))).obj
+        (ModuleCat.of.{u + 1} (ULift.{u + 1} ℤ) (ULift.{u + 1} (ZMod r))))) := by
+  let P := ULift.{u + 1} (ZMod r)
+  let φ : ULift.{u + 1} ℤ →+* P :=
+    (Int.castRingHom P).comp ULift.ringEquiv.toRingHom
+  have : (ModuleCat.restrictScalars.{u + 1} φ).IsLeftAdjoint :=
+    (ModuleCat.restrictCoextendScalarsAdj.{u + 1} φ).isLeftAdjoint
+  have hr : (r : P) = 0 := by
+    apply ULift.ext
+    exact ZMod.natCast_self r
+  have hi : (Ideal.span {(r : P)} : Ideal P) = ⊥ := by simp [hr]
+  let l : ModuleCat.of.{u + 1} P (P ⧸ (Ideal.span {(r : P)} : Ideal P)) ≅
+      ModuleCat.of.{u + 1} P P :=
+    (Submodule.quotEquivOfEqBot _ hi).toModuleIso
+  let c := constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} P)
+  let HP := DerivedCategory.Plus.singleFunctor _ 0 ⋙
+    (lowerStar (ModuleCat.{u + 1} P) h).rightDerivedFunctorPlus ⋙
+    DerivedCategory.Plus.homologyFunctor _ q
+  have hp : IsZero (higherDirectImage P h q (c.obj (ModuleCat.of.{u + 1} P P))) :=
+    (HP.mapIso (c.mapIso l)).isZero_iff.mp hz
+  have hz' := (isZero_higherDirectImage_restrictScalars_iff φ h q
+    (c.obj (ModuleCat.of.{u + 1} P P))).mpr hp
+  let k : (ModuleCat.restrictScalars.{u + 1} φ).obj (ModuleCat.of.{u + 1} P P) ≅
+      ModuleCat.of.{u + 1} (ULift.{u + 1} ℤ) P :=
+    (show (ModuleCat.restrictScalars.{u + 1} φ).obj (ModuleCat.of.{u + 1} P P) ≃ₗ[
+      ULift.{u + 1} ℤ] P from
+      { __ := AddEquiv.refl P
+        map_smul' := by
+          intro z x
+          change (z.down : P) • x = z.down • x
+          exact Int.cast_smul_eq_zsmul P _ _ }).toModuleIso
+  let ci : (Sheaf.restrictScalars Y.smallEtaleTopology φ).obj
+      (c.obj (ModuleCat.of.{u + 1} P P)) ≅
+      (constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} (ULift.{u + 1} ℤ))).obj
+        (ModuleCat.of.{u + 1} (ULift.{u + 1} ℤ) P) :=
+    (constantCommuteCompose Y.smallEtaleTopology
+    (ModuleCat.restrictScalars.{u + 1} φ)).app (ModuleCat.of.{u + 1} P P) ≪≫
+      (constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} (ULift.{u + 1} ℤ))).mapIso k
+  let HZ := DerivedCategory.Plus.singleFunctor _ 0 ⋙
+    (lowerStar (ModuleCat.{u + 1} (ULift.{u + 1} ℤ)) h).rightDerivedFunctorPlus ⋙
+    DerivedCategory.Plus.homologyFunctor _ q
+  exact (HZ.mapIso ci).isZero_iff.mp hz'
+
+/-- If the base-change target functor is nonzero on a sheaf `F` over `Spec K`, then the
+higher direct image of the constant sheaf `ZMod r` on `Y` is nonzero for some prime `r ∣ n`
+that is not a unit in `Λ`. -/
+theorem exists_prime_cyclic_higherDirectImage
+    (Λ : Type (u + 1)) [CommRing Λ] {K : Type u} [Field K] [IsAlgClosed K]
+    {X Y : Scheme.{u}} (e : Y ⟶ Spec (.of K)) (h : Y ⟶ X)
+    [QuasiCompact h] [QuasiSeparated h] (n : ℕ) (hn : n ≠ 0)
+    (hΛ : (n : Λ) = 0) (q : ℤ)
+    (F : Sheaf (Spec (.of K)).smallEtaleTopology (ModuleCat.{u + 1} Λ))
+    (hF : ¬ IsZero ((baseChangeTargetFunctor Λ e h q).obj F)) :
+    ∃ r : ℕ, r.Prime ∧ r ∣ n ∧ ¬ IsUnit (r : Λ) ∧
+      ¬ IsZero (higherDirectImage (ULift.{u + 1} (ZMod r)) h q
+        (constantModSheaf (ULift.{u + 1} (ZMod r)) Y r)) := by
+  classical
+  obtain ⟨M, ⟨i⟩⟩ := exists_constant_module_upperStar_geometricPoint Λ e F
+  let HΛ := DerivedCategory.Plus.singleFunctor _ 0 ⋙
+    (lowerStar (ModuleCat.{u + 1} Λ) h).rightDerivedFunctorPlus ⋙
+    DerivedCategory.Plus.homologyFunctor _ q
+  let cΛ := constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} Λ)
+  have hconst : ¬ IsZero (higherDirectImage Λ h q (cΛ.obj M)) := by
+    intro hz
+    apply hF
+    exact IsZero.of_iso hz ((baseChangeTargetFunctorIso Λ e h q).app F ≪≫ HΛ.mapIso i)
+  let φ : ULift.{u + 1} ℤ →+* Λ :=
+    (Int.castRingHom Λ).comp ULift.ringEquiv.toRingHom
+  have : (ModuleCat.restrictScalars.{u + 1} φ).IsLeftAdjoint :=
+    (ModuleCat.restrictCoextendScalarsAdj.{u + 1} φ).isLeftAdjoint
+  let MZ := (ModuleCat.restrictScalars.{u + 1} φ).obj M
+  let HZ := DerivedCategory.Plus.singleFunctor _ 0 ⋙
+    (lowerStar (ModuleCat.{u + 1} (ULift.{u + 1} ℤ)) h).rightDerivedFunctorPlus ⋙
+    DerivedCategory.Plus.homologyFunctor _ q
+  let cZ := constantSheaf Y.smallEtaleTopology (ModuleCat.{u + 1} (ULift.{u + 1} ℤ))
+  have hZ : ¬ IsZero (higherDirectImage (ULift.{u + 1} ℤ) h q (cZ.obj MZ)) := by
+    intro hz
+    apply hconst
+    apply (isZero_higherDirectImage_restrictScalars_iff φ h q (cΛ.obj M)).mp
+    let ci : (Sheaf.restrictScalars Y.smallEtaleTopology φ).obj (cΛ.obj M) ≅ cZ.obj MZ :=
+      (constantCommuteCompose Y.smallEtaleTopology
+        (ModuleCat.restrictScalars.{u + 1} φ)).app M
+    exact IsZero.of_iso hz (HZ.mapIso ci)
+  have hM : ∀ x : MZ, n • x = 0 := by
+    intro x
+    change n • (show M from x) = 0
+    rw [← Nat.cast_smul_eq_nsmul Λ, hΛ, zero_smul]
+  by_contra hnone
+  apply hZ
+  apply isZero_higherDirectImage_constant_of_prime_vanishing h q MZ n hn hM
+  intro r hr hrn hnotinj
+  have hunit : ¬ IsUnit (r : Λ) := by
+    intro hu
+    apply hnotinj
+    intro x y hxy
+    change r • (show M from x) = r • (show M from y) at hxy
+    rw [← Nat.cast_smul_eq_nsmul Λ, ← Nat.cast_smul_eq_nsmul Λ] at hxy
+    exact hu.smul_left_cancel.mp hxy
+  have hz : IsZero (higherDirectImage (ULift.{u + 1} (ZMod r)) h q
+      (constantModSheaf (ULift.{u + 1} (ZMod r)) Y r)) := by
+    by_contra hnonzero
+    exact hnone ⟨r, hr, hrn, hunit, hnonzero⟩
+  exact prime_cyclic_vanishing_in_integer_coefficients h q r hz
+
+end AlgebraicGeometry.Etale

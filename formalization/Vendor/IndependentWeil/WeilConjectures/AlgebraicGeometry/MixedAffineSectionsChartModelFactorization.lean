@@ -1,0 +1,112 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.MixedGlobalExtension
+public import WeilConjectures.AlgebraicGeometry.GlobalHomAdjunctionIso
+public import Mathlib.AlgebraicGeometry.Modules.Tilde
+public import WeilConjectures.FromJoel.CategoryTheory.Abelian.Flat.KFlat
+import WeilConjectures.AlgebraicGeometry.MixedAffineSectionsExtensionUnitNormalization
+import WeilConjectures.AlgebraicGeometry.MixedAffineSectionsPullbackUnitNormalization
+
+/-! # Localization of the ordinary affine chart comparison in independent universes
+
+## References
+
+* Stacks Project, Tags 06Z0, 08DW, 0AA7 and 0D5T.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option synthInstance.maxSize 2048
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.types false
+universe u w wA
+open CategoryTheory CategoryTheory.Limits
+namespace AlgebraicGeometry
+
+private theorem chartModelFactorization_of_units
+    {C D : Type*} [Category C] [Category D] {L : C ⥤ D} {R : D ⥤ C}
+    (adj : L ⊣ R) {X X' : C} {Y Z Z' : D} (s : X' ⟶ X) [Epi s]
+    (a : L.obj X ≅ Y) (b : Z ≅ Z') (c : Y ⟶ Z') (p : X ⟶ R.obj Z)
+    (h : s ≫ p ≫ R.map b.hom = s ≫ adj.homEquiv _ _ (a.hom ≫ c)) :
+    (adj.homEquiv _ _).symm p ≫ b.hom = a.hom ≫ c := by
+  apply (adj.homEquiv _ _).injective
+  apply (cancel_epi s).1
+  rw [Adjunction.homEquiv_naturality_right, Equiv.apply_symm_apply]
+  exact h
+
+/-- Localization transports the ordinary unit equation to the fixed mixed adjunction mate.
+No invertibility of the ordinary comparison `c` is assumed (Stacks, Tags 06Z0, 08DW, 0AA7
+and 0D5T). -/
+theorem exists_mixedAffineSections_chart_model_factorization
+    [∀ Z : Scheme.{u},
+      HasDerivedCategory.{w} (SheafOfModules.{u} (moduleRings Z.toRingedSpace))]
+    [∀ (R : Type u) [Ring R], HasDerivedCategory.{wA} (ModuleCat.{u} R)]
+    {S T : Scheme.{u}} [IsAffine S] [IsAffine T] (g : T ⟶ S) :
+    let F : ModuleCat.{u} Γ(S, ⊤) ⥤
+        SheafOfModules.{u} (moduleRings S.toRingedSpace) :=
+      tilde.functor Γ(S, ⊤) ⋙ Scheme.Modules.restrictFunctor S.toSpecΓ
+    let H := RingedSpace.globalSectionsFunctor S.toRingedSpace
+    let J := RingedSpace.globalSectionsFunctor T.toRingedSpace
+    let E := ModuleCat.extendScalars.{u, u, u} g.appTop.hom
+    let K : SheafOfModules.{u} (moduleRings S.toRingedSpace) ⥤
+        SheafOfModules.{u} (moduleRings T.toRingedSpace) := Scheme.Modules.tensorPullback g
+    ∀ (c : F ⋙ H ⋙ E ⟶ F ⋙ K ⋙ J),
+      (∀ N : ModuleCat.{u} Γ(S, ⊤),
+        (ModuleCat.extendRestrictScalarsAdj g.appTop.hom).unit.app (H.obj (F.obj N)) ≫
+          (ModuleCat.restrictScalars.{u} g.appTop.hom).map (c.app N) =
+        H.map ((Classical.choose (Scheme.Modules.exists_tensorPullbackAdjunction g)).unit.app
+          (F.obj N))) →
+      ∀ [F.Additive] [H.Additive] [J.Additive] [E.Additive] [K.Additive]
+        (P : CochainComplex (ModuleCat.{u} Γ(S, ⊤)) ℤ)
+        (_hP : (HomologicalComplex.quasiIso (ModuleCat.{u} Γ(S, ⊤)) (.up ℤ)).kFlat P),
+      let Q := DerivedCategory.Q.obj ((F.mapHomologicalComplex (.up ℤ)).obj P)
+      ∃ (a : (mixedGlobalExtension g).obj ((schemeDerivedGlobalSections S).obj Q) ≅
+            DerivedCategory.Q.obj (((F ⋙ H ⋙ E).mapHomologicalComplex (.up ℤ)).obj P))
+        (b : (schemeDerivedGlobalSections T).obj ((derivedPullback g).obj Q) ≅
+            DerivedCategory.Q.obj (((F ⋙ K ⋙ J).mapHomologicalComplex (.up ℤ)).obj P)),
+        (((mixedGlobalExtensionAdjunction g).homEquiv _ _).symm
+          ((schemeDerivedGlobalSections S).map ((schemeHomPullbackAdjunction g).unit.app Q) ≫
+            (mixedGlobalSectionsDirectImageIso g).hom.app ((derivedPullback g).obj Q))) ≫
+              b.hom = a.hom ≫
+                DerivedCategory.Q.map ((c.mapHomologicalComplex (.up ℤ)).app P) := by
+  intro F H J E K c hc instF instH instJ instE instK P hP Q
+  let R := ModuleCat.restrictScalars.{u} g.appTop.hom
+  have : F.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive F
+  have : H.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive H
+  have : J.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive J
+  have : E.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive E
+  have : K.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive K
+  have : R.PreservesZeroMorphisms := Functor.preservesZeroMorphisms_of_additive R
+  let C := (F.mapHomologicalComplex (.up ℤ)).obj P
+  let d : F ⋙ H ⟶ F ⋙ K ⋙ J ⋙ R :=
+    Functor.whiskerRight (Functor.whiskerLeft F
+      (Classical.choose (Scheme.Modules.exists_tensorPullbackAdjunction g)).unit) H
+  let X := ((F ⋙ H).mapHomologicalComplex (.up ℤ)).obj P
+  let e := (ModuleCat.extendRestrictScalarsAdj g.appTop.hom).mapHomologicalComplex (.up ℤ)
+  have hcP : e.unit.app X ≫
+      (R.mapHomologicalComplex (.up ℤ)).map ((c.mapHomologicalComplex (.up ℤ)).app P) =
+        (d.mapHomologicalComplex (.up ℤ)).app P := by
+    apply HomologicalComplex.Hom.ext
+    funext i
+    exact hc (P.X i)
+  obtain ⟨a, ha⟩ := exists_mixedAffineSections_extension_unit_normalization g P hP
+  obtain ⟨b, hb⟩ := exists_mixedAffineSections_pullback_unit_normalization g P hP
+  refine ⟨a, b, ?_⟩
+  have : IsIso (mixedSectionsComplexUnit S C) :=
+    mixedAffineChart_sectionsComplexUnit_isIso S P
+  apply chartModelFactorization_of_units (mixedGlobalExtensionAdjunction g)
+    (mixedSectionsComplexUnit S C)
+  have ha' := ha _ ((c.mapHomologicalComplex (.up ℤ)).app P)
+  rw [hcP] at ha'
+  simp only [Category.assoc] at hb ⊢
+  exact hb.trans ha'.symm
+
+
+end AlgebraicGeometry

@@ -68,7 +68,7 @@ theorem wooley_X_pow_sub_dvd_hasseDeriv_X_pow_mul
   rw [hasseDeriv_coeff]
   have hlt : d + i < k + 1 := by omega
   rw [coeff_X_pow_mul']
-  simp only [if_neg (not_le.mpr hlt), mul_zero]
+  simp only [ite_eq_right (not_le.mpr hlt), mul_zero]
 
 /-- Literal coefficient factorization defining the source integer `Ω`. -/
 theorem wooley_taylorCoefficient_exists_omega

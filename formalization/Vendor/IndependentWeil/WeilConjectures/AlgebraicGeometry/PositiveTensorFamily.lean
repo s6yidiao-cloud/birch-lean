@@ -1,0 +1,62 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Modules.TensorSection
+public import WeilConjectures.Algebra.Category.ModuleCat.Sheaf.TensorProduct
+
+/-!
+# Positive tensor products of families and their sections
+
+## References
+
+* Stacks Project, Tag 09NC, <https://stacks.math.columbia.edu/tag/09NC>
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory MonoidalCategory Opposite
+
+namespace AlgebraicGeometry.Scheme.Modules
+
+/-- Left-associated tensor product of a nonempty ordered family (Stacks, Tag 09NC).
+The parameter `n` means `n + 1` factors. -/
+noncomputable def positiveTensorFamily {X : Scheme.{u}} :
+    (n : ℕ) → (Fin (n + 1) → X.Modules) → X.Modules
+  | 0, L => L 0
+  | n + 1, L => positiveTensorFamily n (fun i ↦ L i.castSucc) ⊗ L (Fin.last (n + 1))
+
+/-- The pointwise tensor of compatible sections is compatible with restriction. -/
+theorem tensorGlobalSections_naturality {X : Scheme.{u}} {M N : X.Modules}
+    (s : M.sections) (t : N.sections) {U V : X.Opensᵒᵖ} (f : U ⟶ V) :
+    (M ⊗ N).val.map f (tmulSection (s.val U) (t.val U)) =
+      tmulSection (s.val V) (t.val V) := by
+  have hf : (homOfLE (leOfHom f.unop)).op = f := Subsingleton.elim _ _
+  have h := tmulSection_map (leOfHom f.unop) (s.val U) (t.val U)
+  rw [hf] at h
+  change (M ⊗ N).val.map f (tmulSection (s.val U) (t.val U)) =
+    tmulSection (M.val.map f (s.val U)) (N.val.map f (t.val U)) at h
+  simpa only [PresheafOfModules.sections_property] using h
+
+/-- Tensor product of two global sections, evaluated on every open. -/
+noncomputable def tensorGlobalSections {X : Scheme.{u}} {M N : X.Modules}
+    (s : M.sections) (t : N.sections) : (M ⊗ N).sections :=
+  PresheafOfModules.sectionsMk (fun U ↦ tmulSection (s.val U) (t.val U))
+    (fun {_ _} f ↦ tensorGlobalSections_naturality s t f)
+
+/-- Left-associated tensor of one global section from each factor. -/
+noncomputable def positiveTensorFamilySection {X : Scheme.{u}} :
+    (n : ℕ) → (L : Fin (n + 1) → X.Modules) →
+      ((i : Fin (n + 1)) → (L i).sections) → (positiveTensorFamily n L).sections
+  | 0, _, s => s 0
+  | n + 1, L, s => tensorGlobalSections
+      (positiveTensorFamilySection n (fun i ↦ L i.castSucc) (fun i ↦ s i.castSucc))
+      (s (Fin.last (n + 1)))
+
+end AlgebraicGeometry.Scheme.Modules

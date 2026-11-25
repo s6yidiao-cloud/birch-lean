@@ -1,5 +1,9 @@
-import Birch.GradientIdealCertificate
-import Mathlib.LinearAlgebra.Dimension.Constructions
+module
+
+public import Birch.GradientIdealCertificate
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+
+@[expose] public section
 
 /-! # Counting a fiber from a homogeneous monomial certificate -/
 
@@ -116,7 +120,7 @@ private theorem small_monomials_span_of_reduction {n D : ℕ} {K A : Type*} [Fie
         _ = q := hdeg
       have hR_eval : E R = E (monomial a 1) := by
         change E (monomial (a-b) 1 * P) = _
-        rw [map_mul, hPeval, ← map_mul, monomial_mul, mul_one, hsub]
+        rw [map_mul, hPeval, ← map_mul, MvPolynomial.monomial_mul_monomial, mul_one, hsub]
       rw [← hR_eval, R.as_sum, map_sum]
       apply Submodule.sum_mem
       intro m hm
@@ -138,7 +142,7 @@ private theorem card_le_small_monomials_of_eval_reduction {n D : ℕ} {K : Type*
         evalOnFinset T F = evalOnFinset T (monomial a 1)) :
     T.card ≤ Nat.card {a : Fin n →₀ ℕ // a.degree < D} := by
   let S := {a : Fin n →₀ ℕ // a.degree < D}
-  letI : Fintype S := Fintype.ofInjective (smallMonomialEmbedding n D)
+  let : Fintype S := Fintype.ofInjective (smallMonomialEmbedding n D)
     (smallMonomialEmbedding n D).injective
   have htop := small_monomials_span_of_reduction (evalOnFinset T) (evalOnFinset_surjective T) hred
   have hcard := finrank_le_of_span_eq_top htop
@@ -173,9 +177,9 @@ theorem finite_quotient_and_finrank_le_of_perturbed_homogeneous_system
       · rw [← hbsum, map_sum, map_sum]
         exact Finset.sum_congr rfl fun i _ => by rw [map_mul, map_mul, hfE])
   let S := {a : Fin n →₀ ℕ // a.degree < D}
-  letI : Fintype S := Fintype.ofInjective (smallMonomialEmbedding n D)
+  let : Fintype S := Fintype.ofInjective (smallMonomialEmbedding n D)
     (smallMonomialEmbedding n D).injective
-  haveI : Module.Finite K (MvPolynomial (Fin n) K ⧸ J) := by
+  have : Module.Finite K (MvPolynomial (Fin n) K ⧸ J) := by
     constructor
     rw [← H]
     exact Submodule.fg_span (Set.finite_range _)

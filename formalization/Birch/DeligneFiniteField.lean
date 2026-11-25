@@ -1,4 +1,5 @@
 import Birch.TerminalAssembly
+import Birch.PrimeCriticalPoint
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
 
 /-!
@@ -22,14 +23,6 @@ noncomputable section
 /-- The standard additive character sum, without normalization. -/
 def primeDeligneSum {l : ℕ} (p : ℕ) [NeZero p] (g : MvPolynomial (Fin l) (ZMod p)) : ℂ :=
   ∑ x : Fin l → ZMod p, ZMod.stdAddChar (g.eval x)
-
-/-- The leading homogeneous part has no nonzero critical points over the
-algebraic closure of the prime field. -/
-def PrimeIsolatedLeadingCriticalPoint {l : ℕ} (p : ℕ) [Fact p.Prime] (r : ℕ)
-    (g : MvPolynomial (Fin l) (ZMod p)) : Prop :=
-  let K := AlgebraicClosure (ZMod p)
-  ∀ x : Fin l → K,
-    (∀ i, (pderiv i (homogeneousComponent r g)).eval₂ (algebraMap (ZMod p) K) x = 0) → x = 0
 
 /-- A square-root estimate for the standard nontrivial additive character
 in one fixed dimension. -/
@@ -128,6 +121,50 @@ private theorem deligne_normalization (B : ℝ) (l : ℕ) {p : ℝ} (hp : 0 < p)
   congr 2
   ring
 
+/-- Reduction, normalization and a linear twist preserve any bound on the
+unnormalized standard-character sum. -/
+theorem norm_twistedCompleteSum_le_of_primeDeligneSum_le {r l p : ℕ} [Fact p.Prime] [NeZero p]
+    (hr : 2 ≤ r) (g : IntForm l) (hg : g.totalDegree ≤ r)
+    (hs : ∀ x : Fin l → AlgebraicClosure (ZMod p),
+      (∀ i, evalForm (pderiv i (homogeneousComponent r g)) x = 0) → x = 0)
+    (a : ℤ) (ha : (a : ZMod p) ≠ 0) (z : Fin l → ℤ) {B : ℝ}
+    (h : ∀ f : MvPolynomial (Fin l) (ZMod p), f.totalDegree ≤ r →
+      PrimeIsolatedLeadingCriticalPoint p r f → ‖primeDeligneSum p f‖ ≤ B) :
+    ‖twistedCompleteSum g p a z‖ ≤ B / (p : ℝ)^l := by
+  let L : IntForm l := ∑ i, C (z i) * X i
+  let G : IntForm l := C a * g + L
+  change ‖completeSum G p 1‖ ≤ _
+  rw [norm_completeSum_one_eq_primeDeligneSum]
+  have hL : L.IsHomogeneous 1 := by
+    apply IsHomogeneous.sum
+    intro i _
+    exact isHomogeneous_C_mul_X (z i) i
+  have hG : G.totalDegree ≤ r :=
+    (totalDegree_add _ _).trans (max_le
+      ((totalDegree_mul _ _).trans (by simpa only [totalDegree_C, zero_add] using hg))
+      (hL.totalDegree_le.trans (by omega)))
+  have htop : homogeneousComponent r G = C a * homogeneousComponent r g := by
+    unfold G
+    rw [map_add, homogeneousComponent_C_mul,
+      homogeneousComponent_eq_zero _ _ (hL.totalDegree_le.trans_lt (by omega)), add_zero]
+  have hcrit : PrimeIsolatedLeadingCriticalPoint p r
+      (MvPolynomial.map (Int.castRingHom (ZMod p)) G) := by
+    apply (primeIsolatedLeadingCriticalPoint_reduce_iff G).mpr
+    intro x hx
+    let K := AlgebraicClosure (ZMod p)
+    have haK : (a : K) ≠ 0 := by
+      rw [← map_intCast (algebraMap (ZMod p) K)]
+      exact (map_ne_zero (algebraMap (ZMod p) K)).mpr ha
+    apply hs x
+    intro i
+    have hi := hx i
+    rw [htop, pderiv_C_mul] at hi
+    change (C a * pderiv i (homogeneousComponent r g)).eval₂ (Int.castRingHom K) x = 0 at hi
+    rw [eval₂_mul, eval₂_C, Int.coe_castRingHom] at hi
+    exact (mul_eq_zero.mp hi).resolve_left haK
+  exact div_le_div_of_nonneg_right
+    (h _ ((totalDegree_map_coefficients_le _ _).trans hG) hcrit) (by positivity)
+
 /-- The standard-character estimate supplies the manuscript's normalized
 estimate with any nonzero numerator and any linear twist. -/
 theorem twistedCompleteSum_le_of_primeExponentialSumBoundAtDimension {r l : ℕ} {B : ℝ} (hr : 2 ≤ r)
@@ -139,44 +176,12 @@ theorem twistedCompleteSum_le_of_primeExponentialSumBoundAtDimension {r l : ℕ}
         ∀ (a : ℤ), (a : ZMod p) ≠ 0 → ∀ z : Fin l → ℤ,
           ‖twistedCompleteSum g p a z‖ ≤ B^l * (p : ℝ)^(-(l : ℝ)/2) := by
   intro p _ _ hrp g hg hs a ha z
-  let L : IntForm l := ∑ i, C (z i) * X i
-  let G : IntForm l := C a * g + L
-  change ‖completeSum G p 1‖ ≤ _
-  rw [norm_completeSum_one_eq_primeDeligneSum]
   by_cases hl : 0 < l
-  · have hL : L.IsHomogeneous 1 := by
-      apply IsHomogeneous.sum
-      intro i _
-      exact isHomogeneous_C_mul_X (z i) i
-    have hG : G.totalDegree ≤ r :=
-      (totalDegree_add _ _).trans (max_le
-        ((totalDegree_mul _ _).trans (by simpa only [totalDegree_C, zero_add] using hg))
-        (hL.totalDegree_le.trans (by omega)))
-    have htop : homogeneousComponent r G = C a * homogeneousComponent r g := by
-      unfold G
-      rw [map_add, homogeneousComponent_C_mul,
-        homogeneousComponent_eq_zero _ _ (hL.totalDegree_le.trans_lt (by omega)), add_zero]
-    have hcrit : PrimeIsolatedLeadingCriticalPoint p r
-        (MvPolynomial.map (Int.castRingHom (ZMod p)) G) := by
-      apply (primeIsolatedLeadingCriticalPoint_reduce_iff G).mpr
-      intro x hx
-      let K := AlgebraicClosure (ZMod p)
-      have haK : (a : K) ≠ 0 := by
-        rw [← map_intCast (algebraMap (ZMod p) K)]
-        exact (map_ne_zero (algebraMap (ZMod p) K)).mpr ha
-      apply hs x
-      intro i
-      have hi := hx i
-      rw [htop, pderiv_C_mul] at hi
-      change (C a * pderiv i (homogeneousComponent r g)).eval₂ (Int.castRingHom K) x = 0 at hi
-      rw [eval₂_mul, eval₂_C, Int.coe_castRingHom] at hi
-      exact (mul_eq_zero.mp hi).resolve_left haK
-    have hmain := h p hl hrp _ ((totalDegree_map_coefficients_le _ _).trans hG) hcrit
-    have hp : (0:ℝ) < p := Nat.cast_pos.mpr (NeZero.pos p)
-    exact (div_le_div_of_nonneg_right hmain (pow_nonneg hp.le _)).trans_eq
-      (deligne_normalization B l hp)
-  · have hl₀ : l = 0 := by omega
-    subst l
+  · exact (norm_twistedCompleteSum_le_of_primeDeligneSum_le hr g hg hs a ha z
+      (h p hl hrp)).trans_eq (deligne_normalization B l (Nat.cast_pos.mpr (NeZero.pos p)))
+  · obtain rfl : l = 0 := by omega
+    rw [show twistedCompleteSum g p a z = completeSum (C a * g + ∑ i, C (z i) * X i) p 1 from rfl,
+      norm_completeSum_one_eq_primeDeligneSum]
     simp [primeDeligneSum, ZMod.stdAddChar_apply]
 
 /-- A uniform estimate in each dimension gives the normalized twisted bound

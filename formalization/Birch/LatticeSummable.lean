@@ -20,8 +20,8 @@ theorem summable_latticeVector_rpow {n N : ℕ} (hN : n < N) :
   classical
   let b := Pi.basisFun ℝ (Fin n)
   let L := Submodule.span ℤ (Set.range b)
-  letI : DiscreteTopology L := ZSpan.discreteTopology_pi_basisFun
-  letI : IsZLattice ℝ L := instIsZLatticeRealSpan b
+  let : DiscreteTopology L := ZSpan.discreteTopology_pi_basisFun
+  let : IsZLattice ℝ L := instIsZLatticeRealSpan b
   let e (m : Fin n → ℤ) : L := ⟨latticeVector m, by
     apply (Module.Basis.mem_span_iff_repr_mem ℤ b _).mpr
     intro i

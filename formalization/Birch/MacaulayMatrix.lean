@@ -1,6 +1,11 @@
-import Birch.Geometry
-import Mathlib.LinearAlgebra.Basis.VectorSpace
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+module
+
+public import Birch.MvPolynomialCoefficientCompat
+public import Birch.Geometry
+public import Mathlib.LinearAlgebra.Basis.VectorSpace
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+
+@[expose] public section
 
 /-!
 # Bounding a smooth section using a Macaulay minor
@@ -48,6 +53,7 @@ theorem sum_degreeMonomial_eq {K : Type*} [CommRing K]
       apply hs
       rw [Finsupp.degree_eq_weight_one]
       exact hG hn
+    change AddMonoidAlgebra.coeff G s = 0 at hz
     rw [hz]
     apply Finset.sum_eq_zero
     rintro ⟨t, ht⟩ _
@@ -142,9 +148,9 @@ theorem exists_system_macaulay_minor_of_span {m : ℕ} {K : Type*} [Field K]
   classical
   let A := systemMacaulayMatrix f e D
   let B := Module.Basis.ofSpan hs
-  letI : Finite (Set.range B) := ((Set.finite_range A.col).subset (Module.Basis.ofSpan_subset hs)).to_subtype
+  let : Finite (Set.range B) := ((Set.finite_range A.col).subset (Module.Basis.ofSpan_subset hs)).to_subtype
   let eB := Equiv.ofInjective B B.injective
-  letI := Finite.of_injective eB eB.injective
+  let := Finite.of_injective eB eB.injective
   let b := Pi.basisFun K (DegreeMonomial l D)
   have hc := (Module.finrank_eq_nat_card_basis B).symm.trans (Module.finrank_eq_nat_card_basis b)
   obtain ⟨e⟩ := Finite.card_eq.mp hc.symm
@@ -152,7 +158,7 @@ theorem exists_system_macaulay_minor_of_span {m : ℕ} {K : Type*} [Field K]
     Module.Basis.ofSpan_subset hs (Set.mem_range_self (e i))
   choose f hf using hcol
   refine ⟨f, isUnit_iff_ne_zero.mp ?_⟩
-  rw [← Matrix.isUnit_iff_isUnit_det, ← Matrix.linearIndependent_cols_iff_isUnit]
+  rw [← Matrix.isUnit_iff_isUnit_det, ← Matrix.linearIndependent_col_iff_isUnit]
   change LinearIndependent K (A.col ∘ f)
   have he : A.col ∘ f = B ∘ e := funext hf
   rw [he]

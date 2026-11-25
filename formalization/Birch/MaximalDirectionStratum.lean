@@ -207,7 +207,7 @@ theorem primeBadDirectionLocus_maximal_slicing {n p e s : ℕ} (hp : p.Prime)
     (hdim : PrimeGradientDimension p hp G s) :
     letI : Fact p.Prime := ⟨hp⟩
     CoordinateSlicing s 1 (primeBadDirectionLocus p G n) := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let g := MvPolynomial.map (Int.castRingHom K) G
   let L := directionalDerivativeLinearOver g
@@ -259,7 +259,7 @@ theorem primeDirectionBound_of_intermediate_slicing {n d : ℕ}
   obtain ⟨D, hD⟩ := hintermediate
   refine primeDirectionBound_of_slicing ⟨D+1, ?_⟩
   intro p hp e he hed hdp G hG s j hs hj hsj hdim
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   have hmono {l A B : ℕ} {V : Set (Fin n → AlgebraicClosure (ZMod p))}
       (hV : CoordinateSlicing l A V) (hAB : A ≤ B) : CoordinateSlicing l B V := by
     exact .cover (fun _ : Fin 1 => V) (fun _ => A)

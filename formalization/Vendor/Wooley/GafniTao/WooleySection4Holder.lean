@@ -128,7 +128,7 @@ theorem wooleySourcePolynomial_equation_4_15
       simpa only [M] using hmass
     unfold wooleySourcePolynomialMixedMean
       wooleySourcePolynomialConditionedMean
-    simp only [hmass', if_pos]
+    simp only [hmass', ite_eq_left]
     exact mul_nonneg (Real.rpow_nonneg le_rfl _)
       (Real.rpow_nonneg le_rfl _)
   · have hs : 1 ≤ s := by
@@ -195,7 +195,7 @@ theorem wooleySourcePolynomial_equation_4_15
       simp only [t, I, w, f]
       rw [htriple, hsumMass]
       unfold wooleySourcePolynomialConditionedMean
-      rw [if_neg (by simpa only [M] using hmass)]
+      rw [ite_eq_right (by simpa only [M] using hmass)]
       simp only [M, q]
       field_simp [hmass]
       simp only [Nat.mul_comm]
@@ -219,7 +219,7 @@ theorem wooleySourcePolynomial_equation_4_15
       simp only [t, I, w, g]
       rw [htriple, hsumMass]
       unfold wooleySourcePolynomialConditionedMean
-      rw [if_neg (by simpa only [M] using hmass)]
+      rw [ite_eq_right (by simpa only [M] using hmass)]
       simp only [M, q]
       field_simp [hmass]
       simp only [Nat.mul_comm]
@@ -231,7 +231,7 @@ theorem wooleySourcePolynomial_equation_4_15
           M⁻¹ ^ 2 * (((q ^ k : ℕ) : ℝ)⁻¹) *
             ∑ z ∈ t, w z * h z := by
       unfold wooleySourcePolynomialMixedMean
-      rw [if_neg hmass]
+      rw [ite_eq_right hmass]
       dsimp [M, q, s, R, t, I, w, h,
         wooleySourcePolynomialMixedResidueMoment]
       rw [mul_assoc]

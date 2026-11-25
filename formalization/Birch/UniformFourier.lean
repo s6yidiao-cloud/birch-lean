@@ -22,7 +22,7 @@ local notation "V" => (Fin l → ℝ)
 
 private lemma smoothOrder_le_fin (j : ℕ) : (j : ℕ∞ω) ≤ ∞ := WithTop.coe_le_coe.mpr le_top
 
-private lemma smoothOrder_lt_fin (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.coe_lt_top j)
+private lemma smoothOrder_lt_fin (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.natCast_lt_top j)
 
 private def directionalDerivativeAtOrder (f : V → ℂ) (v : V) (j : ℕ) (x : V) : ℂ :=
   iteratedFDeriv ℝ j f x (fun _ => v)

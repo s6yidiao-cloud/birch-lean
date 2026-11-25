@@ -156,7 +156,7 @@ theorem norm_affine_phase_box_le {n : ℕ} (t : Fin n → ℝ) (c : ℝ)
   simp_rw [phase_add c, hfactor]
   rw [← Finset.mul_sum, ← Finset.prod_univ_sum (fun i : Fin n => Finset.Ico (a i) (b i))
     (fun i (m : ℤ) => phase ((m : ℝ) * t i)), norm_mul, norm_phase, one_mul, norm_prod]
-  exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ =>
+  exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun i _ =>
     by simpa only [zero_add] using norm_affine_phase_Ico_le (t i) 0 (a i) (b i))
 
 end

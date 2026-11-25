@@ -24,7 +24,7 @@ theorem ProjectivelySmooth.exists_stationaryDepth {n d : ℕ} {F : IntForm n}
       (∀ i, residueEval (pderiv i F) (p ^ j) x = 0) → ∀ i, p ∣ (x i).val := by
   classical
   have hp : p.Prime := Fact.out
-  letI : NeZero p := ⟨hp.ne_zero⟩
+  let : NeZero p := ⟨hp.ne_zero⟩
   choose a k ha hc using hs.gradient_certificates hF hd
   let B : ℕ := Finset.univ.sup fun i ↦ (a i).natAbs
   let j := B + 1
@@ -114,7 +114,7 @@ theorem completeSum_primePower_recurrence_of_stationaryDepth {n : ℕ} (F : IntF
       intro i
       rw [← hred₁, ← hred, hred₂]
       exact hgrad (fun i => red (x i)) h i
-    exact hx (if_pos hxdiv)
+    exact hx (ite_eq_left hxdiv)
   have hc := weightedSum_eq_zero_of_nonstationary F hQ hqt hq (a : ZMod Q) hunit w hw hg
   let f (x : Fin n → ZMod Q) := stdAddChar ((a : ZMod Q) * residueEval F Q x)
   have hpart : (∑ x : Fin n → ZMod Q, f x) =

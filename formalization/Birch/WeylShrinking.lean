@@ -123,7 +123,7 @@ private theorem weylSymplectic_normalized_zero {n : ℕ} (A : Matrix (Fin n) (Fi
   let c := weylCongruenceModulus n
   let J := integerWeylSymplectic x y
   have hc : 0 < c := by simp [c, weylCongruenceModulus]
-  letI : NeZero c := ⟨hc.ne'⟩
+  let : NeZero c := ⟨hc.ne'⟩
   have ha₁ (i : Fin n) : (x.1 i : ZMod c) = 0 :=
     congrArg (fun p => p.1 i) hcong
   have ha₂ (i : Fin n) : (x.2 i : ZMod c) = 0 :=
@@ -165,7 +165,7 @@ theorem symmetric_frequency_pair_card_le {n : ℕ} (A : Matrix (Fin n) (Fin n) �
   classical
   let c := weylCongruenceModulus n
   have hc : 0 < c := by simp [c, weylCongruenceModulus]
-  letI : NeZero c := ⟨hc.ne'⟩
+  let : NeZero c := ⟨hc.ne'⟩
   let T := S.image weylCongruence
   let C a := S.filter (fun x => weylCongruence x = a)
   have hC (a) (ha : a ∈ T) : ((C a).card : ℝ) ≤ (1 + 4 / θ) ^ n * (U.card : ℝ) := by
@@ -187,8 +187,8 @@ theorem symmetric_frequency_pair_card_le {n : ℕ} (A : Matrix (Fin n) (Fin n) �
         (hfr hx) (hfr hy) (hz hx)
     let g (x : (C a : Finset (WeylPair n))) : V :=
       ⟨f x.val, Submodule.subset_span ⟨x.val, x.property, rfl⟩⟩
-    letI : MeasurableSpace V := borel V
-    letI : BorelSpace V := ⟨rfl⟩
+    let : MeasurableSpace V := borel V
+    let : BorelSpace V := ⟨rfl⟩
     have hpack := finset_card_le_cover_times_differences (Module.finBasis ℝ V).addHaar
       (C a) U g (R := 2) (by norm_num) hθ (fun x => hfr x.property) (by
         intro x y hxy

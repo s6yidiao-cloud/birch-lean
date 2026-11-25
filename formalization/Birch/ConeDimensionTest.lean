@@ -1,4 +1,5 @@
 import Birch.ConeOrigin
+import Birch.OriginKrullDimension
 import Birch.HyperplaneRestriction
 
 /-! # Testing the dimension of a homogeneous cone with linear cuts -/
@@ -16,22 +17,6 @@ private theorem mem_zeroLocus_ideal_sup {I J : Ideal (MvPolynomial (Fin n) K)}
     {x : Fin n → K} : x ∈ zeroLocus K (I ⊔ J) ↔ x ∈ zeroLocus K I ∧ x ∈ zeroLocus K J := by
   change I ⊔ J ≤ RingHom.ker (aeval x) ↔ I ≤ RingHom.ker (aeval x) ∧ J ≤ RingHom.ker (aeval x)
   exact sup_le_iff
-
-/-- A zero locus contained in the origin has dimension at most zero. -/
-theorem ringKrullDim_le_zero_of_zeroLocus_subset_origin (I : Ideal (MvPolynomial (Fin n) K))
-    (hz : zeroLocus K I ⊆ {0}) : ringKrullDim (MvPolynomial (Fin n) K ⧸ I) ≤ 0 := by
-  let O : Ideal (MvPolynomial (Fin n) K) := vanishingIdeal K ({0} : Set (Fin n → K))
-  have hO : O ≤ I.radical := by
-    rw [← vanishingIdeal_zeroLocus_eq_radical (K := K)]
-    exact vanishingIdeal_anti_mono hz
-  have hprime (p : PrimeSpectrum.zeroLocus (R := MvPolynomial (Fin n) K) I) :
-      p.val.asIdeal = O := by
-    have hp : O ≤ p.val.asIdeal := hO.trans (p.val.isPrime.radical_le_iff.mpr p.prop)
-    exact ((inferInstance : O.IsMaximal).eq_of_le p.val.isPrime.ne_top hp).symm
-  letI : Subsingleton (PrimeSpectrum.zeroLocus (R := MvPolynomial (Fin n) K) I) :=
-    ⟨fun p q => Subtype.ext (PrimeSpectrum.ext ((hprime p).trans (hprime q).symm))⟩
-  rw [ringKrullDim_quotient]
-  exact Order.krullDim_nonpos_of_subsingleton
 
 private def linearCutIdeal {k : ℕ} (a : Fin k → Fin n → K) : Ideal (MvPolynomial (Fin n) K) :=
   Ideal.span (Set.range fun i => normalLinearForm (a i))
@@ -103,7 +88,7 @@ private theorem dim_le_of_linear_cuts {m e k : ℕ}
     simpa only [mul_zero, ← Pi.zero_def, zero_pow he.ne', zero_mul] using
       eval_homogeneous_scale (hf i) 0 (0 : Fin n → K)
   have hker : RingHom.ker π ≤ O := by rwa [Ideal.mk_ker]
-  letI : p.IsMaximal := Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective hker
+  let : p.IsMaximal := Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective hker
   have hcomap : Ideal.comap π p = O := by
     rw [Ideal.comap_map_of_surjective _ Ideal.Quotient.mk_surjective, ← RingHom.ker_eq_comap_bot,
       sup_eq_left.mpr hker]

@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.UniformGradientCertificate
 
 /-! # Uniform Macaulay tests for homogeneous equations -/

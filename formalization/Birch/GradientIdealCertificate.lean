@@ -1,7 +1,11 @@
-import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.RingTheory.Nullstellensatz
-import Mathlib.RingTheory.Noetherian.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+public import Mathlib.RingTheory.Nullstellensatz
+public import Mathlib.RingTheory.Noetherian.Basic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! # Homogeneous gradient certificates -/
 
@@ -88,10 +92,10 @@ private theorem homogeneousComponent_mul_homogeneous {ι R : Type*} [CommRing R]
   rw [Finset.sum_mul, map_sum]
   rw [Finset.sum_eq_single (D-e)]
   · rw [homogeneousComponent_of_mem ((homogeneousComponent_isHomogeneous (D-e) f).mul hg),
-      Nat.sub_add_cancel hD, if_pos rfl]
+      Nat.sub_add_cancel hD, ite_eq_left rfl]
   · intro j _ hj
     rw [homogeneousComponent_of_mem ((homogeneousComponent_isHomogeneous j f).mul hg),
-      if_neg (by omega : D ≠ j+e)]
+      ite_eq_right (by omega : D ≠ j+e)]
   · intro hn
     have hlt : f.totalDegree < D-e := by
       rw [Finset.mem_range] at hn

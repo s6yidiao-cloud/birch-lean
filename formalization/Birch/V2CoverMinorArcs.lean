@@ -204,7 +204,7 @@ theorem criticalMoment_of_metric {d ν : ℕ} (hd : 2 ≤ d) (hν : 0 < ν)
     have hset : {x | (↑(C ^ t) : ℝ≥0∞) * powerScale P (-z (i + 1)) < f P x ^ t} =
         {x | (C : ℝ≥0∞) * powerScale P (-levelExponent d ν r h) < f P x} := by
       ext x
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       rw [ENNReal.coe_rpow_of_nonneg C ht.le,
         ← show -levelExponent d ν r h * t = -z (i + 1) by rw [neg_mul, mul_comm _ t, hz],
         ← scale_rpow hP₀ ht.le, ← ENNReal.mul_rpow_of_nonneg _ _ ht.le,
@@ -318,6 +318,50 @@ private theorem coverPowerBound_of_eventually_le {I J : ℝ → ℝ≥0∞} {a b
   filter_upwards [hIJ, hJ, eventually_ge_atTop (1 : ℝ)] with P hP hJP hPone
   exact hP.trans (hJP.trans (mul_le_mul_right (scale_mono hPone hab) _))
 
+set_option maxHeartbeats 500000 in
+/-- Superlevel estimates for arbitrarily small rescalings of the magnitude
+give the same critical-moment exponent. -/
+theorem criticalMoment_of_scaledMetric {d ν : ℕ} (hd : 2 ≤ d) (hν : 0 < ν)
+    {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (f : ℝ → Ω → ℝ≥0∞) (hf : ∀ P, Measurable (f P))
+    (htriv : ∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x, f P x ≤ (C : ℝ≥0∞))
+    (hmetric : ∀ ζ : ℝ, 0 < ζ → V2MetricDistribution μ d ν
+      (fun P x => ENNReal.ofReal (P ^ (-ζ)) * f P x)) :
+    ∀ ε > 0, coverPowerBound
+      (fun P => ∫⁻ x, f P x ^ criticalMomentExponent d ν ∂μ) (-(d : ℝ) + ε) := by
+  intro ε hε
+  let t := criticalMomentExponent d ν
+  have ht : 0 < t := criticalMomentExponent_pos hd hν
+  let ζ := (ε/2) / t
+  have hζ : 0 < ζ := div_pos (by positivity) ht
+  have hζt : ζ * t = ε/2 := div_mul_cancel₀ _ ht.ne'
+  let g (P : ℝ) (x : Ω) : ℝ≥0∞ := powerScale P (-ζ) * f P x
+  have hg (P : ℝ) : Measurable (g P) := (hf P).const_mul _
+  have hgtriv : ∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x, g P x ≤ (C : ℝ≥0∞) := by
+    obtain ⟨C, hC, hb⟩ := htriv
+    refine ⟨C, hC, ?_⟩
+    filter_upwards [hb, eventually_ge_atTop (1 : ℝ)] with P hP hPone
+    intro x
+    have hs : powerScale P (-ζ) ≤ 1 := by
+      simpa only [powerScale, Real.rpow_zero, ENNReal.ofReal_one] using
+        scale_mono hPone (neg_nonpos.mpr hζ.le)
+    calc
+      g P x ≤ 1 * f P x := mul_le_mul' hs le_rfl
+      _ = f P x := one_mul _
+      _ ≤ _ := hP x
+  have scaled := (criticalMoment_of_metric hd hν μ g hg hgtriv (hmetric ζ hζ)
+    (ε/2) (by positivity)).scale (ζ*t)
+  refine coverPowerBound_of_eventually_le ?_ (by rw [hζt]; linarith) scaled
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with P hP
+  have hP₀ : 0 < P := zero_lt_one.trans_le hP
+  apply le_of_eq
+  rw [← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
+  refine lintegral_congr_ae (Eventually.of_forall fun x => ?_)
+  dsimp only [g]
+  rw [ENNReal.mul_rpow_of_nonneg _ _ ht.le, scale_rpow hP₀.le ht.le, ← mul_assoc,
+    scale_mul hP₀, show ζ*t + -ζ*t = 0 by ring]
+  simp [powerScale, t]
+
 /-- Hölder combines a moment over the arcs with a full-circle moment.
 Both exponents are expressed on the scale of the moments, before taking roots. -/
 theorem coverProductBound_of_moments {p q a b : ℝ} (hpq : p.HolderConjugate q)
@@ -371,17 +415,17 @@ theorem one_lt_coverMomentExponent {e : ℕ} (he : 2 ≤ e) :
   lt_of_lt_of_le (by decide) (four_le_coverMomentExponent he)
 
 /-- The cover minor-arc estimate from a cover moment of exponent `q`. The
-Weyl saving and metric distribution are explicit inputs. The resulting saving
+Weyl saving and full-circle moment are explicit inputs. The resulting saving
 is fixed before the probability space and sums are chosen. -/
-theorem coverMinorArcBound_of_metric_atExponent {d e ν : ℕ} {q σ : ℝ}
+theorem coverMinorArcBound_of_criticalMoment_atExponent {d e ν : ℕ} {q σ : ℝ}
     (hd : 2 ≤ d) (hq : 1 < q)
     (hν : (1 - 1 / q) * minorDimensionThreshold d < (ν : ℝ))
     (hσ : 0 < σ) :
     ∃ δ > 0, ∀ {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
       (m : ℝ → Set Ω) (f g : ℝ → Ω → ℝ≥0∞),
       (∀ P, MeasurableSet (m P)) → (∀ P, Measurable (f P)) → (∀ P, Measurable (g P)) →
-      (∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x, f P x ≤ (C : ℝ≥0∞)) →
-      V2MetricDistribution μ d ν f →
+      (∀ ε > 0, coverPowerBound
+        (fun P => ∫⁻ x, f P x ^ criticalMomentExponent d ν ∂μ) (-(d : ℝ) + ε)) →
       (∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x ∈ m P,
         f P x ≤ (C : ℝ≥0∞) * ENNReal.ofReal (P ^ (-σ))) →
       (∀ ε > 0, coverPowerBound
@@ -411,8 +455,7 @@ theorem coverMinorArcBound_of_metric_atExponent {d e ν : ℕ} {q σ : ℝ}
   have hη : 0 < η := by dsimp [η]; exact div_pos (mul_pos hσ (sub_pos.2 hts)) (by norm_num)
   have hδ : 0 < δ := div_pos hη (mul_pos (by norm_num) hsq.pos)
   refine ⟨δ, hδ, ?_⟩
-  intro Ω _ μ _ m f g hm hf hg htriv hmetric hweyl hmoment
-  have hfull := criticalMoment_of_metric hd (by exact_mod_cast hνpos) μ f hf htriv hmetric
+  intro Ω _ μ _ m f g hm hf hg hfull hweyl hmoment
   have hminor := minorMoment_of_criticalMoment ht hts hσ μ m f hm hweyl hfull
   have hT := hmoment (δ * q) (mul_pos hδ hsq.symm.pos)
   have hbound := coverProductBound_of_moments hsq μ m f g hf hg hminor hT
@@ -425,6 +468,32 @@ theorem coverMinorArcBound_of_metric_atExponent {d e ν : ℕ} {q σ : ℝ}
   calc
     _ = (d : ℝ) / e - d * (1 / s + 1 / q) - η / s + δ := by rw [hconj, hηs]; ring
     _ = _ := by field_simp [hsq.ne_zero, hsq.symm.ne_zero]; ring
+
+theorem coverMinorArcBound_of_metric_atExponent {d e ν : ℕ} {q σ : ℝ}
+    (hd : 2 ≤ d) (hq : 1 < q)
+    (hν : (1 - 1 / q) * minorDimensionThreshold d < (ν : ℝ))
+    (hσ : 0 < σ) :
+    ∃ δ > 0, ∀ {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+      (m : ℝ → Set Ω) (f g : ℝ → Ω → ℝ≥0∞),
+      (∀ P, MeasurableSet (m P)) → (∀ P, Measurable (f P)) → (∀ P, Measurable (g P)) →
+      (∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x, f P x ≤ (C : ℝ≥0∞)) →
+      V2MetricDistribution μ d ν f →
+      (∃ C : ℝ≥0, 0 < C ∧ ∀ᶠ P in atTop, ∀ x ∈ m P,
+        f P x ≤ (C : ℝ≥0∞) * ENNReal.ofReal (P ^ (-σ))) →
+      (∀ ε > 0, coverPowerBound
+        (fun P => ∫⁻ x, g P x ^ q ∂μ)
+        ((d : ℝ) / e * q - d + ε)) →
+      coverPowerBound (fun P => ∫⁻ x in m P, f P x * g P x ∂μ) ((d : ℝ) / e - d - δ) := by
+  have hfactor : 0 ≤ 1 - 1 / q := by
+    exact sub_nonneg.mpr (by simpa using one_div_le_one_div_of_le zero_lt_one hq.le)
+  have hνpos : 0 < ν := by
+    exact_mod_cast (show (0 : ℝ) < ν from
+      (mul_nonneg hfactor (minorDimensionThreshold_pos hd).le).trans_lt hν)
+  obtain ⟨δ, hδ, hminor⟩ := coverMinorArcBound_of_criticalMoment_atExponent (e := e) hd hq hν hσ
+  refine ⟨δ, hδ, ?_⟩
+  intro Ω _ μ _ m f g hm hf hg htriv hmetric hweyl hmoment
+  exact hminor μ m f g hm hf hg (criticalMoment_of_metric hd hνpos μ f hf htriv hmetric)
+    hweyl hmoment
 
 /-- The minor-arc estimate at the moment exponent selected in `v2.tex`. -/
 theorem coverMinorArcBound_of_metric {d e ν : ℕ} {σ : ℝ}

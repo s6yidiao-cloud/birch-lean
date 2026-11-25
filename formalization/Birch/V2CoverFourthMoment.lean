@@ -49,7 +49,7 @@ private theorem taylor_sub_sub_C_ne_zero (g : Polynomial ℤ) (hg : 2 ≤ g.natD
   have hcoeff₀ : g.coeff j = p.eval 0 := by
     rw [← taylor_coeff 0 g j, taylor_zero]
   have hcoeff : (g.taylor h - g - C b).coeff j = p.coeff 1 * h := by
-    rw [coeff_sub, coeff_sub, coeff_C, if_neg hj, sub_zero, taylor_coeff, hcoeff₀,
+    rw [coeff_sub, coeff_sub, coeff_C, ite_eq_right hj, sub_zero, taylor_coeff, hcoeff₀,
       show (hasseDeriv j g).eval h = p.eval h by rfl, heval h, heval 0]
     ring
   intro e

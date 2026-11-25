@@ -52,7 +52,7 @@ interior dimension. Each cut avoids a homogeneous relation on tangent normals. -
 theorem primeGeometricInteriorSections (n r : ℕ) (hr : 2 ≤ r) :
     PrimeGeometricInteriorSections n r := by
   intro p hp hpr F hF s _ _ hdim
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   have hchar : CharP K p := charP_of_injective_algebraMap (algebraMap (ZMod p) K).injective p
   have hrK : (r : K) ≠ 0 := by

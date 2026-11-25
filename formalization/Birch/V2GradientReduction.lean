@@ -93,7 +93,7 @@ theorem exists_goodReduction_homogeneousSystem
   let det : ℤ := ((systemMacaulayMatrix (cutPolynomialSystem f 1 a e) e D).submatrix id sel).det
   refine ⟨det.natAbs, ?_⟩
   intro p hB hp
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let fK (j : Fin m) := MvPolynomial.map (Int.castRingHom K) (f j)
   let aK (j : Fin k) (i : Fin n) : K := (a j i : K)
@@ -127,7 +127,7 @@ theorem eventualPrimeGradientDimensionLE_of_geometric_dimension_le
     (show 0 < d - 1 by omega) (fun j : Fin n => pderiv j F) (fun _ => hF.pderiv) hdim
   refine ⟨B, ?_⟩
   intro p hp hp'
-  letI : Fact p.Prime := ⟨hp'⟩
+  let : Fact p.Prime := ⟨hp'⟩
   obtain ⟨s, hs⟩ := exists_primeGradientDimension hp' hF hd
   refine ⟨s.val, ?_, hs⟩
   have hbound := hB p hp hp'

@@ -33,15 +33,15 @@ theorem exists_affine_transcendence_basis_with_dim {K A : Type} [Field K] [CommR
   obtain ⟨s,hs,x,hx⟩ := exists_affine_transcendence_basis (K := K) (A := A)
   obtain ⟨m,g,hg,hint⟩ := exists_integral_inj_algHom_of_fg K A
   let R := MvPolynomial (Fin m) K
-  letI : Algebra R A := g.toRingHom.toAlgebra
-  letI : Algebra.IsIntegral R A := algebraMap_isIntegral_iff.mp hint
+  let : Algebra R A := g.toRingHom.toAlgebra
+  let : Algebra.IsIntegral R A := algebraMap_isIntegral_iff.mp hint
   have hmono : StrictMono (PrimeSpectrum.comap (algebraMap R A)) := by
     intro p q hpq
-    letI : p.asIdeal.IsPrime := p.isPrime
-    exact Ideal.IsIntegral.comap_lt_comap (R := R) (A := A) hpq
+    let : p.asIdeal.IsPrime := p.isPrime
+    exact Ideal.IsIntegral.under_lt_under (R := R) (A := A) hpq
   have hupper : ringKrullDim A ≤ ringKrullDim R := Order.krullDim_le_of_strictMono _ hmono
   have hm : ringKrullDim R = (m : WithBot ℕ∞) := by
-    simp [R, MvPolynomial.ringKrullDim_of_isNoetherianRing]
+    simp [R]
   have hy : AlgebraicIndependent K (g ∘ X) := by
     rw [algebraicIndependent_iff_injective_aeval, show aeval (g ∘ X) = g by ext i; simp]
     exact hg
@@ -68,7 +68,7 @@ theorem trdeg_affineCoordinates_le {ι K A : Type} [Finite ι] [Field K] [CommRi
   let f := Ideal.Quotient.lift I e₀.toRingHom hker
   have hf : Function.Surjective f := Ideal.Quotient.lift_surjective_of_surjective I hker he₀
   have hd : ringKrullDim e.range ≤ (D : WithBot ℕ∞) := (ringKrullDim_le_of_surjective f hf).trans hI
-  letI : Algebra.FiniteType K e.range := Algebra.FiniteType.of_surjective e₀ he₀
+  let : Algebra.FiniteType K e.range := Algebra.FiniteType.of_surjective e₀ he₀
   obtain ⟨s,hs,z,hz⟩ := exists_affine_transcendence_basis (K := K) (A := e.range)
   have hsD : s ≤ D := by exact_mod_cast hs.trans hd
   rw [← aeval_range, ← hz.cardinalMk_eq_trdeg, Cardinal.mk_fin]
@@ -97,7 +97,7 @@ theorem trdeg_parameters_add_le_of_fiber_dim {α β K L : Type} [Finite α] [Fin
   let J := affineFiberIdeal I u
   let B := MvPolynomial α L ⧸ J
   obtain ⟨P,hP⟩ := exists_primeQuotient_of_dim_ge hj
-  letI : P.asIdeal.IsPrime := P.isPrime
+  let : P.asIdeal.IsPrime := P.isPrime
   let A := B ⧸ P.asIdeal
   let e₁ : MvPolynomial α L →ₐ[L] B := Ideal.Quotient.mkₐ L J
   let e₂ : B →ₐ[L] A := Ideal.Quotient.mkₐ L P.asIdeal
@@ -119,13 +119,13 @@ theorem trdeg_parameters_add_le_of_fiber_dim {α β K L : Type} [Finite α] [Fin
     have hz : e₁ (affineFiberSubstitution u f) = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr hf'
     rw [hz, map_zero]
   let U := Algebra.adjoin K (Set.range u)
-  haveI : Algebra.FiniteType K U := by
+  have : Algebra.FiniteType K U := by
     change Algebra.FiniteType K (Algebra.adjoin K (Set.range u))
     rw [← aeval_range]
     exact Algebra.FiniteType.of_surjective (aeval (R := K) u).rangeRestrict
       (aeval (R := K) u).rangeRestrict_surjective
   obtain ⟨b,_,bu,hbu⟩ := exists_affine_transcendence_basis (K := K) (A := U)
-  letI : Algebra.FiniteType L A := Algebra.FiniteType.of_surjective e he
+  let : Algebra.FiniteType L A := Algebra.FiniteType.of_surjective e he
   obtain ⟨t,ht,bx,hbx⟩ := exists_affine_transcendence_basis_with_dim (K := L) (A := A)
   have hjt : j ≤ t := by
     have h : (j : WithBot ℕ∞) ≤ ringKrullDim A := hP
@@ -134,11 +134,13 @@ theorem trdeg_parameters_add_le_of_fiber_dim {α β K L : Type} [Finite α] [Fin
   have hxTop : Algebra.adjoin L (Set.range x) = ⊤ := by
     rw [← aeval_range, hxe]
     exact (AlgHom.range_eq_top e).mpr he
-  letI : Algebra.IsIntegral (Algebra.adjoin L (Set.range x)) A := by
-    apply Algebra.isIntegral_of_surjective
-    intro a
-    exact ⟨⟨a, by rw [hxTop]; exact Algebra.mem_top⟩, rfl⟩
-  letI : FaithfulSMul L A := (faithfulSMul_iff_algebraMap_injective L A).mpr
+  let : Algebra.IsAlgebraic (Algebra.adjoin L (Set.range x)) A := by
+    let : Algebra.IsIntegral (Algebra.adjoin L (Set.range x)) A := by
+      apply Algebra.isIntegral_of_surjective
+      intro a
+      exact ⟨⟨a, by rw [hxTop]; exact Algebra.mem_top⟩, rfl⟩
+    exact Algebra.IsIntegral.isAlgebraic
+  let : FaithfulSMul L A := (faithfulSMul_iff_algebraMap_injective L A).mpr
     (algebraMap L A).injective
   obtain ⟨T,hTsub,hT⟩ := exists_isTranscendenceBasis_subset (R := L) (Set.range x)
   let buL : Fin b → L := U.val ∘ bu
@@ -188,13 +190,13 @@ theorem ringKrullDim_parameters_le_of_fiber_dim {α β K : Type} [Finite α] [Fi
     simpa only [Nat.cast_add, Nat.cast_one] using ENat.WithBot.add_one_le_iff.mpr h
   let B := MvPolynomial β K ⧸ J
   obtain ⟨P,hP⟩ := exists_primeQuotient_of_dim_ge hd
-  letI : P.asIdeal.IsPrime := P.isPrime
+  let : P.asIdeal.IsPrime := P.isPrime
   let A := B ⧸ P.asIdeal
   let q : MvPolynomial β K →ₐ[K] A :=
     (Ideal.Quotient.mkₐ K P.asIdeal).comp (Ideal.Quotient.mkₐ K J)
   have hq : Function.Surjective q :=
     (Ideal.Quotient.mkₐ_surjective K P.asIdeal).comp (Ideal.Quotient.mkₐ_surjective K J)
-  letI : Algebra.FiniteType K A := Algebra.FiniteType.of_surjective q hq
+  let : Algebra.FiniteType K A := Algebra.FiniteType.of_surjective q hq
   obtain ⟨s,hs,xs,hxs⟩ := exists_affine_transcendence_basis_with_dim (K := K) (A := A)
   have hs₀ : D-j+1 ≤ s := by
     have H : ((D-j+1 : ℕ) : WithBot ℕ∞) ≤ ringKrullDim A := hP

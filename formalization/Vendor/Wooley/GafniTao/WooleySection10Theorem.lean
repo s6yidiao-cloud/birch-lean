@@ -99,7 +99,7 @@ theorem wooleyCriticalExponent_eq_zero_of_lower
   let H : ℕ := B ⌈/⌉ k
   let thetaNat : ℕ := wooleyIterationTheta mu H
   let nu : ℕ := wooleyInitialNu eta Lambda H
-  letI : NeZero (p ^ B) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
+  let : NeZero (p ^ B) := ⟨pow_ne_zero _ (NeZero.ne p)⟩
   have hBupper : Bupper ≤ B :=
     (le_max_left _ _).trans hB
   have hBtau' : Btau ≤ B :=

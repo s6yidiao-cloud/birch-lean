@@ -1,0 +1,46 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import WeilConjectures.AlgebraicGeometry.Curve
+public import WeilConjectures.SixFunctors.Etale.UpperLowerStar.TopologicalInvariance
+public import WeilConjectures.Mathlib.Algebra.Category.ModuleCat.AB
+import WeilConjectures.AlgebraicGeometry.Curve.PrimeCoefficientCurveAssertions
+
+/-!
+# Algebraically closed extension for reduced proper curves
+
+## References
+
+* Stacks Project, Theorem 03SC, item (7), and Lemmas 03SD, 0A3Q, 03SG.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory
+
+namespace AlgebraicGeometry.IsCurve
+
+/-- Field extension invariance for reduced proper curves with constructible prime coefficients. -/
+theorem algebraicallyClosedCohomologyInvariant {k : Type u} [Field k] [IsAlgClosed k]
+    {C C' : Scheme.{u}} (f : C ⟶ Spec (.of k)) [IsCurve f] [IsProper f] [IsReduced C]
+    (k' : Type u) [Field k'] [IsAlgClosed k'] {ι : Spec (.of k') ⟶ Spec (.of k)}
+    {f' : C' ⟶ Spec (.of k')} {ι' : C' ⟶ C} (h : IsPullback ι' f' f ι)
+    {r : ℕ} [Fact r.Prime]
+    (F : Sheaf C.smallEtaleTopology (ModuleCat.{u + 1} (ULift.{u + 1} (ZMod r))))
+    [Scheme.IsConstructibleSheaf F] (q : ℕ) :
+    Function.Bijective (Etale.cohomologyMap ι'
+      ((sheafCompose _ (forget₂ (ModuleCat.{u + 1} (ULift.{u + 1} (ZMod r)))
+        AddCommGrpCat.{u + 1})).obj F) q) := by
+  have hA : IsCurve.Assertions (ULift.{u + 1} (ZMod r)) f F :=
+    primeCoefficientCurveAssertions f F
+  exact IsCurve.Assertions.bijective_cohomologyMap_of_isProper hA k' h q
+
+end AlgebraicGeometry.IsCurve

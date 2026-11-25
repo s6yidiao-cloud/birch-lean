@@ -374,7 +374,7 @@ def coverCompleteProductAt {n : ℕ} (F : IntForm n) (g : ℤ[X]) (q : ℕ) (a :
 
 theorem coverCompleteProductAt_eq {n q : ℕ} [NeZero q] (F : IntForm n) (g : ℤ[X]) (a : ℤ) :
     coverCompleteProductAt F g q a = completeSum F q (a : ZMod q) * coverCompleteSum g q (a : ZMod q) :=
-  dif_neg (NeZero.ne q)
+  dite_eq_right (NeZero.ne q)
 
 /-- The summed coefficients in the fixed-width cover arcs are exactly the
 initial terms of the cover singular series. -/
@@ -397,8 +397,8 @@ theorem coverCompleteProduct_sum_eq_truncation {n : ℕ} (F : IntForm n) (g : �
     intro q hq
     have hq₂ := (Finset.mem_Icc.mp hq).1
     have hq₀ : q ≠ 0 := by omega
-    letI : NeZero q := ⟨hq₀⟩
-    simp only [coverCompleteProductAt_eq, Int.cast_natCast, A, singularSeriesTerm, dif_neg hq₀,
+    let : NeZero q := ⟨hq₀⟩
+    simp only [coverCompleteProductAt_eq, Int.cast_natCast, A, singularSeriesTerm, dite_eq_right hq₀,
       ← coverConductorSum_eq_unitConductorSum, coverConductorSum]
     exact (sum_zmod_units_eq_reducedNumerators q hq₂
       (fun a => completeSum F q a * coverCompleteSum g q a)).symm
@@ -418,7 +418,7 @@ theorem coverCompleteProduct_sum_eq_truncation {n : ℕ} (F : IntForm n) (g : �
       ∑ j ∈ Finset.range Q, A (j+1) := by
     apply Finset.sum_congr rfl
     intro j _
-    simp only [A, singularSeriesTerm, dif_neg (Nat.succ_ne_zero j), coverConductorSum_eq_unitConductorSum]
+    simp only [A, singularSeriesTerm, dite_eq_right (Nat.succ_ne_zero j), coverConductorSum_eq_unitConductorSum]
   rw [hone,hsum,hseries,hshift,hins,Finset.sum_insert]
   simp
 

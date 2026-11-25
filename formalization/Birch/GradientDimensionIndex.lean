@@ -13,7 +13,7 @@ between `0` and `n`. The lower bound uses the critical point at the origin. -/
 theorem exists_primeGradientDimension {n d p : ℕ} (hp : p.Prime) {G : IntForm n}
     (hG : G.IsHomogeneous d) (hd : 2 ≤ d) :
     ∃ s : Fin (n+1), PrimeGradientDimension p hp G s.val := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   let R := MvPolynomial (Fin n) K
   let J : Ideal R := Ideal.span
@@ -33,12 +33,12 @@ theorem exists_primeGradientDimension {n d p : ℕ} (hp : p.Prime) {G : IntForm 
     intro h
     have he : (1 : R) ∈ RingHom.ker e.toRingHom := hJ (by simp [h])
     simp at he
-  letI : Nontrivial (R ⧸ J) := Ideal.Quotient.nontrivial_iff.mpr hproper
+  let : Nontrivial (R ⧸ J) := Ideal.Quotient.nontrivial_iff.mpr hproper
   have hmin : 0 ≤ ringKrullDim (R ⧸ J) := ringKrullDim_nonneg_of_nontrivial
   have hmax : ringKrullDim (R ⧸ J) ≤ (n : ℕ∞) := by
     refine (ringKrullDim_le_of_surjective (Ideal.Quotient.mk J) Ideal.Quotient.mk_surjective).trans_eq ?_
     change ringKrullDim (MvPolynomial (Fin n) K) = _
-    simp [MvPolynomial.ringKrullDim_of_isNoetherianRing]
+    simp
   change ∃ s : Fin (n+1), ringKrullDim (R ⧸ J) = (s.val : ℕ∞)
   generalize hdim : ringKrullDim (R ⧸ J) = N at hmin hmax ⊢
   cases N using WithBot.recBotCoe with
@@ -46,7 +46,7 @@ theorem exists_primeGradientDimension {n d p : ℕ} (hp : p.Prime) {G : IntForm 
   | coe a =>
     have ha := WithBot.coe_le_coe.mp hmax
     have hfin : a ≠ ⊤ := ne_top_of_le_ne_top (by simp) ha
-    have he : (a.toNat : ℕ∞) = a := ENat.coe_toNat hfin
+    have he : (a.toNat : ℕ∞) = a := ENat.natCast_toNat hfin
     have hle : a.toNat ≤ n := by exact_mod_cast (he.symm ▸ ha)
     exact ⟨⟨a.toNat, Nat.lt_succ_of_le hle⟩, congrArg WithBot.some he.symm⟩
 

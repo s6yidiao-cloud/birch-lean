@@ -255,11 +255,11 @@ theorem wooley_mixed_pair_orientation_symmetry
     exact ne_comm
   by_cases h : wooleyResiduesSeparated nu eta xi
   · have h' := hsep.mp h
-    rw [if_pos h, if_pos h']
+    rw [ite_eq_left h, ite_eq_left h']
     ring
   · have h' : ¬ wooleyResiduesSeparated nu xi eta := by
       exact fun hxiEta => h (hsep.mpr hxiEta)
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
 
 /-- Cauchy followed by the exact critical three-factor Hölder inequality.
 This is the abstract finite inequality underlying (6.8), including the
@@ -512,11 +512,11 @@ theorem wooleyInitialMixedReverse_eq_forward {Q : ℕ}
     exact ne_comm
   by_cases h : wooleyResiduesSeparated nu eta xi
   · have h' := hsep.mp h
-    rw [if_pos h, if_pos h']
+    rw [ite_eq_left h, ite_eq_left h']
     ring
   · have h' : ¬ wooleyResiduesSeparated nu xi eta := by
       exact fun hxiEta => h (hsep.mpr hxiEta)
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
 
 /-- The separated pair mass is bounded by the square of the total mass;
 the omitted diagonal has nonnegative weight. -/

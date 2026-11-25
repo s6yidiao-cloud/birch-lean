@@ -397,7 +397,7 @@ theorem huaDifferenceCoefficient_zero_le (H U : Finset ℤ) (g : Polynomial ℤ)
       exact (hf.trans (Finset.card_le_card hsub)).trans (by simp [hzero])
     · have hdeg := natDegree_huaDifference g hs (by omega) hzero
       exact hf.trans ((card_eval_fiber_le_natDegree _ (by rw [hdeg]; omega) _ _).trans
-        (by rw [if_neg hzero, zero_add, hdeg]; omega))
+        (by rw [ite_eq_right hzero, zero_add, hdeg]; omega))
   calc
     _ ≤ ∑ hs ∈ S, ((if (0 : ℤ) ∈ hs then U.card else 0) + g.natDegree) :=
       Finset.sum_le_sum hfiber
@@ -542,9 +542,9 @@ private theorem huaMixedMoment_le (H U : Finset ℤ) (g : Polynomial ℤ) {j : �
       apply Finset.sum_le_sum
       intro a _
       by_cases ha : l a = 0
-      · simp only [ha, neg_zero, if_pos]
+      · simp only [ha, neg_zero, ite_eq_left]
         exact hZ.trans (le_add_of_nonneg_right hR₀)
-      · simp only [if_neg ha, zero_add]
+      · simp only [ite_eq_right ha, zero_add]
         exact hR _ (neg_ne_zero.mpr ha)
     _ = _ := by
       rw [Finset.sum_add_distrib, ← Finset.sum_filter, Finset.sum_const,

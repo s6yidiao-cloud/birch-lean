@@ -96,7 +96,7 @@ theorem wooleySourcePolynomial_lemma_7_1_uniform_global
               wooleySourcePolynomialMixedMean phi s r p B
                 (wooleyNextB k r b) b nu gamma := by
   let I := {r : ℕ // r ∈ wooleyGradeRange (k - 1)}
-  letI : Fintype I := Fintype.ofFinset
+  let : Fintype I := Fintype.ofFinset
     (wooleyGradeRange (k - 1)) (by intro i; rfl)
   have hex : ∀ i : I,
       ∃ C : ℝ, 1 ≤ C ∧ ∃ B0 : ℕ,
@@ -211,7 +211,7 @@ theorem wooleySourcePolynomial_lemma_7_1_uniform_grades
             wooleySourcePolynomialMixedMean phi s r p B
               (wooleyNextB k r b) b nu gamma := by
   let I := {r : ℕ // r ∈ wooleyGradeRange (k - 1)}
-  letI : Fintype I := Fintype.ofFinset
+  let : Fintype I := Fintype.ofFinset
     (wooleyGradeRange (k - 1)) (by intro i; rfl)
   have hex : ∀ i : I,
       ∃ C : ℝ, 1 ≤ C ∧ ∃ B0 : ℕ,

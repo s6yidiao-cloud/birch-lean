@@ -132,10 +132,10 @@ theorem norm_normalizedSum_sub_complete_le_of_poisson_ratio {n d : ℕ} {F : Int
         exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hP (by linarith)) hK.le
   have ht (m : Fin n → ℤ) : ‖tail m‖ ≤ (K * P ^ (-L)) * A m := by
     by_cases hm : m = 0
-    · simp only [tail, if_pos hm, norm_zero]
+    · simp only [tail, ite_eq_left hm, norm_zero]
       dsimp [A]
       positivity
-    · simpa only [tail, if_neg hm] using hf m hm
+    · simpa only [tail, ite_eq_right hm] using hf m hm
   have htNorm : Summable (fun m ↦ ‖tail m‖) :=
     (hA.mul_left (K * P ^ (-L))).of_nonneg_of_le (fun _ ↦ norm_nonneg _) ht
   have htSum : Summable tail := htNorm.of_norm
@@ -144,7 +144,7 @@ theorem norm_normalizedSum_sub_complete_le_of_poisson_ratio {n d : ℕ} {F : Int
       summable_of_ne_finset_zero (s := {0}) (by
         intro m hm
         have hm₀ : m ≠ (0 : Fin n → ℤ) := by simpa only [Finset.mem_singleton] using hm
-        exact if_neg hm₀)
+        exact ite_eq_right hm₀)
     apply (hsingle.add htSum).congr
     intro m
     by_cases hm : m = 0 <;> simp [tail, hm]

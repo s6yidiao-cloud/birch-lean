@@ -1,0 +1,89 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.CategoryTheory.Abelian.RightDerived
+public import Mathlib.Algebra.Category.Grp.Abelian
+public import Mathlib.Algebra.Exact.Basic
+import WeilConjectures.CategoryTheory.RightDerivedInjectiveSequence
+import WeilConjectures.CategoryTheory.RightDerivedBinaryProduct
+
+/-!
+# Derived sequence from a sequence exact on injectives
+
+Source: Stacks Project, Tag 0A50, passage from the injective section sequence to
+its long exact homology sequence; Homology, Tag 0117.
+-/
+
+@[expose] public section
+
+universe v u w
+open CategoryTheory CategoryTheory.Limits
+namespace CategoryTheory
+
+/-- A sequence `0 ⟶ A ⟶ B × D ⟶ E ⟶ 0` of additive functors, given by `(a, b)` and `c - d`, that
+is short exact on injective objects induces connecting maps `δ` making the Mayer–Vietoris
+sequence `R^n A ⟶ R^n B × R^n D ⟶ R^n E ⟶ R^(n+1) A` exact.
+
+Source: Stacks Project, Tag 0A50, final paragraph, and Homology Tag 0117. -/
+theorem rightDerived_pair_sequence
+    {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
+    (A B D E : C ⥤ AddCommGrpCat.{w})
+    [A.Additive] [B.Additive] [D.Additive] [E.Additive]
+    (a : A ⟶ B) (b : A ⟶ D) (c : B ⟶ E) (d : D ⟶ E)
+    (hinj : ∀ (I : C), Injective I →
+      Function.Injective (fun x => (a.app I x, b.app I x)))
+    (hexact : ∀ (I : C), Injective I →
+      Function.Exact (fun x => (a.app I x, b.app I x))
+        (fun x => c.app I x.1 - d.app I x.2))
+    (hsurj : ∀ (I : C), Injective I →
+      Function.Surjective (fun x : B.obj I × D.obj I => c.app I x.1 - d.app I x.2)) :
+    ∃ δ : ∀ n : ℕ, E.rightDerived n ⟶ A.rightDerived (n + 1),
+      ∀ M : C,
+        ∀ n : ℕ,
+          Function.Exact (fun x => ((a.rightDerived n).app M x,
+            (b.rightDerived n).app M x))
+            (fun x => (c.rightDerived n).app M x.1 - (d.rightDerived n).app M x.2) ∧
+          Function.Exact
+            (fun x : (B.rightDerived n).obj M × (D.rightDerived n).obj M =>
+              (c.rightDerived n).app M x.1 - (d.rightDerived n).app M x.2)
+            ((δ n).app M) ∧
+          Function.Exact ((δ n).app M)
+            (fun x => ((a.rightDerived (n + 1)).app M x,
+              (b.rightDerived (n + 1)).app M x)) := by
+  obtain ⟨δ, hδ⟩ := rightDerived_injective_sequence A (abBinaryProduct B D) E
+    (abBinaryProductLift a b) (abBinaryProductDifference c d) hinj hexact hsurj
+  refine ⟨δ, ?_⟩
+  intro M n
+  obtain ⟨e, he₁, he₂⟩ := rightDerived_binaryProduct_iso A B D E a b c d M n
+  obtain ⟨e', he'₁, _⟩ := rightDerived_binaryProduct_iso A B D E a b c d M (n + 1)
+  obtain ⟨h₁, h₂, h₃⟩ := hδ M n
+  have bij := ConcreteCategory.bijective_of_isIso e.hom
+  have inj' := (ConcreteCategory.bijective_of_isIso e'.hom).1
+  refine ⟨?_, ?_, ?_⟩
+  · intro y
+    obtain ⟨x, rfl⟩ := bij.2 y
+    dsimp only
+    rw [← he₂, h₁]
+    constructor
+    · rintro ⟨z, rfl⟩
+      exact ⟨z, (he₁ z).symm⟩
+    · rintro ⟨z, hz⟩
+      exact ⟨z, bij.1 ((he₁ z).trans hz)⟩
+  · intro y
+    rw [h₂]
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨e.hom x, (he₂ x).symm⟩
+    · rintro ⟨x, hx⟩
+      obtain ⟨z, rfl⟩ := bij.2 x
+      exact ⟨z, (he₂ z).trans hx⟩
+  · intro y
+    dsimp only
+    rw [← he'₁, ← map_zero e'.hom.hom, inj'.eq_iff, h₃]
+
+end CategoryTheory

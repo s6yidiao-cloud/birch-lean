@@ -43,7 +43,7 @@ theorem coverNormalizedProduct_approx_majorArcs {n d e : ℕ} {F : IntForm n}
   refine ⟨E, hE, ?_⟩
   filter_upwards [happrox, eventually_ge_atTop (1 : ℝ)] with P hP hP₁
   intro q a hq hqQ α hα
-  letI : NeZero q := ⟨hq.ne'⟩
+  let : NeZero q := ⟨hq.ne'⟩
   have hp : 0 < P := zero_lt_one.trans_le hP₁
   let γ := P ^ d * (α - (a : ℝ) / q)
   let Q := P ^ Δ

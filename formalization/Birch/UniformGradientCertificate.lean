@@ -1,6 +1,11 @@
-import Birch.GradientIdealCertificate
-import Birch.MacaulayMatrix
-import Mathlib.RingTheory.Polynomial.Basic
+module
+
+public import Birch.MvPolynomialCoefficientCompat
+public import Birch.GradientIdealCertificate
+public import Birch.MacaulayMatrix
+public import Mathlib.RingTheory.Polynomial.Basic
+
+@[expose] public section
 
 /-! # Uniform homogeneous gradient certificates -/
 
@@ -105,7 +110,8 @@ theorem system_monomial_mem_of_macaulay_minor {l q e D : ℕ} {K : Type*} [Field
         apply hu
         simpa only [Finsupp.degree_apply] using
           (hf.degree_eq_sum_deg_support (mem_support_iff.mpr hne)).symm
-      rw [hz, coeff_monomial, if_neg (fun h : m = u => hu (h ▸ hm))]
+      change AddMonoidAlgebra.coeff f u = 0 at hz
+      rw [hz, coeff_monomial, ite_eq_right (fun h : m = u => hu (h ▸ hm))]
   exact he ▸ hJ
 
 /-- A nonsingular maximal minor certifies monomial membership in a gradient ideal. -/

@@ -74,7 +74,7 @@ private theorem absTail_eq_two_mul_Ioi {f : ℝ → ℂ} (hf : Integrable f)
     (∫ γ in {γ : ℝ | T < |γ|}, ‖f γ‖) = 2 * ∫ γ in Ioi T, ‖f γ‖ := by
   have hset : {γ : ℝ | T < |γ|} = Iio (-T) ∪ Ioi T := by
     ext x
-    simp only [mem_setOf_eq, mem_union, mem_Iio, mem_Ioi]
+    simp only [Set.mem_ofPred_eq, mem_union, mem_Iio, mem_Ioi]
     by_cases hx : 0 ≤ x
     · rw [abs_of_nonneg hx]
       have hh : ¬x < -T := by linarith

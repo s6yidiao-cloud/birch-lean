@@ -1,6 +1,10 @@
-import Birch.CircleMethod
-import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.RingTheory.Nullstellensatz
+module
+
+public import Birch.CircleMethod
+public import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+public import Mathlib.RingTheory.Nullstellensatz
+
+@[expose] public section
 
 /-!
 # Transverse weights for geometrically smooth hypersurfaces

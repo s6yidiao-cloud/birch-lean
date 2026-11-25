@@ -1,0 +1,78 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import Mathlib.AlgebraicGeometry.Modules.Sheaf
+public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
+public import Mathlib.Algebra.Homology.Additive
+public import Mathlib.Algebra.Category.Grp.Abelian
+public import Mathlib.Algebra.Homology.QuasiIso
+import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+import WeilConjectures.AlgebraicGeometry.ModulePushforwardInjectiveAcyclic
+import WeilConjectures.AlgebraicGeometry.Modules.Ext
+
+/-! # Global sections of a resolution of the direct image of injectives
+
+## References
+
+* Stacks Project, Cohomology of Sheaves, Tags 01FB, 01EZ, 01F0, 01EX;
+  Derived Categories, Tag 015E.
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits Opposite
+
+namespace AlgebraicGeometry.Scheme.Modules
+
+local instance (Y : Scheme.{u}) (V : Y.Opens) :
+    (SheafOfModules.evaluation.{u} Y.ringCatSheaf (op V)).Additive :=
+  inferInstanceAs ((SheafOfModules.forget Y.ringCatSheaf ⋙
+    PresheafOfModules.evaluation Y.ringCatSheaf.obj (op V)).Additive)
+
+/-- Global sections of a quasi-isomorphism from the direct image of a nonnegative complex
+of injective modules to a nonnegative complex of injective modules is a quasi-isomorphism,
+both over `O_Y(Y)` and after forgetting to abelian groups (Stacks, Tags 01FB, 01EX, 015E). -/
+theorem quasiIso_globalSections_pushforward_injectives
+    {X Y : Scheme.{u}} (h : X ⟶ Y)
+    (I : CochainComplex X.Modules ℤ) (J : CochainComplex Y.Modules ℤ)
+    (hI : ∀ n : ℤ, Injective (I.X n)) (hJ : ∀ n : ℤ, Injective (J.X n))
+    (hI0 : ∀ n : ℤ, n < 0 → IsZero (I.X n))
+    (hJ0 : ∀ n : ℤ, n < 0 → IsZero (J.X n))
+    (φ : ((pushforward h).mapHomologicalComplex (ComplexShape.up ℤ)).obj I ⟶ J)
+    (hφ : QuasiIso φ) :
+    QuasiIso (((SheafOfModules.evaluation.{u} Y.ringCatSheaf
+      (op (⊤ : Y.Opens))).mapHomologicalComplex (ComplexShape.up ℤ)).map φ) ∧
+      QuasiIso (((SheafOfModules.evaluation.{u} Y.ringCatSheaf (op (⊤ : Y.Opens)) ⋙
+        forget₂ (ModuleCat.{u} (Y.ringCatSheaf.obj.obj (op (⊤ : Y.Opens))))
+          AddCommGrpCat.{u}).mapHomologicalComplex (ComplexShape.up ℤ)).map φ) := by
+  let : EnoughInjectives Y.Modules := inferInstance
+  let F := SheafOfModules.forget Y.ringCatSheaf ⋙
+    PresheafOfModules.evaluation Y.ringCatSheaf.obj (op (⊤ : Y.Opens))
+  have : I.IsStrictlyGE 0 := (CochainComplex.isStrictlyGE_iff I 0).2 hI0
+  have : J.IsStrictlyGE 0 := (CochainComplex.isStrictlyGE_iff J 0).2 hJ0
+  let : F.Additive := by dsimp [F]; infer_instance
+  have hI' : ∀ n, F.rightAcyclic (((pushforward h).mapHomologicalComplex
+      (ComplexShape.up ℤ)).obj I |>.X n) := by
+    intro n
+    exact (module_pushforward_injective_acyclic h (I.X n)).2 ⊤
+  have hJ' : ∀ n, F.rightAcyclic (J.X n) := by
+    intro n
+    exact Functor.rightAcyclic_of_injective (J.X n)
+  have hq : QuasiIso ((F.mapHomologicalComplex (ComplexShape.up ℤ)).map φ) :=
+    F.quasiIso_map_of_rightAcyclic φ 0 hI' hJ'
+  let e := forget₂ (ModuleCat.{u} (Y.ringCatSheaf.obj.obj (op (⊤ : Y.Opens))))
+      AddCommGrpCat.{u}
+  have hq' : QuasiIso ((e.mapHomologicalComplex (ComplexShape.up ℤ)).map
+      ((F.mapHomologicalComplex (ComplexShape.up ℤ)).map φ)) := by
+    rw [HomologicalComplex.quasiIso_map_iff_of_preservesHomology]
+    exact hq
+  exact ⟨hq, hq'⟩
+end AlgebraicGeometry.Scheme.Modules
+

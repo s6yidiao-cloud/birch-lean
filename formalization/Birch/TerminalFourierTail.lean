@@ -89,7 +89,7 @@ private theorem sum_pi_prod {g : ℤ → ℝ} (hg : Summable g) (hg₀ : ∀ j, 
       (∑' x : Fin l → ℤ, ∏ i, g (x i)) = (∑' j : ℤ, g j)^l := by
   induction l with
   | zero =>
-    letI : Unique (Fin 0 → ℤ) := ⟨⟨fun _ => 0⟩, fun _ => funext fun i => i.elim0⟩
+    let : Unique (Fin 0 → ℤ) := ⟨⟨fun _ => 0⟩, fun _ => funext fun i => i.elim0⟩
     have h0 : HasSum (fun _ : Fin 0 → ℤ => (1 : ℝ)) 1 := by
       simpa only [Fintype.sum_unique] using (hasSum_fintype (fun _ : Fin 0 → ℤ => (1 : ℝ)))
     simp only [Finset.univ_eq_empty, Finset.prod_empty, pow_zero]
@@ -138,7 +138,7 @@ theorem terminal_fourier_weight_sum {θ : ℝ} (hθ : 0 < θ) {l N : ℕ} (hN : 
       _ = (A^(-2 : ℝ))^l := by rw [← Real.rpow_natCast, ← Real.rpow_mul (by positivity : 0 ≤ A)]
       _ = ∏ _i : Fin l, A^(-2 : ℝ) := by simp
       _ ≤ _ := by
-        apply Finset.prod_le_prod (fun _ _ => Real.rpow_nonneg (by positivity) _)
+        apply Finset.prod_le_prod₀ (fun _ _ => Real.rpow_nonneg (by positivity) _)
         intro i _
         have hi : |(m i : ℝ)| ≤ ‖latticeVector m‖ := by
           simpa only [latticeVector, Real.norm_eq_abs] using norm_le_pi_norm (latticeVector m) i

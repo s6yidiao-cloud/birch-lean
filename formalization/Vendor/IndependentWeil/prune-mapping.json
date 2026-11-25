@@ -1,0 +1,826 @@
+{
+  "_private.WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows.0.AlgebraicGeometry.Scheme.finiteExchangeInvertible": {
+    "module": "WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows",
+    "file": "WeilConjectures/AlgebraicGeometry/AdicCoefficientDatum/FourArrows.lean",
+    "fromLine": 308,
+    "toLine": 330,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5b25cb208b61fc4004f6e9d4a072ae30db035bf350b2b97d29c1ebfcce11368f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.finiteLevelProEtaleBaseChange"
+    ]
+  },
+  "_private.WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows.0.AlgebraicGeometry.Scheme.exchangeTransportRings": {
+    "module": "WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows",
+    "file": "WeilConjectures/AlgebraicGeometry/AdicCoefficientDatum/FourArrows.lean",
+    "fromLine": 332,
+    "toLine": 363,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5b25cb208b61fc4004f6e9d4a072ae30db035bf350b2b97d29c1ebfcce11368f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "_private.WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows.0.AlgebraicGeometry.Scheme.finiteExchangeInvertible"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.AdicCoefficientDatum.finiteExchange_isIso": {
+    "module": "WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows",
+    "file": "WeilConjectures/AlgebraicGeometry/AdicCoefficientDatum/FourArrows.lean",
+    "fromLine": 365,
+    "toLine": 379,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5b25cb208b61fc4004f6e9d4a072ae30db035bf350b2b97d29c1ebfcce11368f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "_private.WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows.0.AlgebraicGeometry.Scheme.exchangeTransportRings"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.AdicCoefficientDatum.finiteExchangeIso": {
+    "module": "WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows",
+    "file": "WeilConjectures/AlgebraicGeometry/AdicCoefficientDatum/FourArrows.lean",
+    "fromLine": 381,
+    "toLine": 391,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5b25cb208b61fc4004f6e9d4a072ae30db035bf350b2b97d29c1ebfcce11368f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.AdicCoefficientDatum.finiteExchange_isIso"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.AdicCoefficientDatum.fourArrows": {
+    "module": "WeilConjectures.AlgebraicGeometry.AdicCoefficientDatum.FourArrows",
+    "file": "WeilConjectures/AlgebraicGeometry/AdicCoefficientDatum/FourArrows.lean",
+    "fromLine": 393,
+    "toLine": 407,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5b25cb208b61fc4004f6e9d4a072ae30db035bf350b2b97d29c1ebfcce11368f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.AdicCoefficientDatum.finiteExchangeIso"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcRefinementMap_isIso": {
+    "module": "WeilConjectures.AlgebraicGeometry.Complete.CompleteCompactSupportProetale",
+    "file": "WeilConjectures/AlgebraicGeometry/Complete/CompleteCompactSupportProetale.lean",
+    "fromLine": 231,
+    "toLine": 243,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "aa6fb6c58d7c703fbc564fea4a29c9107c60816faf8a2bfe4bbe5128eac81585",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcProperOpenGamma_app_isIso"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcCompactificationComparison": {
+    "module": "WeilConjectures.AlgebraicGeometry.Complete.CompleteCompactSupportProetale",
+    "file": "WeilConjectures/AlgebraicGeometry/Complete/CompleteCompactSupportProetale.lean",
+    "fromLine": 245,
+    "toLine": 258,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "aa6fb6c58d7c703fbc564fea4a29c9107c60816faf8a2bfe4bbe5128eac81585",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcRefinementMap_isIso"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcExchange": {
+    "module": "WeilConjectures.AlgebraicGeometry.Complete.CompleteProperOpenGamma",
+    "file": "WeilConjectures/AlgebraicGeometry/Complete/CompleteProperOpenGamma.lean",
+    "fromLine": 619,
+    "toLine": 628,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "4eb58e211b6e06584ce73a9a4bd9fa8e38c53de85c128986a4bf662a5243a3d9",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.completedCompactSupportExchange"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcJ_towerComplete": {
+    "module": "WeilConjectures.AlgebraicGeometry.Complete.CompleteProperOpenGammaIsIso",
+    "file": "WeilConjectures/AlgebraicGeometry/Complete/CompleteProperOpenGammaIsIso.lean",
+    "fromLine": 153,
+    "toLine": 163,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7741f7d2a60e78529b4312897a8f7fe88df882171ae6583518a517eee34925b9",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.completedExtensionZeroComparison"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcProperOpenGamma_app_isIso": {
+    "module": "WeilConjectures.AlgebraicGeometry.Complete.CompleteProperOpenGammaIsIso",
+    "file": "WeilConjectures/AlgebraicGeometry/Complete/CompleteProperOpenGammaIsIso.lean",
+    "fromLine": 269,
+    "toLine": 296,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7741f7d2a60e78529b4312897a8f7fe88df882171ae6583518a517eee34925b9",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcJ_towerComplete"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.completedCompactSupportExchange": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.CompletedCompactSupportExchange",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/CompletedCompactSupportExchange.lean",
+    "fromLine": 90,
+    "toLine": 119,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "416bd53b0b664a7764a45daf09e1969db7a28579bb287ad53c1dec5b21e7dfdc",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcDatumCompletedExchange"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcCompletedExchange_exists": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.CompletedExtensionZeroComparison",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/CompletedExtensionZeroComparison.lean",
+    "fromLine": 1628,
+    "toLine": 1644,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "bcb9a8f7eba9f2205d0bac3fbdd257fecd17be7f71b967f4f8ffa2b39e15b5c3",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.Scheme.completedExtensionZeroComparison": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.CompletedExtensionZeroComparison",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/CompletedExtensionZeroComparison.lean",
+    "fromLine": 1652,
+    "toLine": 1666,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "bcb9a8f7eba9f2205d0bac3fbdd257fecd17be7f71b967f4f8ffa2b39e15b5c3",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcCompletedExchange"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcCompletedExchange": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.CompletedExtensionZeroComparison",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/CompletedExtensionZeroComparison.lean",
+    "fromLine": 1646,
+    "toLine": 1650,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "bcb9a8f7eba9f2205d0bac3fbdd257fecd17be7f71b967f4f8ffa2b39e15b5c3",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcCompletedExchange_exists"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.completedOpenExchangeComparison": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.Open.CompletedOpenExchangeTransport",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/Open/CompletedOpenExchangeTransport.lean",
+    "fromLine": 668,
+    "toLine": 719,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "b324505caae445680b7341ff91ae753fe1f6c7f7f1f8147dc72579d61029ca28",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcCompletedExchange",
+      "AlgebraicGeometry.Scheme.cbcDatumCompletedExchange",
+      "AlgebraicGeometry.Scheme.completedExtensionZeroComparison"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.cbcDatumCompletedExchange": {
+    "module": "WeilConjectures.AlgebraicGeometry.Completed.Open.CompletedOpenExchangeTransport",
+    "file": "WeilConjectures/AlgebraicGeometry/Completed/Open/CompletedOpenExchangeTransport.lean",
+    "fromLine": 650,
+    "toLine": 665,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "b324505caae445680b7341ff91ae753fe1f6c7f7f1f8147dc72579d61029ca28",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.cbcCompletedExchange"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.finiteOriginToConstant_map_ambientExchange_isIso": {
+    "module": "WeilConjectures.AlgebraicGeometry.Finite.Coefficient.FiniteCoefficientExchangeTransport",
+    "file": "WeilConjectures/AlgebraicGeometry/Finite/Coefficient/FiniteCoefficientExchangeTransport.lean",
+    "fromLine": 34,
+    "toLine": 61,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7c22951e0f342d13db077bc0d729b5952b859c42b2da25635ea95779f908b570",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.Scheme.finiteLevelProEtaleBaseChange": {
+    "module": "WeilConjectures.AlgebraicGeometry.Finite.FiniteLevelProEtaleBaseChange",
+    "file": "WeilConjectures/AlgebraicGeometry/Finite/FiniteLevelProEtaleBaseChange.lean",
+    "fromLine": 105,
+    "toLine": 134,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "f6023cefafc7620f9f5e92e43c74dd53e6190f78f676baa47e455112794e4020",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.finiteOriginToConstant_map_ambientExchange_isIso"
+    ]
+  },
+  "CategoryTheory.AdicSites.OrderedExchangeInterface.completionMateComparison": {
+    "module": "WeilConjectures.AlgebraicGeometry.OrderedExchange.ProEtaleConstantReductionTower",
+    "file": "WeilConjectures/AlgebraicGeometry/OrderedExchange/ProEtaleConstantReductionTower.lean",
+    "fromLine": 162,
+    "toLine": 190,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "a16236760ad6db084f84fdc0e3a22186dcbfffd5aac6c9db43b92c2813069d13",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.completeExchange",
+      "CategoryTheory.AdicSites.completionMateComparison",
+      "CategoryTheory.AdicSites.ordinaryExchange",
+      "CategoryTheory.AdicSites.towerExchange"
+    ]
+  },
+  "AlgebraicGeometry.Scheme.pbcTateAmbient_mem": {
+    "module": "WeilConjectures.AlgebraicGeometry.Pbc.PbcCoefficientTwists",
+    "file": "WeilConjectures/AlgebraicGeometry/Pbc/PbcCoefficientTwists.lean",
+    "fromLine": 174,
+    "toLine": 181,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "537270e47c7e724e9fbfa6028b9e35ea735482ec064c944700fe27b6e3b50f01",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.Scheme.pbcTateRational": {
+    "module": "WeilConjectures.AlgebraicGeometry.Pbc.PbcCoefficientTwists",
+    "file": "WeilConjectures/AlgebraicGeometry/Pbc/PbcCoefficientTwists.lean",
+    "fromLine": 183,
+    "toLine": 189,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "537270e47c7e724e9fbfa6028b9e35ea735482ec064c944700fe27b6e3b50f01",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Scheme.pbcTateAmbient_mem"
+    ]
+  },
+  "CategoryTheory.AdicSites.moduleSquare_existsUnique": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 826,
+    "toLine": 833,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "CategoryTheory.AdicSites.completionMateComparison": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 2375,
+    "toLine": 2404,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.completeExchange",
+      "CategoryTheory.AdicSites.ordinaryExchange",
+      "CategoryTheory.AdicSites.towerExchange"
+    ]
+  },
+  "CategoryTheory.AdicSites.moduleSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 835,
+    "toLine": 840,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.moduleSquare_existsUnique"
+    ]
+  },
+  "CategoryTheory.AdicSites.derivedSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 842,
+    "toLine": 850,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.moduleSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.towerModuleSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 852,
+    "toLine": 865,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.moduleSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.ordinaryExchange": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 886,
+    "toLine": 893,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.derivedSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.rightSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 895,
+    "toLine": 902,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.derivedSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.towerSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 867,
+    "toLine": 875,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.towerModuleSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.completeRightSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 904,
+    "toLine": 913,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.rightSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.towerExchange": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 877,
+    "toLine": 884,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.towerSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.completeSquare": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 915,
+    "toLine": 926,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.completeRightSquare"
+    ]
+  },
+  "CategoryTheory.AdicSites.completeExchange": {
+    "module": "WeilConjectures.CategoryTheory.AdicSites.Morphism.CompletionMateComparison",
+    "file": "WeilConjectures/CategoryTheory/AdicSites/Morphism/CompletionMateComparison.lean",
+    "fromLine": 928,
+    "toLine": 936,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "087481664c140cece1a48ca191dd27d8dd8bce7133e1630464896d40391c106d",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "CategoryTheory.AdicSites.completeSquare"
+    ]
+  },
+  "AlgebraicGeometry.coefficientChangeCompatibility": {
+    "module": "WeilConjectures.SixFunctors.CoefficientReduction",
+    "file": "WeilConjectures/SixFunctors/CoefficientReduction.lean",
+    "fromLine": 836,
+    "toLine": 860,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "735c91cb41b61f696955805edba3bd0ffe802b01fbc0d926714f96b7173dd8ef",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.Etale.exists_isDerivedBaseChange_arrowIso_reductionModIdeal_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.CoefficientReduction",
+    "file": "WeilConjectures/SixFunctors/CoefficientReduction.lean",
+    "fromLine": 871,
+    "toLine": 898,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "735c91cb41b61f696955805edba3bd0ffe802b01fbc0d926714f96b7173dd8ef",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.coefficientChangeCompatibility"
+    ]
+  },
+  "AlgebraicGeometry.ProEtale.nonempty_arrowIso_reductionModIdeal_rightDerivedLowerShriekOfCompactificationBaseChangeMap": {
+    "module": "WeilConjectures.SixFunctors.CoefficientReduction",
+    "file": "WeilConjectures/SixFunctors/CoefficientReduction.lean",
+    "fromLine": 916,
+    "toLine": 938,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "735c91cb41b61f696955805edba3bd0ffe802b01fbc0d926714f96b7173dd8ef",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.coefficientChangeCompatibility"
+    ]
+  },
+  "AlgebraicGeometry.Etale.nonempty_iso_derivedHom_of_isHomotopyLimit": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 398,
+    "toLine": 438,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_derivedHom_dualizing",
+      "AlgebraicGeometry.Etale.nonempty_iso_rightDerivedUpperShriek_obj_derivedHom_of_isIso_reductionModIdeal"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegral_and_torAmplitudeIn_of_isHomotopyLimit": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 440,
+    "toLine": 515,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_derivedHom_dualizing",
+      "AlgebraicGeometry.Etale.exists_isHomotopyLimit_dualizing",
+      "AlgebraicGeometry.Etale.nonempty_iso_derivedHom_of_isHomotopyLimit"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegral_exceptionalAdjoint": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 573,
+    "toLine": 633,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_and_torAmplitudeIn_of_isHomotopyLimit",
+      "AlgebraicGeometry.Etale.nonempty_iso_derivedHom_of_isHomotopyLimit_of_derivedComplete"
+    ]
+  },
+  "AlgebraicGeometry.Etale.nonempty_iso_derivedHom_of_isHomotopyLimit_of_derivedComplete": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 546,
+    "toLine": 571,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.nonempty_iso_derivedHom_of_isHomotopyLimit"
+    ]
+  },
+  "AlgebraicGeometry.Etale.preservationMatrix_integral": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 645,
+    "toLine": 716,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_exceptionalAdjoint"
+    ]
+  },
+  "AlgebraicGeometry.Etale.nonempty_iso_rightDerivedUpperShriek_obj_derivedHom_of_isIso_reductionModIdeal": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralExceptionalAdjoint",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralExceptionalAdjoint.lean",
+    "fromLine": 267,
+    "toLine": 289,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "fe8f610918197b2eed79c1a91473d1e3b7b6ebfc9b2dcfc1ed9c801d5b779b64",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_finite"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegral_derivedHom_dualizing": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralVerdier",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralVerdier.lean",
+    "fromLine": 419,
+    "toLine": 449,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "2524d7b68f6a03bacf27d940be80959772cc862319144d7407a1daded0c35812",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.Etale.exists_isHomotopyLimit_dualizing": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralVerdier",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralVerdier.lean",
+    "fromLine": 306,
+    "toLine": 412,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "2524d7b68f6a03bacf27d940be80959772cc862319144d7407a1daded0c35812",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_finite",
+      "AlgebraicGeometry.coefficientChangeCompatibility"
+    ]
+  },
+  "AlgebraicGeometry.Etale.verdierDual_integralStage": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.IntegralVerdier",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/IntegralVerdier.lean",
+    "fromLine": 451,
+    "toLine": 479,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "2524d7b68f6a03bacf27d940be80959772cc862319144d7407a1daded0c35812",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_derivedHom_dualizing"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegral_rightDerivedUpperShriek": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.LocalizationIntegral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/LocalizationIntegral.lean",
+    "fromLine": 485,
+    "toLine": 507,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "ddc7dfa93b5d04d44130d53f227adcb450732a76fcbc8ac2cd4ced1043967b16",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_exceptionalAdjoint"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegralRightDerivedUpperShriek": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.LocalizationIntegral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/LocalizationIntegral.lean",
+    "fromLine": 718,
+    "toLine": 735,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "ddc7dfa93b5d04d44130d53f227adcb450732a76fcbc8ac2cd4ced1043967b16",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_rightDerivedUpperShriek"
+    ]
+  },
+  "AlgebraicGeometry.Etale.boundedConstructibleIntegral_closedSupportTriangle": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.LocalizationIntegral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/LocalizationIntegral.lean",
+    "fromLine": 752,
+    "toLine": 775,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "ddc7dfa93b5d04d44130d53f227adcb450732a76fcbc8ac2cd4ced1043967b16",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_rightDerivedUpperShriek"
+    ]
+  },
+  "AlgebraicGeometry.Etale.torAmplitudeIn_reductionModIdeal_rightDerivedUpperShriek": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.LocalizationIntegral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/LocalizationIntegral.lean",
+    "fromLine": 777,
+    "toLine": 795,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "ddc7dfa93b5d04d44130d53f227adcb450732a76fcbc8ac2cd4ced1043967b16",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.boundedConstructibleIntegral_closedSupportTriangle"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_derivedCompleteIntegral": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Integral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Integral.lean",
+    "fromLine": 150,
+    "toLine": 179,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7fb57638bf941cfd06ff0584120953b73ec7e56fcf022f5dae3b20c7d20939cb",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_finite"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_reductionModIdeal_maximalIdealShrink_pow_map_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Integral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Integral.lean",
+    "fromLine": 181,
+    "toLine": 202,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7fb57638bf941cfd06ff0584120953b73ec7e56fcf022f5dae3b20c7d20939cb",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_finite"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_completion_map_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Integral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Integral.lean",
+    "fromLine": 223,
+    "toLine": 255,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7fb57638bf941cfd06ff0584120953b73ec7e56fcf022f5dae3b20c7d20939cb",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_maximalIdealShrink_pow_map_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_completion_map_projectionMap_of_derivedCompleteIntegral": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Integral",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Integral.lean",
+    "fromLine": 257,
+    "toLine": 284,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "7fb57638bf941cfd06ff0584120953b73ec7e56fcf022f5dae3b20c7d20939cb",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_completion_map_projectionMap",
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_maximalIdealShrink_pow_map_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_reductionModIdeal_pow_map_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Rational",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Rational.lean",
+    "fromLine": 99,
+    "toLine": 113,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "6f85dd7a03f43ec2c0dbcf57bb4a21d751ae2c6db780d14fb58d29e17bf8480f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_maximalIdealShrink_pow_map_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_fromIntegral_map_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Rational",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Rational.lean",
+    "fromLine": 80,
+    "toLine": 97,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "6f85dd7a03f43ec2c0dbcf57bb4a21d751ae2c6db780d14fb58d29e17bf8480f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_completion_map_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.Etale.hasProjectionFormula_field": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.Rational",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/Rational.lean",
+    "fromLine": 115,
+    "toLine": 139,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "6f85dd7a03f43ec2c0dbcf57bb4a21d751ae2c6db780d14fb58d29e17bf8480f",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_fromIntegral_map_projectionMap",
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_pow_map_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_finite": {
+    "module": "WeilConjectures.SixFunctors.Etale.Derived.ProjectionFormula.RestrictScalars",
+    "file": "WeilConjectures/SixFunctors/Etale/Derived/ProjectionFormula/RestrictScalars.lean",
+    "fromLine": 81,
+    "toLine": 97,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "da494eb3795015bf71ad8581112284e6ea8049aeff6544ab7729739286b307c8",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.exists_isDerivedBaseChange_arrowIso_reductionModIdeal_projectionMap"
+    ]
+  },
+  "AlgebraicGeometry.ProEtale.hasProjectionFormula_of_derivedCompleteIntegral": {
+    "module": "WeilConjectures.SixFunctors.ProEtale.FiniteCoefficient.Derived.ProjectionFormula",
+    "file": "WeilConjectures/SixFunctors/ProEtale/FiniteCoefficient/Derived/ProjectionFormula.lean",
+    "fromLine": 387,
+    "toLine": 434,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "73083d14e554febe8ee85e769330fd0d4a03465565fbf40a7c99c38002e049a4",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.Etale.isIso_reductionModIdeal_map_projectionMap_of_derivedCompleteIntegral"
+    ]
+  },
+  "AlgebraicGeometry.ProEtale.isIso_rationalization_map_projectionMap": {
+    "module": "WeilConjectures.SixFunctors.ProEtale.FiniteCoefficient.Derived.ProjectionFormula",
+    "file": "WeilConjectures/SixFunctors/ProEtale/FiniteCoefficient/Derived/ProjectionFormula.lean",
+    "fromLine": 436,
+    "toLine": 470,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "73083d14e554febe8ee85e769330fd0d4a03465565fbf40a7c99c38002e049a4",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.ProEtale.hasProjectionFormula_of_derivedCompleteIntegral"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.exists_weilTrace_of_isPullback": {
+    "module": "WeilConjectures.WeilSheaf.AffineLineBundle",
+    "file": "WeilConjectures/WeilSheaf/AffineLineBundle.lean",
+    "fromLine": 103,
+    "toLine": 131,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "4e910d9aceef62da858f640692c219a2e2c52398471a85890d084c653c313bdb",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.WeilComplex.nonempty_adjunction_derivedLowerShriek_of_isPullback": {
+    "module": "WeilConjectures.WeilSheaf.AffineLineBundle",
+    "file": "WeilConjectures/WeilSheaf/AffineLineBundle.lean",
+    "fromLine": 133,
+    "toLine": 148,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "4e910d9aceef62da858f640692c219a2e2c52398471a85890d084c653c313bdb",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.exists_weilTrace_of_isPullback"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.nonempty_affineLineAdjunction_of_smoothPurity": {
+    "module": "WeilConjectures.WeilSheaf.AffineLineSmoothAdjunction",
+    "file": "WeilConjectures/WeilSheaf/AffineLineSmoothAdjunction.lean",
+    "fromLine": 47,
+    "toLine": 63,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "9d7134b87c7743e2e0f5f52ed9668af00d59a6dce4daa013322345fbada185ae",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.nonempty_derivedLowerShriek_adjunction_of_smooth_of_isSeparated"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.nonempty_derivedLowerShriek_adjunction_of_smooth": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurity",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurity.lean",
+    "fromLine": 280,
+    "toLine": 298,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "37c2f1b9ea3e1e3acac078e8b344f60e8108fefd7db61f0f00f0803ed3219d3b",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  },
+  "AlgebraicGeometry.WeilComplex.exists_natTrans_forget_eq_upperShriekUnitTensorMap": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurity",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurity.lean",
+    "fromLine": 165,
+    "toLine": 212,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "37c2f1b9ea3e1e3acac078e8b344f60e8108fefd7db61f0f00f0803ed3219d3b",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.exists_natTrans_forget_eq_upperShriekUnitTensorMap_of_orientation"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.exists_natTrans_upperShriek_isIso_forget_of_smooth": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurity",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurity.lean",
+    "fromLine": 214,
+    "toLine": 247,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "37c2f1b9ea3e1e3acac078e8b344f60e8108fefd7db61f0f00f0803ed3219d3b",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.exists_natTrans_forget_eq_upperShriekUnitTensorMap"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.nonempty_derivedLowerShriek_adjunction_of_smooth_of_isSeparated": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurity",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurity.lean",
+    "fromLine": 251,
+    "toLine": 278,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "37c2f1b9ea3e1e3acac078e8b344f60e8108fefd7db61f0f00f0803ed3219d3b",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.exists_natTrans_upperShriek_isIso_forget_of_smooth"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.nonempty_rightAdjoint_obj_adicConstant_iso_of_smooth": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurity",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurity.lean",
+    "fromLine": 300,
+    "toLine": 324,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "37c2f1b9ea3e1e3acac078e8b344f60e8108fefd7db61f0f00f0803ed3219d3b",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.nonempty_derivedLowerShriek_adjunction_of_smooth_of_isSeparated"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.exists_natTrans_forget_eq_upperShriekUnitTensorMap_of_orientation": {
+    "module": "WeilConjectures.WeilSheaf.SmoothPurityMapOfOrientation",
+    "file": "WeilConjectures/WeilSheaf/SmoothPurityMapOfOrientation.lean",
+    "fromLine": 66,
+    "toLine": 117,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "5683e0d883b9dade1ddf33f952639a6efed68d45c343f7e2b0d104ad74152400",
+    "reason": "concrete downstream consumer",
+    "retainedSourceDependenciesRemoved": [
+      "AlgebraicGeometry.WeilComplex.exists_coprojection_forget_eq_upperShriekUnitTensorMap"
+    ]
+  },
+  "AlgebraicGeometry.WeilComplex.exists_coprojection_forget_eq_upperShriekUnitTensorMap": {
+    "module": "WeilConjectures.WeilSheaf.UpperShriekUnitTensorMap",
+    "file": "WeilConjectures/WeilSheaf/UpperShriekUnitTensorMap.lean",
+    "fromLine": 65,
+    "toLine": 102,
+    "pin": "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9",
+    "originalSHA256": "22ab57443f46d10be95c7cd6ff3b845f817ea1096f0dc826fa0e600f8342888b",
+    "reason": "explicit sorry",
+    "retainedSourceDependenciesRemoved": []
+  }
+}

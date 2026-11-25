@@ -53,10 +53,9 @@ private theorem finalWeight_full_count_eq {n : ℕ} (F : IntForm n) {w : (Fin n 
   simpa only [one_mul, weightedZeros] using compactWeightedZeros_eq_box F w hB
     (R := 1) (fun x hx i => (hw.cubeSupported x hx i).le)
 
-/-- The weighted form asymptotic from the prime-field Deligne bound, using the
-unit-cube form of the strict-threshold argument. -/
-theorem fixedPartialFormAsymptotic_of_deligne
-    (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FixedPartialFormAsymptotic := by
+/-- The weighted form asymptotic from the critical full-circle moment. -/
+theorem fixedPartialFormAsymptotic_of_formCriticalMoments
+    (hCritical : ∀ d, FormCriticalMomentBounds d) : FixedPartialFormAsymptotic := by
   intro d n hd
   let saving (σ : ℕ) := if dimensionThreshold d < n - σ then v2FormSaving d (n - σ) else 1
   let dims := Finset.range (n + 1)
@@ -70,15 +69,24 @@ theorem fixedPartialFormAsymptotic_of_deligne
     have hν := (finalFormThreshold_iff hd).mp hthreshold
     have hσmem : σ ∈ dims := Finset.mem_range.mpr (by omega)
     have hη : dims.inf' hne saving ≤ v2FormSaving d (n - σ) := by
-      simpa [saving, hν] using Finset.inf'_le saving hσmem
-    have hterminal : ∀ r, 3 ≤ r → r < d → PrimeDeligneEstimate r := fun r hr _ => hDeligne r hr
-    obtain ⟨hmass, hI, C, hC, herror⟩ := v2CubeFormAsymptotic_of_weilII hd hF hσ hν
-      hw.toCompactWeight hw.cubeSupported htrans hterminal
+      calc
+        dims.inf' hne saving ≤ saving σ := Finset.inf'_le saving hσmem
+        _ = v2FormSaving d (n - σ) := ite_eq_left hν
+    obtain ⟨hmass, hI, C, hC, herror⟩ := v2CubeFormAsymptotic_of_formCriticalMoments hd hF hσ hν
+      hw.toCompactWeight hw.cubeSupported htrans (hCritical d)
     refine ⟨hmass, hI, C, hC, ?_⟩
     filter_upwards [herror, eventually_ge_atTop (1 : ℝ)] with B hB hB₁
     rw [finalWeight_full_count_eq F hw (zero_lt_one.trans_le hB₁)]
     exact hB.trans (mul_le_mul_of_nonneg_left
       (Real.rpow_le_rpow_of_exponent_le hB₁ (sub_le_sub_left hη _)) hC.le)
+
+theorem fixedPartialFormAsymptotic_of_terminalPrimeBounds
+    (hPrime : ∀ d, TerminalPrimeBounds d) : FixedPartialFormAsymptotic :=
+  fixedPartialFormAsymptotic_of_formCriticalMoments fun d => FormCriticalMomentBounds.of_terminalPrimeBounds (hPrime d)
+
+theorem fixedPartialFormAsymptotic_of_deligne
+    (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FixedPartialFormAsymptotic :=
+  fixedPartialFormAsymptotic_of_terminalPrimeBounds (fun _ => TerminalPrimeBounds.of_deligne fun r hr _ => hDeligne r hr)
 
 private theorem finalSmoothHassePrinciple_of_formAsymptotic (h : FixedPartialFormAsymptotic) :
     FinalSmoothHassePrinciple := by
@@ -109,10 +117,15 @@ private theorem finalSmoothHassePrinciple_of_formAsymptotic (h : FixedPartialFor
   obtain ⟨B, hB⟩ := (eventually_weightedZeros_pos_of_asymptotic (d := d) hmain hη hC herr).exists
   exact hasNonsingularZero_rat_of_weightedZeros_pos hF htrans hB
 
-/-- The smooth Hasse principle under the same prime-field Deligne estimate. -/
-theorem finalSmoothHassePrinciple
-    (hDeligne : ∀ r, 3 ≤ r → PrimeDeligneEstimate r) : FinalSmoothHassePrinciple :=
-  finalSmoothHassePrinciple_of_formAsymptotic (fixedPartialFormAsymptotic_of_deligne hDeligne)
+/-- The smooth Hasse principle from the critical full-circle moment. -/
+theorem finalSmoothHassePrinciple_of_formCriticalMoments
+    (hCritical : ∀ d, FormCriticalMomentBounds d) : FinalSmoothHassePrinciple :=
+  finalSmoothHassePrinciple_of_formAsymptotic (fixedPartialFormAsymptotic_of_formCriticalMoments hCritical)
+
+/-- The smooth Hasse principle from the uniform terminal prime-field bounds. -/
+theorem finalSmoothHassePrinciple_of_terminalPrimeBounds
+    (hPrime : ∀ d, TerminalPrimeBounds d) : FinalSmoothHassePrinciple :=
+  finalSmoothHassePrinciple_of_formAsymptotic (fixedPartialFormAsymptotic_of_terminalPrimeBounds hPrime)
 
 end
 

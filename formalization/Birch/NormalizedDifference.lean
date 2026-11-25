@@ -22,7 +22,7 @@ noncomputable section
 
 private lemma smoothOrder_le (j : ℕ) : (j : ℕ∞ω) ≤ ∞ := WithTop.coe_le_coe.mpr le_top
 
-private lemma smoothOrder_lt (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.coe_lt_top j)
+private lemma smoothOrder_lt (j : ℕ) : (j : ℕ∞ω) < ∞ := WithTop.coe_lt_coe.mpr (ENat.natCast_lt_top j)
 
 /-- A common norm bound for derivatives through order `N` on a closed ball. -/
 def DerivativesBoundedOnBall {X Y : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]

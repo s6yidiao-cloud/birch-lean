@@ -1,7 +1,11 @@
-import Birch.Statement
-import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.Tactic
+module
+
+public import Birch.Statement
+public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 # Weighted exponential sums and orthogonality
@@ -71,12 +75,12 @@ theorem measurableSet_majorArcs (d : ℕ) (P : ℝ) :
     else ∅
   have hA : majorArcs d P = ⋃ (q : ℕ) (a : ℤ), A q a := by
     ext α
-    simp only [majorArcs, mem_setOf_eq, mem_iUnion]
+    simp only [majorArcs, Set.mem_ofPred_eq, mem_iUnion]
     refine exists_congr fun q ↦ exists_congr fun a ↦ ?_
     by_cases h : 0 < q ∧ (q : ℝ) ≤ P ^ (1 / 2 : ℝ) ∧ a.natAbs.Coprime q
-    · simp only [A, if_pos h, mem_setOf_eq]
+    · simp only [A, ite_eq_left h, Set.mem_ofPred_eq]
       exact ⟨fun hh ↦ hh.2.2.2, fun hh ↦ ⟨h.1, h.2.1, h.2.2, hh⟩⟩
-    · simp only [A, if_neg h, notMem_empty, iff_false]
+    · simp only [A, ite_eq_right h, notMem_empty, iff_false]
       exact fun hh ↦ h ⟨hh.1, hh.2.1, hh.2.2.1⟩
   rw [hA]
   refine MeasurableSet.iUnion fun q ↦ MeasurableSet.iUnion fun a ↦ ?_
@@ -109,7 +113,7 @@ theorem phase_integer_orthogonality (m : ℤ) :
     unfold phase
     push_cast
     ring_nf
-  simp_rw [if_neg hm, hphase, circleMeasure, ← intervalIntegral.integral_of_le zero_le_one]
+  simp_rw [ite_eq_right hm, hphase, circleMeasure, ← intervalIntegral.integral_of_le zero_le_one]
   rw [integral_exp_mul_complex hcoef]
   simp only [Complex.ofReal_one, mul_one, Complex.ofReal_zero, mul_zero, Complex.exp_zero]
   have hexp : Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (m : ℂ)) = 1 := by

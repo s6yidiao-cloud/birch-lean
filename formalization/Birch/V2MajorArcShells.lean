@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.MajorArcLatticePoisson
 import Birch.V2CoverLocal
 
@@ -343,12 +344,12 @@ theorem measurableSet_v2MajorArcs (d : ℕ) (Δ P : ℝ) : MeasurableSet (v2Majo
     {α | |α - (a : ℝ) / q| ≤ P^(-(d : ℝ) + Δ)} else ∅
   have heq : v2MajorArcs d Δ P = ⋃ (q : ℕ) (a : ℤ), A q a := by
     ext α
-    simp only [v2MajorArcs, mem_setOf_eq, mem_iUnion]
+    simp only [v2MajorArcs, Set.mem_ofPred_eq, mem_iUnion]
     refine exists_congr fun q => exists_congr fun a => ?_
     by_cases h : 0 < q ∧ (q : ℝ) ≤ P^Δ ∧ a.natAbs.Coprime q
-    · simp only [A, if_pos h, mem_setOf_eq]
+    · simp only [A, ite_eq_left h, Set.mem_ofPred_eq]
       exact ⟨fun hh => hh.2.2.2, fun hh => ⟨h.1, h.2.1, h.2.2, hh⟩⟩
-    · simp only [A, if_neg h, notMem_empty, iff_false]
+    · simp only [A, ite_eq_right h, notMem_empty, iff_false]
       exact fun hh => h ⟨hh.1, hh.2.1, hh.2.2.1⟩
   rw [heq]
   refine MeasurableSet.iUnion fun q => MeasurableSet.iUnion fun a => ?_
@@ -658,7 +659,7 @@ private theorem formConductorMass_nonneg {n : ℕ} (F : IntForm n) (q : ℕ) :
 
 private theorem norm_unitConductorSum_le_formConductorMass {n : ℕ} (F : IntForm n) (q : ℕ) [NeZero q] :
     ‖unitConductorSum F q‖ ≤ formConductorMass F q := by
-  rw [formConductorMass, dif_neg (NeZero.ne q), unitConductorSum]
+  rw [formConductorMass, dite_eq_right (NeZero.ne q), unitConductorSum]
   exact norm_sum_le _ _
 
 /-- Absolute convergence over reduced numerators implies convergence of the
@@ -676,8 +677,8 @@ private theorem formCompleteSumNormAt_shell_eq {n Q : ℕ} (hQ : 1 ≤ Q) (F : I
   intro q hq
   have hq₂ := Nat.succ_le_of_lt (hQ.trans_lt (Finset.mem_Ioc.mp hq).1)
   have hq₀ : q ≠ 0 := by omega
-  letI : NeZero q := ⟨hq₀⟩
-  simp only [formConductorMass, formCompleteSumNormAt, dif_neg hq₀]
+  let : NeZero q := ⟨hq₀⟩
+  simp only [formConductorMass, formCompleteSumNormAt, dite_eq_right hq₀]
   exact (sum_zmod_units_eq_reducedNumerators q hq₂ (fun a => ‖completeSum F q a‖)).symm
 
 private theorem formConductorMass_tail_of_shell_decay {n : ℕ} (F : IntForm n)
@@ -769,7 +770,7 @@ theorem formCompleteSumShell_decay_of_minorIntegral {n d : ℕ} {F : IntForm n}
   have hX : 0 ≤ P^b := Real.rpow_nonneg hP₀.le _
   obtain ⟨hq, _, hqP, _, _, _⟩ := (mem_rationalShellCenters hX).mp hj
   have hq₀ : q ≠ 0 := by omega
-  letI : NeZero q := ⟨hq₀⟩
+  let : NeZero q := ⟨hq₀⟩
   have hqR : (0 : ℝ) < q := by positivity
   let γ := P^d * (α - (a : ℝ)/q)
   have hγ : |γ| ≤ r := by

@@ -274,7 +274,7 @@ theorem coverConductorMass_tail_of_coverNormalizedMinor {n d e : ℕ} {F : IntFo
   rintro ⟨q,a⟩ hj α hα
   have hp : 0 < P := by linarith
   obtain ⟨hq, _, hqB, _, _, _⟩ := (mem_rationalShellCenters (by positivity)).1 hj
-  letI : NeZero q := ⟨by omega⟩
+  let : NeZero q := ⟨by omega⟩
   let γ := P^d * (α - (a : ℝ)/q)
   have ha := (mem_rationalShellInterval (R := r*P^(-(d : ℝ))) (q := q) (a := a)).1 hα
   have hγ : |γ| ≤ r := by

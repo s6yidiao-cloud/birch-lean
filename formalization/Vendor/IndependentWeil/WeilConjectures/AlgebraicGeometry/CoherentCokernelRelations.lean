@@ -1,0 +1,83 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.Coherent
+import WeilConjectures.AlgebraicGeometry.FiniteTypeEpiImage
+import WeilConjectures.AlgebraicGeometry.CoherentCokernelRelationsLocal
+import all WeilConjectures.AlgebraicGeometry.CoherentFiniteTypeSubKernel
+import all WeilConjectures.AlgebraicGeometry.CoherentKernelConditionRestriction
+
+/-! # Coherent CokernelRelations
+
+## References
+
+* Stacks Project, Tag 01BY
+-/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits TopologicalSpace
+
+namespace AlgebraicGeometry.RingedSpace
+
+/-- Relations in the cokernel of a map from a finite type module to a coherent module
+are of finite type (Stacks, Tag 01BY). -/
+theorem coherent_cokernel_relations (X : RingedSpace.{u})
+    (F G : SheafOfModules.{u} (moduleRings X)) (f : F ⟶ G)
+    (hF : F.IsFiniteType) (hG : IsCoherent X G)
+    (U : Opens X) (n : ℕ)
+    (g : SheafOfModules.free (R := (moduleRings X).over U) (ULift.{u} (Fin n)) ⟶
+      (cokernel f).over U) :
+    (kernel g).IsFiniteType := by
+  classical
+  let R := moduleRings X
+  choose V hVU hxV m ψ e he using
+    fun x : U ↦ coherent_cokernel_relations_local X F G f hF hG U n g x x.property
+  let W : U → Over U := fun x ↦ Over.mk (homOfLE (hVU x))
+  have hW : ((Opens.grothendieckTopology X).over U).CoversTop W := by
+    intro Y
+    rw [GrothendieckTopology.mem_over_iff]
+    intro x hx
+    let z : U := ⟨x, Y.hom.le hx⟩
+    let Z : Over U := Over.mk (homOfLE (inf_le_left.trans (hVU z)) : V z ⊓ Y.left ⟶ U)
+    let a : Z ⟶ Y := Over.homMk (homOfLE inf_le_right)
+    let b : Z ⟶ W z := Over.homMk (homOfLE inf_le_left)
+    refine ⟨V z ⊓ Y.left, homOfLE inf_le_right, ?_, hxV z, hx⟩
+    exact ⟨Z, a, 𝟙 _, ⟨z, ⟨b⟩⟩, by simp [a]⟩
+  have hlocal (x : U) : ((kernel g).over (W x)).IsFiniteType := by
+    have : Epi (e x) := he x
+    have : ((SheafOfModules.overMap R (homOfLE (hVU x))).obj
+        (kernel g)).IsFiniteType :=
+      sheaf_finiteType_of_epi (R := R.over (V x))
+        (A := kernel (ψ x)) (e x) (hG.2 (V x) (m x) (ψ x))
+    let E := SheafOfModules.pushforwardPushforwardEquivalence.{u}
+      (Over.iteratedSliceEquiv (W x))
+      (S := (R.over U).over (W x)) (R := R.over (W x).left) (𝟙 _) (𝟙 _)
+      (by ext : 2; exact R.1.map_id _) (by ext : 2; exact R.1.map_id _)
+    have (Z : Over (W x)) : (Over.post (Over.iteratedSliceEquiv (W x)).functor).IsContinuous
+        ((((Opens.grothendieckTopology X).over U).over (W x)).over Z)
+        (((Opens.grothendieckTopology X).over (W x).left).over
+          ((Over.iteratedSliceEquiv (W x)).functor.obj Z)) :=
+      Functor.IsCoverDense.isContinuous _ _ _
+        ((Functor.IsDenseSubsite.coverPreserving _ _
+          (Over.iteratedSliceEquiv (W x)).functor).overPost Z)
+    have : (E.functor.obj
+        ((SheafOfModules.overMap R (homOfLE (hVU x))).obj (kernel g))).IsFiniteType :=
+      finiteType_pushforward_leftAdjoint (Over.iteratedSliceEquiv (W x)).functor
+        (𝟙 _) (Iso.refl _)
+    let ek : E.functor.obj
+        ((SheafOfModules.overMap R (homOfLE (hVU x))).obj (kernel g)) ≅
+        (kernel g).over (W x) :=
+      (SheafOfModules.fullyFaithfulForget _).preimageIso
+        (PresheafOfModules.isoMk (fun Z ↦ Iso.refl _))
+    exact finiteType_of_iso (R := (R.over U).over (W x)) ek
+  exact finiteType_of_cover (kernel g) W hW hlocal
+
+end AlgebraicGeometry.RingedSpace

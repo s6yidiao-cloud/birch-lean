@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+
+module
+
+public import WeilConjectures.AlgebraicGeometry.DerivedCategory
+import WeilConjectures.Topology.SheafIsomorphismLocalOpenCover
+
+@[expose] public section
+
+set_option autoImplicit false
+universe u w
+open CategoryTheory CategoryTheory.Limits
+
+namespace AlgebraicGeometry.Scheme
+
+attribute [local instance] Functor.additive_of_preserves_binary_products
+
+/-- Derived restriction detects isomorphisms on a two-member open cover.
+(Stacks, Tag 08DF) -/
+theorem derived_restriction_isIso_open_cover (X : Scheme.{u}) (U V : X.Opens)
+    (hcover : U ⊔ V = ⊤)
+    [HasDerivedCategory.{w} (SheafOfModules.{u} (moduleRings X.toRingedSpace))]
+    [∀ W : X.Opens,
+      HasDerivedCategory.{w} (SheafOfModules.{u} ((moduleRings X.toRingedSpace).over W))]
+    {E F : schemeDerivedCategory X} (φ : E ⟶ F)
+    (hU : IsIso ((SheafOfModules.overFunctor.{u}
+      (moduleRings X.toRingedSpace) U).mapDerivedCategory.map φ))
+    (hV : IsIso ((SheafOfModules.overFunctor.{u}
+      (moduleRings X.toRingedSpace) V).mapDerivedCategory.map φ)) : IsIso φ := by
+  apply (DerivedCategory.isIso_iff _ φ).2
+  intro n
+  let W : Bool → X.Opens := fun b ↦ if b then U else V
+  have hW : ⨆ b, W b = ⊤ := by
+    simpa [W, iSup_bool_eq] using hcover
+  apply (sheaf_module_isIso_iff_isIso_over_open_cover
+    X.toRingedSpace Bool W hW _ _ _).2
+  intro b
+  have hb : IsIso ((SheafOfModules.overFunctor.{u}
+      (moduleRings X.toRingedSpace) (W b)).mapDerivedCategory.map φ) := by
+    cases b
+    · exact hV
+    · exact hU
+  exact (NatIso.isIso_map_iff
+    ((SheafOfModules.overFunctor.{u} (moduleRings X.toRingedSpace)
+      (W b)).mapDerivedCategoryHomologyFunctorIso n) φ).2 (by
+        dsimp
+        infer_instance)
+
+end AlgebraicGeometry.Scheme

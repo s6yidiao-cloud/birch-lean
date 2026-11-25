@@ -95,7 +95,7 @@ theorem measurableSet_primeHit (p : ℕ) (u : ℝ) :
     if ¬ (p : ℤ) ∣ a then {x | |x - (a : ℝ) / p| ≤ u / (p : ℝ)} else ∅
   have hC : {x | primeHit p u x} = ⋃ a : ℤ, C a := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, primeHit]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, primeHit]
     apply exists_congr
     intro a
     by_cases ha : (p : ℤ) ∣ a <;> simp [C, ha]
@@ -144,7 +144,7 @@ theorem measure_zero_le_variance {Ω : Type*} [MeasurableSpace Ω] (μ : Measure
   have hpos : 0 < avg ^ 2 := by positivity
   have hsubset : {x | f x = 0} ⊆ {x | avg ^ 2 ≤ (f x - avg) ^ 2} := by
     intro x hx
-    simp only [Set.mem_setOf_eq] at hx ⊢
+    simp only [Set.mem_ofPred_eq] at hx ⊢
     rw [hx, zero_sub, neg_sq]
   have hmarkov := mul_meas_ge_le_integral_of_nonneg (ae_of_all μ hsq) hint (avg ^ 2)
   apply (ENNReal.le_ofReal_iff_toReal_le (measure_ne_top μ _)
@@ -375,7 +375,7 @@ theorem primePairMultiplicity_le (T : Finset (ℕ × ℕ)) {j D : ℕ} {P : ℝ}
     (Finset.prod_dvd_prod_of_subset S j.primeFactors id hS).trans (Nat.prod_primeFactors_dvd j)
   have hlow : P ^ S.card ≤ ∏ p ∈ S, (p : ℝ) := by
     rw [← Finset.prod_const]
-    apply Finset.prod_le_prod (fun _ _ => by linarith)
+    apply Finset.prod_le_prod₀ (fun _ _ => by linarith)
     intro p hpS
     obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hpS
     exact (hp q (Finset.mem_filter.1 hq).1).2

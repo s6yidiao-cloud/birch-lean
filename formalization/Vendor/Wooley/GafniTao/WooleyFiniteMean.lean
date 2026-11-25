@@ -44,7 +44,7 @@ theorem wooley_sum_grid_character (q k : ℕ) [NeZero q]
   by_cases hd : d = 0
   · subst d
     simp
-  · rw [if_neg hd]
+  · rw [ite_eq_right hd]
     obtain ⟨j, hj⟩ : ∃ j, d j ≠ 0 := by
       simpa only [Function.ne_iff, Pi.zero_apply] using hd
     rw [prod_eq_zero (mem_univ j)]
@@ -176,7 +176,7 @@ theorem wooleyModularCount_cast_complex (q s k Q : ℕ) :
     (wooleyModularCount s k Q q : ℂ) =
       ∑ xy : FordVinogradovTuple s Q × FordVinogradovTuple s Q,
         if wooleyModularDisplacement q s k Q xy = 0 then 1 else 0 := by
-  letI : Fintype (WooleyModularSolution s k Q q) := Fintype.ofFinite _
+  let : Fintype (WooleyModularSolution s k Q q) := Fintype.ofFinite _
   rw [wooleyModularCount, Nat.card_eq_fintype_card]
   unfold WooleyModularSolution
   rw [Fintype.card_subtype, Finset.card_eq_sum_ones]
@@ -302,7 +302,7 @@ theorem wooley_equations_3_5_to_3_7
     letI : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
     wooleyMonomialNormalizedGridMean s k Q (p ^ B) =
       (wooleyPadicCount s k Q p B : ℝ) / ((Q ^ s : ℕ) : ℝ) := by
-  letI : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
+  let : NeZero (p ^ B) := ⟨pow_ne_zero B hp.ne_zero⟩
   rw [wooleyMonomialNormalizedGridMean_eq_count hQ,
     wooleyModularCount_primePower_eq_padic]
 

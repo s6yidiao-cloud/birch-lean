@@ -1,0 +1,37 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+public import Mathlib.Algebra.Homology.DerivedCategory.ExactFunctor
+
+/-! # The derived universal property of an ordinary scalar unit
+
+The coefficient functor and its exactness are parameters. Keeping this universal
+property abstract prevents repeated expansion of concrete sheaf constructions.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+universe uA uB vA vB wA wB
+open CategoryTheory CategoryTheory.Limits
+namespace CategoryTheory.Functor
+
+/-- For an exact additive functor U:A→B between abelian categories, objects F in B and H in A
+and a morphism η:F→U(H), `DerivedUnit(U,F,H,η)` says that composition with single(η) followed
+by the inverse exact-functor single comparison induces a bijection
+Hom(single H,K)→Hom(single F,DU(K)) for every unbounded complex K
+(Stacks, Tags 0152, 06YY, 0GLZ). -/
+def DerivedUnit
+    {A : Type uA} {B : Type uB} [Category.{vA} A] [Category.{vB} B]
+    [Abelian A] [Abelian B]
+    [HasDerivedCategory.{wA} A] [HasDerivedCategory.{wB} B]
+    (U : A ⥤ B) [U.Additive] [PreservesFiniteLimits U] [PreservesFiniteColimits U]
+    (F : B) (H : A) (η : F ⟶ U.obj H) : Prop :=
+  ∀ K : DerivedCategory A,
+    Function.Bijective (fun f : (DerivedCategory.singleFunctor A 0).obj H ⟶ K ↦
+      (DerivedCategory.singleFunctor B 0).map η ≫
+        (U.mapDerivedCategorySingleFunctor 0).inv.app H ≫ U.mapDerivedCategory.map f)
+
+end CategoryTheory.Functor

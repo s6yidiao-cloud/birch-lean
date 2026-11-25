@@ -1,0 +1,52 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+public import WeilConjectures.AlgebraicGeometry.AdicFiniteReductionData
+public import WeilConjectures.AlgebraicGeometry.CoefficientTorFlatModel
+import WeilConjectures.AlgebraicGeometry.AdicFiniteTransitionTensorSequenceCore
+
+/-! # The tensor sequence underlying one adic reduction transition
+
+## References
+
+* Stacks Project, Tags 09C2 and 08FZ
+-/
+
+@[expose] public noncomputable section
+set_option autoImplicit false
+set_option synthInstance.maxSize 2048
+attribute [-instance] CategoryTheory.GrothendieckTopology.hasSheafify_of_essentiallySmall
+universe u v
+open CategoryTheory CategoryTheory.Limits CategoryTheory.ConstantCompletion
+namespace AlgebraicGeometry.Scheme
+
+/-- One normalized quotient transition has a short exact cochain presentation whose
+kernel homology is a residue tensor test. There is no Tor bound, product or completeness
+hypothesis in this assertion (Stacks, Tags 09C2, 06YS and 06YY). -/
+theorem adicFiniteTransition_tensor_sequence
+    (X : Scheme.{u}) (A : Type (max v (u + 1))) [CommRing A] (J : Ideal A)
+    (N : adicFiniteAmbient.{u, v} X A) (n : ℕ) :
+    ∃ P : Cx (constant (coefficientProEtaleModelTopology.{u, v} X) (adicFiniteCoeff J 0)),
+      P.IsKFlatIndependentCoefficients ∧
+      Nonempty ((Q _).obj P ≅ adicFiniteReduction.{u, v} X J N 0) ∧
+      ∃ (M : Mod (constant (coefficientProEtaleModelTopology.{u, v} X)
+          (adicFiniteCoeff J 0)))
+        (S : ShortComplex (Cx (constant (coefficientProEtaleModelTopology.{u, v} X) A))),
+        S.ShortExact ∧
+        ∃ (e₂ : (Q _).obj S.X₂ ≅ adicFiniteUnderlying.{u, v} X J N (n + 1))
+          (e₃ : (Q _).obj S.X₃ ≅ adicFiniteUnderlying.{u, v} X J N n),
+          (Q _).map S.g ≫ e₃.hom = e₂.hom ≫ adicFiniteTransition.{u, v} X J N n ∧
+          ∀ q : ℤ, Nonempty (S.X₁.homology q ≅
+            (res (quotient (coefficientProEtaleModelTopology.{u, v} X) A J 0)).obj
+              (coefficientModelTensorTest _ P M q)) := by
+  let T := coefficientProEtaleModelTopology.{u, v} X
+  let R := constant T (adicFiniteCoeff J 0)
+  obtain ⟨P, hP, _, eP⟩ := exists_coefficientModelFlatKFlatRepresentative
+    (R := R) (adicFiniteReduction.{u, v} X J N 0)
+  refine ⟨P, hP, eP, ?_⟩
+  exact adicFiniteTransition_tensor_sequence_core X A J N n P hP eP
+
+end AlgebraicGeometry.Scheme

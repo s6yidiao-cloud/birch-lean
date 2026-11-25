@@ -1,4 +1,5 @@
 import Birch.CompletionConditional
+import Birch.AffineDomainHeight
 import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
 import Mathlib.RingTheory.IntegralClosure.GoingDown
 import Mathlib.RingTheory.KrullDimension.Field
@@ -11,57 +12,6 @@ open Algebra MvPolynomial
 
 namespace Birch
 
-/- The height argument follows the Noether-normalization and going-down proof
-in AxiomMath/Stacks, RingTheory/KrullDimension/FiniteTypeOverField.lean at
-f56a316ddf7a930906d88b78d6f9a2668cffd0cf (Apache-2.0, see LICENSES). -/
-
-private theorem height_maximal_mvPolynomial {K : Type*} [Field K] {n : ℕ}
-    (P : Ideal (MvPolynomial (Fin n) K)) [P.IsMaximal] : P.height = n := by
-  induction n with
-  | zero =>
-    have h := Ideal.height_le_ringKrullDim_of_ne_top (I := P) Ideal.IsPrime.ne_top'
-    have hz : ringKrullDim (MvPolynomial (Fin 0) K) = 0 := by simp
-    rw [hz] at h
-    exact le_antisymm (by exact_mod_cast h) (by simp)
-  | succ n ih =>
-    let e := (MvPolynomial.finSuccEquiv K n).toRingEquiv
-    let Q := Ideal.map e P
-    let q := Q.comap Polynomial.C
-    haveI : Q.IsMaximal := Ideal.map_isMaximal_of_equiv e
-    haveI : q.IsMaximal := Polynomial.isMaximal_comap_C_of_isJacobsonRing Q
-    haveI : Q.LiesOver q := ⟨by rw [Ideal.under_def, Polynomial.algebraMap_eq]⟩
-    rw [← RingEquiv.height_map e P, Polynomial.height_eq_height_add_one q Q, ih q]
-    push_cast
-    rfl
-
-/-- Any maximal ideal in a finitely generated domain over a field has height
-at least the dimension of the domain. -/
-theorem ringKrullDim_le_height_of_affineDomain {K A : Type*} [Field K] [CommRing A]
-    [IsDomain A] [Algebra K A] [Algebra.FiniteType K A] (m : Ideal A) [m.IsMaximal] :
-    ringKrullDim A ≤ (m.height : WithBot ℕ∞) := by
-  obtain ⟨s,g,hg,hint⟩ := exists_integral_inj_algHom_of_fg K A
-  let R := MvPolynomial (Fin s) K
-  letI : Algebra R A := g.toRingHom.toAlgebra
-  letI : Algebra.IsIntegral R A := algebraMap_isIntegral_iff.mp hint
-  letI : FaithfulSMul R A := (faithfulSMul_iff_algebraMap_injective R A).mpr hg
-  letI : IsNoetherianRing A := Algebra.FiniteType.isNoetherianRing K A
-  let q := m.comap (algebraMap R A)
-  haveI : q.IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal m
-  haveI : m.LiesOver q := ⟨rfl⟩
-  have hq : q.height = s := height_maximal_mvPolynomial q
-  have hh : (s : ℕ∞) ≤ m.height := by
-    rw [Ideal.height_eq_height_add_of_liesOver_of_hasGoingDown q m, hq]
-    exact le_self_add
-  have hmono : StrictMono (PrimeSpectrum.comap (algebraMap R A)) := by
-    intro a b hab
-    letI : a.asIdeal.IsPrime := a.isPrime
-    exact Ideal.IsIntegral.comap_lt_comap (R := R) (A := A) hab
-  have h : ringKrullDim A ≤ ringKrullDim R := Order.krullDim_le_of_strictMono _ hmono
-  have hr : ringKrullDim R = (s : WithBot ℕ∞) := by
-    simp [R, MvPolynomial.ringKrullDim_of_isNoetherianRing]
-  rw [hr] at h
-  exact h.trans (WithBot.coe_le_coe.mpr hh)
-
 /-- A maximal ideal of an affine algebra has full height when it lies on
 each irreducible component. -/
 theorem ringKrullDim_le_height_of_affine_components {K A : Type*} [Field K] [CommRing A]
@@ -70,14 +20,14 @@ theorem ringKrullDim_le_height_of_affine_components {K A : Type*} [Field K] [Com
   classical
   unfold ringKrullDim Order.krullDim
   refine iSup_le fun p => ?_
-  letI : p.head.asIdeal.IsPrime := p.head.isPrime
+  let : p.head.asIdeal.IsPrime := p.head.isPrime
   obtain ⟨q,hq,hqle⟩ := Ideal.exists_minimalPrimes_le (I := (⊥ : Ideal A))
     (J := p.head.asIdeal) bot_le
-  letI : q.IsPrime := hq.isPrime
+  let : q.IsPrime := hq.isPrime
   let π := Ideal.Quotient.mk q
   let M := Ideal.map π m
   have hqm : q ≤ m := hm q hq
-  haveI : M.IsMaximal := Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective
+  have : M.IsMaximal := Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective
     (by rwa [Ideal.mk_ker])
   have hM : M.comap π = m := by
     rw [Ideal.comap_map_of_surjective _ Ideal.Quotient.mk_surjective, ← RingHom.ker_eq_comap_bot,
@@ -104,20 +54,20 @@ private theorem ringKrullDim_le_of_integral_injective {R S : Type*}
     [CommRing R] [CommRing S] [Algebra R S] [Algebra.IsIntegral R S]
     (hf : Function.Injective (algebraMap R S)) : ringKrullDim R ≤ ringKrullDim S := by
   let f := algebraMap R S
-  letI : FaithfulSMul R S := (faithfulSMul_iff_algebraMap_injective R S).2 hf
+  let : FaithfulSMul R S := (faithfulSMul_iff_algebraMap_injective R S).2 hf
   have liftChain (p : LTSeries (PrimeSpectrum R)) :
       ∃ q : LTSeries (PrimeSpectrum S), q.length = p.length ∧
         q.last.asIdeal.comap f = p.last.asIdeal := by
     induction p using RelSeries.inductionOn' with
     | singleton P =>
-      haveI : P.asIdeal.IsPrime := P.isPrime
+      have : P.asIdeal.IsPrime := P.isPrime
       let q := Classical.choice (show Nonempty (P.asIdeal.primesOver S) from inferInstance)
       refine ⟨RelSeries.singleton _ ⟨q.val, q.prop.1⟩, rfl, ?_⟩
       exact ((Ideal.liesOver_iff _ _).mp q.prop.2).symm
     | snoc p P h ih =>
       obtain ⟨q,hql,hq⟩ := ih
-      letI : P.asIdeal.IsPrime := P.isPrime
-      letI : q.last.asIdeal.IsPrime := q.last.isPrime
+      let : P.asIdeal.IsPrime := P.isPrime
+      let : q.last.asIdeal.IsPrime := q.last.isPrime
       have hle : q.last.asIdeal.comap f ≤ P.asIdeal := hq.trans_le h.le
       obtain ⟨Q,hQ,hQp,hQe⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isPrime
         P.asIdeal q.last.asIdeal hle
@@ -125,7 +75,9 @@ private theorem ringKrullDim_le_of_integral_injective {R S : Type*}
         refine lt_of_le_of_ne hQ ?_
         intro he
         have he' := congrArg (fun x : PrimeSpectrum S => x.asIdeal.comap f) he
-        rw [hq, hQe] at he'
+        rw [hq] at he'
+        change p.last.asIdeal = Ideal.under R Q at he'
+        rw [hQe] at he'
         exact h.ne (PrimeSpectrum.ext he')
       exact ⟨q.snoc ⟨Q,hQp⟩ hQlt, by simp [hql], by simpa using hQe⟩
   unfold ringKrullDim Order.krullDim
@@ -158,13 +110,13 @@ theorem exists_affine_transcendence_basis {K A : Type} [Field K] [CommRing A] [I
       change Function.Injective (aeval x)
       rwa [he]
     · rw [hadj]
-      letI := hspan
+      let := hspan
       infer_instance
-  letI := g.toRingHom.toAlgebra
-  letI : Algebra.IsIntegral (MvPolynomial (Fin s) K) A := algebraMap_isIntegral_iff.mp hint
+  let := g.toRingHom.toAlgebra
+  let : Algebra.IsIntegral (MvPolynomial (Fin s) K) A := algebraMap_isIntegral_iff.mp hint
   have hdim := ringKrullDim_le_of_integral_injective hg
   have hpoly : ringKrullDim (MvPolynomial (Fin s) K) = (s : WithBot ℕ∞) := by
-    simp [MvPolynomial.ringKrullDim_of_isNoetherianRing]
+    simp
   rw [hpoly] at hdim
   exact ⟨s, hdim, x, htb⟩
 
@@ -186,7 +138,7 @@ theorem trdeg_affinePoint_le {K L : Type} [Field K] [Field L] [Algebra K L]
   let f := Ideal.Quotient.lift J e₀.toRingHom hker
   have hf : Function.Surjective f := Ideal.Quotient.lift_surjective_of_surjective J hker he₀
   have hd : ringKrullDim e.range ≤ (m : WithBot ℕ∞) := (ringKrullDim_le_of_surjective f hf).trans hdim
-  letI : Algebra.FiniteType K e.range := Algebra.FiniteType.of_surjective e₀ he₀
+  let : Algebra.FiniteType K e.range := Algebra.FiniteType.of_surjective e₀ he₀
   obtain ⟨s,hs,y,hy⟩ := exists_affine_transcendence_basis (K := K) (A := e.range)
   have hsm : s ≤ m := by exact_mod_cast hs.trans hd
   rw [← aeval_range, ← hy.cardinalMk_eq_trdeg, Cardinal.mk_fin]
@@ -203,8 +155,10 @@ theorem trdeg_hypersurfacePoint_le {K L : Type} [Field K] [Field L] [Algebra K L
     rw [Set.mem_singleton_iff.mp hf]
     exact RingHom.mem_ker.mpr hx
   have hdim := ringKrullDim_quotient_succ_le_of_nonZeroDivisor (mem_nonZeroDivisors_iff_ne_zero.mpr hG)
+  have hc : ENat.card (Fin n) = n := by
+    simp [ENat.card_eq_coe_fintype_card]
   rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field K,
-    zero_add, Nat.card_fin] at hdim
+    zero_add, hc] at hdim
   have hb : ringKrullDim (MvPolynomial (Fin n) K ⧸ J) ≤ ((n-1 : ℕ) : WithBot ℕ∞) := by
     rcases Nat.exists_eq_succ_of_ne_zero hn.ne' with ⟨m,rfl⟩
     rw [Nat.succ_sub_one]
@@ -225,7 +179,7 @@ theorem trdeg_primeGradientPoint_le {n p s : ℕ} (hp : p.Prime) (G : IntForm n)
     ∀ (L : Type) [Field L] [Algebra K L] (x : Fin n → L),
       (∀ j, evalForm (pderiv j G) x = 0) →
       Algebra.trdeg K (Algebra.adjoin K (Set.range x)) ≤ s := by
-  letI : Fact p.Prime := ⟨hp⟩
+  let : Fact p.Prime := ⟨hp⟩
   let K := AlgebraicClosure (ZMod p)
   change ∀ (L : Type) [Field L] [Algebra K L] (x : Fin n → L),
     (∀ j, evalForm (pderiv j G) x = 0) → Algebra.trdeg K (Algebra.adjoin K (Set.range x)) ≤ s

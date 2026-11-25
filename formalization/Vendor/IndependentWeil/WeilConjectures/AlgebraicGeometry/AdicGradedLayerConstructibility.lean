@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 Bin Wu. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bin Wu
+-/
+module
+public import WeilConjectures.AlgebraicGeometry.AdicCoefficientFiltration
+public import WeilConjectures.AlgebraicGeometry.CoefficientBoundedConstructibleProEtale
+import WeilConjectures.AlgebraicGeometry.AdicGradedResidueTensorComparison
+import WeilConjectures.AlgebraicGeometry.CoefficientProEtaleConstructibleIso
+import WeilConjectures.AlgebraicGeometry.CoefficientSurjectiveRestrictionConstructible
+
+/-! # Constructible cohomology of the graded coefficient layer
+
+## References
+
+* Stacks Project, Tags 09BR and 094H
+-/
+
+@[expose] public section
+set_option autoImplicit false
+universe u v
+open CategoryTheory CategoryTheory.ConstantCompletion
+namespace AlgebraicGeometry.Scheme
+
+/-- Only the graded layer, rather than a higher reduction, has constructible cohomology
+(Stacks, Tags 09BR and 094H). -/
+theorem adicFiniteGradedLayer_constructible (X : Scheme.{u}) [IsNoetherian X]
+    (A : Type (max v (u + 1))) [CommRing A] [IsNoetherianRing A] (J : Ideal A)
+    (N : adicFiniteAmbient.{u, v} X A)
+    (hres : ProEtale.coefficientBoundedConstructibleProEtale.{u, v} X
+      (adicFiniteCoeff J 0) (adicFiniteReduction.{u, v} X J N 0))
+    (n : ℕ) (q : ℤ) :
+    IsCoefficientAffineLocallyConstructibleProEtaleModuleSheaf.{u, v} X
+      (adicFiniteCoeff J (n + 1))
+      ((coefficientModelCohomology _ q).obj (adicFiniteGradedLayer.{u, v} X J N n)) := by
+  let M := adicFiniteResidueGradedModule J n
+  have hM : Module.Finite (adicFiniteCoeff J 0) M :=
+    adicFiniteResidueGradedModule_finite J n
+  have htensor := coefficientConstructible_constantTensor X (adicFiniteCoeff J 0)
+    (adicFiniteReduction.{u, v} X J N 0) hres M hM q
+  have hrestrict := coefficientSurjectiveRestriction_constructible X
+    (adicFiniteCoeff J (n + 1)) (adicFiniteCoeff J 0)
+    (adicFiniteFactor J (Nat.zero_le (n + 1)))
+    (Ideal.Quotient.factor_surjective
+      (Ideal.pow_le_pow_right (Nat.add_le_add_right (Nat.zero_le (n + 1)) 1)))
+    (coefficientConstantTensor.{u, v} X (adicFiniteCoeff J 0)
+      (adicFiniteReduction.{u, v} X J N 0) M) q htensor
+  obtain ⟨e⟩ := adicFiniteGradedLayer_residueTensor X J N n
+  exact ProEtale.coefficientProEtale_constructible_of_iso X
+    (adicFiniteCoeff J (n + 1)) ((coefficientModelCohomology _ q).mapIso e).symm hrestrict
+
+end AlgebraicGeometry.Scheme

@@ -1,3 +1,4 @@
+import Birch.MvPolynomialCoefficientCompat
 import Birch.CompletionGeometry
 import Birch.ConeDimensionTest
 import Birch.CutPolynomialSystem
@@ -62,7 +63,7 @@ theorem exists_bounded_macaulay_cuts {K : Type} [Field K] [IsAlgClosed K]
     have h := coeff_cutPolynomialSystem_totalDegree_le f₀ (C c) a₀ e
       (B := 0) (A := 1)
       (fun j s => by
-        change (coeff s (MvPolynomial.map (C : K →+* R) (f j))).totalDegree ≤ 0
+        change (AddMonoidAlgebra.coeff (MvPolynomial.map (C : K →+* R) (f j)) s).totalDegree ≤ 0
         rw [coeff_map, totalDegree_C])
       (fun j l => by
         change (X (R := K) (j,l)).totalDegree ≤ 1

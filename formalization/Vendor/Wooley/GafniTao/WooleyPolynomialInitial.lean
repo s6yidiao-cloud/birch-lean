@@ -119,11 +119,11 @@ theorem wooleyPolynomialInitialMixedReverse_eq_forward {Q k : ℕ}
     exact ne_comm
   by_cases h : wooleyResiduesSeparated nu eta xi
   · have h' := hsep.mp h
-    rw [if_pos h, if_pos h']
+    rw [ite_eq_left h, ite_eq_left h']
     ring
   · have h' : ¬ wooleyResiduesSeparated nu xi eta :=
       fun hxiEta => h (hsep.mpr hxiEta)
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
 
 /-- Polynomial-system equation (6.6). -/
 theorem wooleyPolynomial_equation_6_6 {Q k : ℕ}
