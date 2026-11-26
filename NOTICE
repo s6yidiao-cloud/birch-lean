@@ -1,6 +1,10 @@
 Forms and polynomial covers in many variables
 
-The manuscript is by Yijie Diao and Lena Wurzinger.
+The original Birch Lean code is licensed under the Apache License, Version 2.0.
+See the LICENSE file at the repository root.
+
+The manuscript is by Yijie Diao and Lena Wurzinger and is outside the scope
+of the code license.
 
 Third party Lean sources and dependencies
 
@@ -21,4 +25,3 @@ Third party Lean sources and dependencies
   and carry their respective licenses.
 
 The listed license grants apply to their respective third party source.
-For terms on the manuscript and original Birch code, consult the rights holders.
