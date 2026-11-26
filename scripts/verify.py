@@ -161,8 +161,38 @@ def check_frozen_snapshot():
     print("Checked the frozen release hashes.", flush=True)
 
 
+def fetch_weil_cache():
+    """Seed Lake's artifact cache with the pinned upstream Linux build."""
+    upstream = "formal-arithmetic-geometry/weil-conjectures"
+    revision = "ae6479530ccaaa19b6d7ca02bc3248cbf49611c9"
+    endpoint = "https://cache.fuxi.merten.dev/lake-cache"
+    scope = f"{upstream}/pt/x86_64-unknown-linux-gnu/tc/leanprover--lean4---4.35.0"
+    expected_hash = "835f82e155a852b262b1b9d8f4f01cc31f1d8be2f4cf1117f02c69e6ed921ddd"
+    env = dict(os.environ, LAKE_CACHE_DIR=str(PROJECT / ".lake" / "weil-cache"),
+               LAKE_ARTIFACT_CACHE="true", LAKE_RESTORE_ARTIFACTS="true")
+    with tempfile.TemporaryDirectory() as temp:
+        config = Path(temp) / "lake-config.toml"
+        config.write_text(
+            '[[cache.service]]\nname = "weil"\nkind = "s3"\n'
+            f'artifactEndpoint = "{endpoint}/a"\nrevisionEndpoint = "{endpoint}/r"\n',
+            encoding="utf-8",
+        )
+        index = Path(temp) / "outputs.jsonl"
+        subprocess.run(["curl", "--fail", "--silent", "--show-error", "--location",
+                        "--retry", "3", "--output", str(index),
+                        f"{endpoint}/r/{scope}/{revision}.jsonl"], check=True)
+        if hashlib.sha256(index.read_bytes()).hexdigest() != expected_hash:
+            raise SystemExit("The upstream Weil cache index differs from the pinned SHA-256.")
+        subprocess.run(["lake", "cache", "get", str(index), "--service=weil",
+                        f"--repo={upstream}", "--package=weil-conjectures"],
+                       cwd=PROJECT, env=dict(env, LAKE_CONFIG=str(config)), check=True)
+    return env
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--weil-cache", action="store_true",
+                        help="reuse matching artifacts from the upstream Weil Linux build")
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--frozen", action="store_true", help="check the manifest and run the Lean audit")
     modes.add_argument("--write-manifest", action="store_true", help="write the SHA-256 release manifest")
@@ -177,9 +207,10 @@ def main():
     check_source_closure()
     if args.frozen:
         check_frozen_snapshot()
-    subprocess.run(["lake", "build", "Birch", "GafniTao"], cwd=PROJECT, check=True)
+    env = fetch_weil_cache() if args.weil_cache else None
+    subprocess.run(["lake", "build", "Birch", "GafniTao"], cwd=PROJECT, env=env, check=True)
     subprocess.run(["lake", "env", "lean", "-DwarningAsError=true", str(AUDIT)],
-                   cwd=PROJECT, check=True)
+                   cwd=PROJECT, env=env, check=True)
 
 
 if __name__ == "__main__":
