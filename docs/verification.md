@@ -16,4 +16,25 @@ elaborates the four result types after `import Birch`, checks their required
 proof dependencies, and inspects transitive axioms. Its allowed kernel
 axioms are `propext`, `Classical.choice`, and `Quot.sound`.
 
-[GitHub Actions configuration](../.github/workflows/lean.yml) invokes the same verifier with the pinned Mathlib dependency cache.
+## Reproducing the check
+
+From a fresh checkout, run the commands in the [README](../README.md#build-and-verify).
+The Mathlib cache supplies compiled Mathlib dependencies. The default verifier builds
+the bundled Weil, Stepanov, Wooley, and Birch modules locally.
+
+On x86-64 Linux, after fetching the Mathlib cache, you can run the same command as CI
+from the repository root.
+
+```sh
+python3 scripts/verify.py --frozen --weil-cache
+```
+
+This option also downloads the [Weil project's published Lake artifacts](https://github.com/formal-arithmetic-geometry/weil-conjectures/blob/ae6479530ccaaa19b6d7ca02bc3248cbf49611c9/.github/workflows/lean_action_ci.yml).
+The verifier checks the SHA-256 of the pinned cache index. Lake reuses matching
+build inputs and compiles the remaining modules from source. Both commands run
+the same final theorem and axiom audit.
+
+Open a [Verify Lean run on main](https://github.com/s6yidiao-cloud/birch-lean/actions/workflows/lean.yml?query=branch%3Amain)
+and select **Build and audit the Lean formalization** to see the output for its
+commit. A successful run checks the frozen files, reports the proof route for
+each of the four results, and finishes with the axiom-dependency count.
