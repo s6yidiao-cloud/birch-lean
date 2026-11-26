@@ -30,4 +30,7 @@ The verifier checks the source files against the release manifest, builds the Le
 - [`checks/`](checks/) contains the [theorem audit](checks/BirchAudit.lean) and the [list of theorem statements and hypotheses](checks/formalization.yaml).
 - [`docs/`](docs/) contains the [proof map](docs/FORMALIZATION_MAP.md) and [verification notes](docs/verification.md).
 - [`scripts/`](scripts/) contains the [verification script](scripts/verify.py).
-- Third party provenance and licenses are in the [notice](NOTICE).
+
+## License
+
+The original Birch Lean code is licensed under [Apache 2.0](LICENSE). Third party attributions and licenses are listed in [NOTICE](NOTICE).
