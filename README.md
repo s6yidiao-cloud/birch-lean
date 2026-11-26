@@ -13,6 +13,8 @@ Outside this repository, the formalization depends only on Mathlib.
 
 ## Build and verify
 
+[![Verify Lean](https://github.com/s6yidiao-cloud/birch-lean/actions/workflows/lean.yml/badge.svg?branch=main)](https://github.com/s6yidiao-cloud/birch-lean/actions/workflows/lean.yml?query=branch%3Amain)
+
 Install [elan](https://github.com/leanprover/elan), Git and Python 3.10 or newer. The Lake project pins Lean to v4.35.0 and records the Mathlib revision in its [manifest](formalization/lake-manifest.json). From the repository root, run
 
 ```sh
