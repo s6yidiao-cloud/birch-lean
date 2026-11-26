@@ -22,9 +22,12 @@ cd ..
 python3 scripts/verify.py --frozen
 ```
 
-The verifier checks the source closure, builds the Lean project with warnings as errors, checks the manuscript-shaped theorem signatures, and audits the proof dependencies and axioms.
+The verifier checks the source files against the release manifest, builds the Lean project with warnings as errors, and checks the theorem statements, proof dependencies, and axioms.
 
-- Statement correspondence and proof choices are in the [proof map](docs/FORMALIZATION_MAP.md).
-- The toolchain and checks are in the [verification notes](docs/verification.md).
-- The theorem scope and hypothesis are in the [status file](checks/formalization.yaml).
+## Repository
+
+- [`formalization/`](formalization/) contains the Lean project. The four results above are in [`FinalUnconditional.lean`](formalization/Birch/FinalUnconditional.lean).
+- [`checks/`](checks/) contains the [theorem audit](checks/BirchAudit.lean) and the [list of theorem statements and hypotheses](checks/formalization.yaml).
+- [`docs/`](docs/) contains the [proof map](docs/FORMALIZATION_MAP.md) and [verification notes](docs/verification.md).
+- [`scripts/`](scripts/) contains the [verification script](scripts/verify.py).
 - Third party provenance and licenses are in the [notice](NOTICE).
